@@ -1,0 +1,58 @@
+.panel { background:#fff; border-radius:16px; padding:18px; border:1px solid var(--bd); }
+
+/* Tìm kiếm + bộ lọc */
+.searchbar { display:flex; gap:12px; }
+.search { flex:1; display:flex; align-items:center; gap:10px; background:#f8f7fd; border:1px solid var(--bd); border-radius:12px; padding:0 14px; color:var(--mut); }
+.search input { flex:1; border:0; background:transparent; padding:12px 0; outline:none; font-size:14px; color:var(--txt); }
+.search input:focus { outline:none; }
+.search:focus-within { border-color:var(--pri); box-shadow:0 0 0 3px var(--pri-l); }
+.filter-btn { display:flex; align-items:center; gap:8px; border-radius:12px; padding:0 16px; background:#f8f7fd; color:var(--mut); }
+.filter-btn .dot { display:none; width:8px; height:8px; border-radius:50%; background:var(--pri); }
+.filter-btn.active .dot { display:inline-block; }
+.filter-panel { display:none; flex-wrap:wrap; gap:12px; align-items:flex-end; padding:14px; margin-top:12px; background:#faf9ff; border:1px dashed var(--bd); border-radius:12px; }
+.filter-panel.show { display:flex; }
+
+/* Bảng */
+table { width:100%; border-collapse:separate; border-spacing:0 6px; margin-top:12px; font-size:14px; }
+th { text-align:left; font-size:12.5px; font-weight:700; color:#3b3950; padding:8px 12px; }
+th.center, td.center { text-align:center; }
+td { padding:12px; background:#fafafe; vertical-align:middle; }
+td:first-child { border-radius:10px 0 0 10px; }
+td:last-child { border-radius:0 10px 10px 0; }
+tr:hover td { background:#f3f1fc; }
+tr.is-dropped td { background:#fdeceb; }
+tr.is-dropped:hover td { background:#fbe0de; }
+.name { font-weight:700; }
+.sub { font-size:12px; color:var(--mut); margin-top:2px; }
+
+/* Pill trạng thái */
+.badge { display:inline-block; min-width:92px; text-align:center; padding:6px 12px; border-radius:8px; font-size:12.5px; font-weight:700; white-space:nowrap; }
+.b-studying { background:#22e07a; color:#04361a; }
+.b-reserved { background:#fff176; color:#5b4a00; }
+.b-dropped { background:#ffd6d6; color:#a01919; }
+.b-graduated { background:#c9dcff; color:#17357f; }
+.b-none { background:#ececf3; color:#6b6a7d; }
+
+/* Nút icon thao tác */
+.actions { display:flex; gap:8px; justify-content:center; }
+.ibtn { width:34px; height:34px; padding:0; display:grid; place-items:center; border-radius:8px; color:#55536b; background:#fff; }
+.ibtn svg { width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.ibtn:hover { background:var(--pri-l); color:var(--pri); border-color:var(--pri); }
+.ibtn.danger { background:#e11d2e; color:#fff; border-color:#e11d2e; }
+.ibtn.danger:hover { background:#c1121f; color:#fff; }
+
+.pager { display:flex; justify-content:space-between; align-items:center; margin-top:12px; font-size:14px; color:var(--mut); }
+.pager div { display:flex; gap:8px; align-items:center; }
+.empty { text-align:center; padding:40px; color:var(--mut); }
+
+/* Modal chi tiết */
+dl { display:grid; grid-template-columns:140px 1fr; gap:8px 12px; margin:0; font-size:14px; }
+dt { color:var(--mut); }
+dd { margin:0; }
+h3 { font-size:14px; margin:18px 0 8px; }
+.hist { font-size:13px; border-left:3px solid var(--pri-l); padding-left:12px; }
+.hist div { margin-bottom:10px; }
+
+@media (max-width:860px) {
+  th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display:none; }
+}

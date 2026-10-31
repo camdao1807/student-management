@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý sinh viên</title>
+<link rel="stylesheet" href="/layout.css">
+<link rel="stylesheet" href="/student.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div>
+        <div class="brand-name">Student</div>
+        <div class="brand-sub">Management</div>
+      </div>
+    </div>
+    <nav>
+      <a class="nav-item active" href="/student.html">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+        Sinh viên
+      </a>
+      <a class="nav-item disabled" title="Module của bạn nhóm">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg>
+        Lớp học
+      </a>
+      <a class="nav-item disabled" title="Module của bạn nhóm">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 11l2 2 3-3"/></svg>
+        Cố vấn học tập
+      </a>
+    </nav>
+  </aside>
+
+  <div class="content">
+
+    <!-- Thanh trên cùng: góc phải là khu vực đăng nhập -->
+    <header class="topbar">
+      <div class="crumb">Trang chủ / <b>Sinh viên</b></div>
+      <div class="user-area" id="userArea">
+        <!-- Khi module đăng nhập xong, thay phần này bằng tên người dùng + nút Đăng xuất -->
+        <a class="login-btn" href="/login.html" id="loginBtn">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>
+          Đăng nhập
+        </a>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Sinh viên</h1>
+        <p>Quản lý hồ sơ và trạng thái sinh viên</p>
+      </div>
+      <button class="primary" id="btnAdd">
+        <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>
+        Thêm sinh viên
+      </button>
+    </div>
+
+    <div class="panel">
+      <div class="searchbar">
+        <div class="search">
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q" placeholder="Tìm theo mã sinh viên hoặc họ tên...">
+        </div>
+        <button class="filter-btn" id="btnFilter">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M4 6h16M7 12h10M10 18h4"/></svg>
+          Bộ lọc <span class="dot" id="filterDot"></span>
+        </button>
+      </div>
+
+      <div class="filter-panel" id="filterPanel">
+        <div class="field">Lớp <span id="classFilterBox"></span></div>
+        <div class="field">Giới tính
+          <select id="fGender">
+            <option value="">Tất cả</option>
+            <option value="male">Nam</option>
+            <option value="female">Nữ</option>
+            <option value="other">Khác</option>
+          </select>
+        </div>
+        <div class="field">Trạng thái
+          <select id="fStatus">
+            <option value="">Tất cả</option>
+            <option value="studying">Đang học</option>
+            <option value="reserved">Bảo lưu</option>
+            <option value="dropped">Thôi học</option>
+            <option value="graduated">Đã tốt nghiệp</option>
+          </select>
+        </div>
+        <div class="field">Hồ sơ
+          <select id="fArchived">
+            <option value="false">Đang sử dụng</option>
+            <option value="true">Đã lưu trữ</option>
+          </select>
+        </div>
+        <button id="btnClear">Xóa lọc</button>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Họ tên</th><th>Lớp</th><th>Giới tính</th><th>Ngày sinh</th>
+            <th>Trạng thái</th><th class="center">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div id="empty" class="empty" style="display:none">Không có sinh viên nào.</div>
+
+      <div class="pager">
+        <span id="info"></span>
+        <div>
+          <button id="prev">‹ Trước</button>
+          <span id="pageNo"></span>
+          <button id="next">Sau ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal thêm / sửa -->
+<div class="overlay" id="mForm">
+  <form class="modal" id="form" novalidate>
+    <h2 id="formTitle">Thêm sinh viên</h2>
+    <div class="grid">
+      <div class="field">Mã sinh viên *
+        <input id="studentCode" maxlength="20" required>
+        <span class="hint" id="codeHint"></span>
+      </div>
+      <div class="field">Họ tên *
+        <input id="fullName" maxlength="150" required>
+      </div>
+      <div class="field">Ngày sinh *
+        <input id="dateOfBirth" type="date" required>
+      </div>
+      <div class="field">Giới tính
+        <select id="gender">
+          <option value="">-- Chọn --</option>
+          <option value="male">Nam</option>
+          <option value="female">Nữ</option>
+          <option value="other">Khác</option>
+        </select>
+      </div>
+      <div class="field">Email *
+        <input id="email" type="email" maxlength="150" required>
+      </div>
+      <div class="field">Số điện thoại
+        <input id="phone" maxlength="20">
+      </div>
+      <div class="field full">Lớp *
+        <span id="classFormBox"></span>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" data-close>Hủy</button>
+      <button type="submit" class="primary" id="btnSave">Lưu</button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal chi tiết -->
+<div class="overlay" id="mDetail">
+  <div class="modal">
+    <h2>Chi tiết sinh viên</h2>
+    <div id="detailBody"></div>
+    <div class="modal-actions"><button data-close>Đóng</button></div>
+  </div>
+</div>
+
+<!-- Modal đổi trạng thái -->
+<div class="overlay" id="mStatus">
+  <form class="modal" id="statusForm">
+    <h2>Đổi trạng thái</h2>
+    <div class="grid">
+      <div class="field full">Sinh viên <b id="stName"></b></div>
+      <div class="field">Trạng thái mới *
+        <select id="stValue">
+          <option value="studying">Đang học</option>
+          <option value="reserved">Bảo lưu</option>
+          <option value="dropped">Thôi học</option>
+          <option value="graduated">Đã tốt nghiệp</option>
+        </select>
+      </div>
+      <div class="field">Ngày có hiệu lực *
+        <input id="stDate" type="date" required>
+      </div>
+      <div class="field full">Lý do
+        <textarea id="stReason" rows="3"></textarea>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" data-close>Hủy</button>
+      <button type="submit" class="primary">Xác nhận</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast"></div>
+<script src="/student.js"></script>
+</body>
+</html>
