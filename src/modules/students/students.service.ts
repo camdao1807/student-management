@@ -1,17 +1,11 @@
 import {
-  BadRequestException,
-  ConflictException,
-  Injectable,
-  NotFoundException,
+  BadRequestException, ConflictException, Injectable, NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, Repository } from 'typeorm';
 import { Student } from '../../entities/student.entity';
 import { StudentClass } from '../../entities/student-class.entity';
-import {
-  StudentStatus,
-  StudentStatusValue,
-} from '../../entities/student-status.entity';
+import { StudentStatus, StudentStatusValue } from '../../entities/student-status.entity';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
 import { QueryStudentDto } from './dto/query-student.dto';
@@ -21,12 +15,9 @@ import { todayStr } from './validators/is-not-future-date';
 @Injectable()
 export class StudentsService {
   constructor(
-    @InjectRepository(Student)
-    private readonly studentRepo: Repository<Student>,
-    @InjectRepository(StudentClass)
-    private readonly classRepo: Repository<StudentClass>,
-    @InjectRepository(StudentStatus)
-    private readonly statusRepo: Repository<StudentStatus>,
+    @InjectRepository(Student) private readonly studentRepo: Repository<Student>,
+    @InjectRepository(StudentClass) private readonly classRepo: Repository<StudentClass>,
+    @InjectRepository(StudentStatus) private readonly statusRepo: Repository<StudentStatus>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -42,29 +33,51 @@ export class StudentsService {
 
   private async assertCodeAvailable(code: string, excludeId?: string) {
     if (!(await this.isCodeAvailable(code, excludeId))) {
-      throw new ConflictException(
-        `Mã sinh viên "${code}" đã tồn tại (có thể ở hồ sơ đã lưu trữ)`,
-      );
+      throw new ConflictException(`Mã sinh viên "${code}" đã tồn tại (có thể ở hồ sơ đã lưu trữ)`);
     }
   }
 
   private async assertClassUsable(classId: string) {
     const cls = await this.classRepo.findOne({ where: { id: classId } });
-    if (!cls)
-      throw new BadRequestException(`Lớp có id=${classId} không tồn tại`);
-    if (!cls.isActive)
-      throw new BadRequestException(
-        `Lớp "${cls.classCode}" đã ngừng hoạt động`,
-      );
+    if (!cls) throw new BadRequestException(`Lớp có id=${classId} không tồn tại`);
+    if (!cls.isActive) throw new BadRequestException(`Lớp "${cls.classCode}" đã ngừng hoạt động`);
   }
 
   private rethrowDuplicate(e: any): never {
-    if (e?.code === 'ER_DUP_ENTRY')
-      throw new ConflictException('Mã sinh viên đã tồn tại');
-    if (e?.code === 'ER_CHECK_CONSTRAINT_VIOLATED')
-      throw new BadRequestException('Dữ liệu vi phạm ràng buộc CHECK');
+    if (e?.code === 'ER_DUP_ENTRY') throw new ConflictException('Mã sinh viên đã tồn tại');
+    if (e?.code === 'ER_CHECK_CONSTRAINT_VIOLATED') throw new BadRequestException('Dữ liệu vi phạm ràng buộc CHECK');
     if (e?.sqlState === '45000') throw new BadRequestException(e.sqlMessage);
     throw e;
+  }
+
+  // ---------- Danh sách lớp cho ô chọn (chỉ đọc) ----------
+  async listClassOptions() {
+    return this.classRepo.find({
+      where: { isActive: true },
+      select: { id: true, classCode: true, className: true, majorName: true, academicYear: true },
+      order: { majorName: 'ASC', classCode: 'ASC' },
+    });
+  }
+
+  // ---------- Thống kê theo trạng thái hiện tại ----------
+  async stats() {
+    const total = await this.studentRepo.count();
+    const rows: { status: string; c: string | number }[] = await this.dataSource.query(
+      `SELECT v.status AS status, COUNT(*) AS c
+         FROM students s
+         JOIN v_student_current_status v ON v.student_id = s.id
+        WHERE s.deleted_at IS NULL
+        GROUP BY v.status`,
+    );
+    const by: Record<string, number> = {};
+    rows.forEach((r) => (by[r.status] = Number(r.c)));
+    return {
+      total,
+      studying: by['studying'] ?? 0,
+      reserved: by['reserved'] ?? 0,
+      dropped: by['dropped'] ?? 0,
+      graduated: by['graduated'] ?? 0,
+    };
   }
 
   // ---------- Thêm mới ----------
@@ -85,7 +98,6 @@ export class StudentsService {
             classId: dto.classId,
           }),
         );
-        // Mỗi sinh viên mới có bản ghi trạng thái đầu tiên: đang học
         await em.save(
           em.create(StudentStatus, {
             studentId: student.id,
@@ -105,15 +117,7 @@ export class StudentsService {
 
   // ---------- Danh sách: tìm kiếm + lọc + phân trang ----------
   async findAll(query: QueryStudentDto) {
-    const {
-      q,
-      classId,
-      gender,
-      status,
-      archived,
-      page = 1,
-      limit = 20,
-    } = query;
+    const { q, classId, gender, status, archived, academicYear, page = 1, limit = 20 } = query;
 
     const qb = this.studentRepo
       .createQueryBuilder('s')
@@ -122,12 +126,11 @@ export class StudentsService {
     if (archived) qb.withDeleted().andWhere('s.deletedAt IS NOT NULL');
 
     if (q?.trim()) {
-      qb.andWhere('(s.studentCode LIKE :kw OR s.fullName LIKE :kw)', {
-        kw: `%${q.trim()}%`,
-      });
+      qb.andWhere('(s.studentCode LIKE :kw OR s.fullName LIKE :kw)', { kw: `%${q.trim()}%` });
     }
     if (classId) qb.andWhere('s.classId = :classId', { classId });
     if (gender) qb.andWhere('s.gender = :gender', { gender });
+    if (academicYear) qb.andWhere('c.academicYear = :ay', { ay: academicYear });
     if (status) {
       qb.andWhere(
         's.id IN (SELECT v.student_id FROM v_student_current_status v WHERE v.status = :status)',
@@ -150,16 +153,13 @@ export class StudentsService {
   private async attachCurrentStatus(students: Student[]) {
     if (!students.length) return [];
     const ids = students.map((s) => s.id);
-    const rows: {
-      student_id: string;
-      status: string;
-      effective_date: string;
-    }[] = await this.dataSource.query(
-      `SELECT student_id, status, effective_date
+    const rows: { student_id: string; status: string; effective_date: string }[] =
+      await this.dataSource.query(
+        `SELECT student_id, status, effective_date
            FROM v_student_current_status
           WHERE student_id IN (${ids.map(() => '?').join(',')})`,
-      ids,
-    );
+        ids,
+      );
     const map = new Map(rows.map((r) => [String(r.student_id), r]));
     return students.map((s) => ({
       ...s,
@@ -174,8 +174,7 @@ export class StudentsService {
       relations: { studentClass: true },
       withDeleted: withArchived,
     });
-    if (!student)
-      throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
+    if (!student) throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
     const [withStatus] = await this.attachCurrentStatus([student]);
     return withStatus;
   }
@@ -183,8 +182,7 @@ export class StudentsService {
   // ---------- Cập nhật hồ sơ ----------
   async update(id: string, dto: UpdateStudentDto) {
     const student = await this.studentRepo.findOne({ where: { id } });
-    if (!student)
-      throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
+    if (!student) throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
 
     if (dto.studentCode && dto.studentCode !== student.studentCode) {
       await this.assertCodeAvailable(dto.studentCode, id);
@@ -201,11 +199,10 @@ export class StudentsService {
     return this.findOne(id);
   }
 
-  // ---------- Đổi trạng thái (ghi thêm lịch sử, không sửa bản ghi cũ) ----------
+  // ---------- Đổi trạng thái (ghi thêm lịch sử) ----------
   async changeStatus(id: string, dto: ChangeStatusDto, userId: string | null) {
     const student = await this.studentRepo.findOne({ where: { id } });
-    if (!student)
-      throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
+    if (!student) throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
 
     return this.statusRepo.save(
       this.statusRepo.create({
@@ -226,35 +223,19 @@ export class StudentsService {
     });
   }
 
-  // ---------- Lưu trữ / khôi phục (không xóa dữ liệu) ----------
+  // ---------- Lưu trữ / khôi phục ----------
   async archive(id: string) {
     const student = await this.studentRepo.findOne({ where: { id } });
-    if (!student)
-      throw new NotFoundException(
-        `Không tìm thấy sinh viên id=${id} (hoặc đã lưu trữ)`,
-      );
+    if (!student) throw new NotFoundException(`Không tìm thấy sinh viên id=${id} (hoặc đã lưu trữ)`);
     await this.studentRepo.softDelete(id);
     return { id, archived: true };
   }
 
   async restore(id: string) {
-    const student = await this.studentRepo.findOne({
-      where: { id },
-      withDeleted: true,
-    });
-    if (!student)
-      throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
-    if (!student.deletedAt)
-      throw new BadRequestException('Hồ sơ này chưa bị lưu trữ');
+    const student = await this.studentRepo.findOne({ where: { id }, withDeleted: true });
+    if (!student) throw new NotFoundException(`Không tìm thấy sinh viên id=${id}`);
+    if (!student.deletedAt) throw new BadRequestException('Hồ sơ này chưa bị lưu trữ');
     await this.studentRepo.restore(id);
     return { id, archived: false };
-  }
-    // Danh sách lớp để đổ vào ô chọn (chỉ đọc)
-  async listClassOptions() {
-    return this.classRepo.find({
-      where: { isActive: true },
-      select: { id: true, classCode: true, className: true, majorName: true },
-      order: { majorName: 'ASC', classCode: 'ASC' },
-    });
   }
 }
