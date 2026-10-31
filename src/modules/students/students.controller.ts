@@ -1,13 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  Patch,
-  Post,
-  Query,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -34,18 +25,22 @@ export class StudentsController {
     return this.service.findAll(query);
   }
 
-  // Phải đặt TRƯỚC ':id'
+  // Các route cố định phải đặt TRƯỚC ':id'
   @Get('check-code')
   async checkCode(@Query() q: CheckCodeDto) {
-    return {
-      code: q.code,
-      available: await this.service.isCodeAvailable(q.code, q.excludeId),
-    };
+    return { code: q.code, available: await this.service.isCodeAvailable(q.code, q.excludeId) };
   }
+
+  @Get('stats')
+  stats() {
+    return this.service.stats();
+  }
+
   @Get('classes-options')
   classOptions() {
     return this.service.listClassOptions();
   }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.service.findOne(id);
@@ -57,11 +52,7 @@ export class StudentsController {
   }
 
   @Post(':id/status')
-  changeStatus(
-    @Param('id') id: string,
-    @Body() dto: ChangeStatusDto,
-    @Req() req: any,
-  ) {
+  changeStatus(@Param('id') id: string, @Body() dto: ChangeStatusDto, @Req() req: any) {
     return this.service.changeStatus(id, dto, this.uid(req));
   }
 
