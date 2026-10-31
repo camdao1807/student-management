@@ -7,6 +7,7 @@ import { Employee } from './entities/employee.entity';
 import { Student } from './entities/student.entity';
 import { StudentStatus } from './entities/student-status.entity';
 import { AdvisorClasseSection } from './entities/advisor-classe-section.entity';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AdvisorClasseSection } from './entities/advisor-classe-section.entity';
       synchronize: false,
     }),
     StudentsModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
