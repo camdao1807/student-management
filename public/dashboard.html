@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard | Student Management</title>
+<link rel="stylesheet" href="/layout.css">
+<link rel="stylesheet" href="/dashboard.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
+    </div>
+    <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+
+    <a class="nav-item active" href="/dashboard.html">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="8" height="8" rx="1"/>
+        <rect x="13" y="3" width="8" height="5" rx="1"/>
+        <rect x="13" y="10" width="8" height="11" rx="1"/>
+        <rect x="3" y="13" width="8" height="8" rx="1"/>
+      </svg>
+      Dashboard
+    </a>
+
+    <a class="nav-item" href="/student.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M22 10L12 5 2 10l10 5 10-5z"/>
+        <path d="M6 12v5c3 2 9 2 12 0v-5"/>
+      </svg>
+      Quản lý sinh viên
+    </a>
+
+    <a class="nav-item disabled" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5"/>
+        <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/>
+      </svg>
+      Quản lý lớp hành chính
+    </a>
+
+    <a class="nav-item disabled" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <circle cx="12" cy="10" r="3"/>
+        <path d="M7 18c1-2 3-3 5-3s4 1 5 3"/>
+      </svg>
+      Quản lý giảng viên
+    </a>
+
+    <a class="nav-item disabled" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 7h18M3 12h18M3 17h12"/>
+      </svg>
+      Trạng thái học vụ
+    </a>
+
+    <a class="nav-item disabled" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5"/>
+        <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+      </svg>
+      Cố vấn học tập
+    </a>
+
+    <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
+
+    <a class="nav-item disabled" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+      </svg>
+      Quản lý tài khoản
+    </a>
+  </aside>
+
+  <div class="content dashboard-content">
+
+    <header class="topbar">
+      <div class="crumb">Trang chủ / Hệ thống / <b>Dashboard</b></div>
+      <div class="user-area" id="userArea">
+        <a class="login-btn" href="/login.html">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập
+        </a>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Tổng quan hệ thống</h1>
+        <p>Dữ liệu vận hành sinh viên, lớp học, giảng viên và báo cáo toàn trường.</p>
+      </div>
+      <div class="head-actions">
+        <button id="refreshDashboard" title="Làm mới dữ liệu">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M5.6 9a7 7 0 0111.8-2L20 12M4 12l2.6 5a7 7 0 0011.8-2"/></svg>Làm mới <small id="lastUpdated"></small>
+        </button>
+        <button id="quickExport">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v4h14v-4"/></svg>Xuất báo cáo nhanh
+        </button>
+        <button class="primary" onclick="location.href='/student.html'">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>Thêm sinh viên mới
+        </button>
+      </div>
+    </div>
+
+    <div id="overviewState" class="state-line" role="status" aria-live="polite">Đang tải dữ liệu tổng quan...</div>
+    <div id="overviewError" class="state-line error-state" role="alert" hidden></div>
+
+    <section class="metric-grid" aria-label="Chỉ số tổng quan">
+      <article class="metric metric-students">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></span><span class="badge" id="studentsBadge">—</span></div>
+        <span class="metric-label">Tổng sinh viên</span>
+        <strong id="studentsTotal">—</strong>
+        <small><span id="studentsActive">—</span> đang hoạt động <i></i> <span id="studentsArchived">—</span> lưu trữ</small>
+      </article>
+      <article class="metric metric-studying">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 11l2 2 3-3"/></svg></span><span class="badge" id="studyingBadge">—</span></div>
+        <span class="metric-label">Sinh viên đang học</span>
+        <strong id="studentsStudying">—</strong>
+        <small>Trạng thái hiện tại, không tính hồ sơ lưu trữ</small>
+      </article>
+      <article class="metric metric-classes">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></span><span class="badge" id="classesBadge">—</span></div>
+        <span class="metric-label">Lớp hành chính</span>
+        <strong id="classesTotal">—</strong>
+        <small><span id="classesActive">—</span> lớp đang hoạt động</small>
+      </article>
+      <article class="metric metric-employees">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span><span class="badge" id="employeesBadge">—</span></div>
+        <span class="metric-label">Giảng viên / CVHT</span>
+        <strong id="employeesTotal">—</strong>
+        <small><span id="employeesActive">—</span> giảng viên đang hoạt động</small>
+      </article>
+    </section>
+
+    <section class="chart-grid" aria-label="Phân tích sinh viên">
+      <article class="panel chart-panel status-panel">
+        <div class="panel-heading"><div><h2>Phân bố theo trạng thái</h2><p>Thống kê toàn bộ hồ sơ sinh viên đang hoạt động</p></div></div>
+        <div class="donut-wrap">
+          <svg id="statusDonut" viewBox="0 0 240 240" role="img" aria-label="Biểu đồ phân bố trạng thái"></svg>
+          <div class="donut-center"><span>TỔNG CỘNG</span><strong id="statusTotal">—</strong><span>Sinh viên</span></div>
+        </div>
+        <div id="statusLegend" class="status-legend"></div>
+      </article>
+      <article class="panel chart-panel class-panel">
+        <div class="panel-heading">
+          <div><h2>Sĩ số theo lớp</h2><p>Giới hạn tiêu chuẩn: 60 - 70 sinh viên / lớp · chỉ gồm hồ sơ chưa lưu trữ</p></div>
+          <div class="seg" role="tablist"><button type="button" class="on" data-view="chart">Biểu đồ cột</button><button type="button" data-view="table">Dạng bảng</button></div>
+        </div>
+        <div id="classChart" class="col-chart" role="img" aria-label="Biểu đồ số sinh viên theo lớp"></div>
+        <div id="classAvg" class="avg-line"></div>
+      </article>
+      <article class="panel chart-panel cohort-panel">
+        <div class="panel-heading"><div><h2>Sinh viên theo khóa học</h2><p>Nhóm theo năm học; chỉ tính hồ sơ chưa lưu trữ</p></div></div>
+        <div id="cohortChart" class="bar-chart cohort-chart" role="img" aria-label="Biểu đồ số sinh viên theo khóa học"></div>
+      </article>
+    </section>
+
+    <section class="panel report-panel" aria-labelledby="reportTitle">
+      <div class="report-heading">
+        <div><h2 id="reportTitle">Báo cáo sinh viên</h2><p id="reportSummary">Tìm kiếm, lọc và xuất dữ liệu</p></div>
+        <div class="export-actions">
+          <button type="button" class="export-btn" id="exportCsv" title="Xuất toàn bộ kết quả lọc dạng CSV">
+            <svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v4h14v-4"/></svg>CSV
+          </button>
+          <button type="button" class="primary export-btn" id="exportXlsx" title="Xuất toàn bộ kết quả lọc dạng Excel">
+            <svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v4h14v-4"/></svg>Excel
+          </button>
+        </div>
+      </div>
+
+      <div class="report-filters">
+        <label class="report-search">Tìm sinh viên
+          <span class="search-input"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="filterQuery" type="search" placeholder="Mã sinh viên hoặc họ tên"></span>
+        </label>
+        <label>Lớp<select id="filterClass"><option value="">Tất cả lớp</option></select></label>
+        <label>Khóa học<select id="filterYear"><option value="">Tất cả khóa</option></select></label>
+        <label>Trạng thái<select id="filterStatus">
+          <option value="">Tất cả trạng thái</option><option value="studying">Đang học</option><option value="reserved">Bảo lưu</option><option value="dropped">Thôi học</option><option value="graduated">Đã tốt nghiệp</option><option value="no_status">Chưa có trạng thái</option>
+        </select></label>
+        <label>Phạm vi hồ sơ<select id="filterArchive">
+          <option value="active">Đang hoạt động</option><option value="archived">Đã lưu trữ</option><option value="all">Tất cả hồ sơ</option>
+        </select></label>
+        <label>Nhập học từ<input id="filterStartDate" type="date"></label>
+        <label>Đến ngày<input id="filterEndDate" type="date"></label>
+        <button type="button" id="clearFilters" class="clear-filter">Xóa bộ lọc</button>
+      </div>
+
+      <div id="reportState" class="state-line" role="status" aria-live="polite" hidden></div>
+      <div id="reportError" class="state-line error-state" role="alert" hidden></div>
+      <div class="table-scroll">
+        <table class="report-table">
+          <thead><tr>
+            <th class="index-col">STT</th>
+            <th><button data-sort="studentCode" class="sort-button">Mã sinh viên <span></span></button></th>
+            <th><button data-sort="fullName" class="sort-button">Họ và tên <span></span></button></th>
+            <th><button data-sort="classCode" class="sort-button">Lớp <span></span></button></th>
+            <th><button data-sort="academicYear" class="sort-button">Khóa học <span></span></button></th>
+            <th><button data-sort="gender" class="sort-button">Giới tính <span></span></button></th>
+            <th>Email</th>
+            <th><button data-sort="status" class="sort-button">Trạng thái <span></span></button></th>
+            <th><button data-sort="admissionDate" class="sort-button">Ngày nhập học <span></span></button></th>
+          </tr></thead>
+          <tbody id="reportRows"></tbody>
+        </table>
+      </div>
+      <div id="reportEmpty" class="empty-report" hidden>Không tìm thấy sinh viên phù hợp.</div>
+      <div class="report-footer">
+        <span id="recordCount">0 bản ghi</span>
+        <div class="pager">
+          <label>Số dòng<select id="pageLimit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option></select></label>
+          <button type="button" id="prevPage" aria-label="Trang trước">‹</button>
+          <span id="pageNumber">Trang 1 / 1</span>
+          <button type="button" id="nextPage" aria-label="Trang sau">›</button>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/dashboard.js"></script>
+</body>
+</html>
