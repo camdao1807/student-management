@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quản lý trạng thái sinh viên | SM University</title>
+<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css"></head>
+<body><div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">SM</div><div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div></div>
+  <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+  <a class="nav-item" href="student.html">Quản lý sinh viên</a>
+  <a class="nav-item" href="classes.html">Lớp học</a>
+  <a class="nav-item" href="advisor-classe-sections.html">Giảng viên / CVHT</a>
+  <a class="nav-item active" href="student-status.html">Trạng thái sinh viên</a>
+</aside>
+<div class="content">
+  <div class="topbar"><div class="crumb">Trang chủ / <b>Trạng thái sinh viên</b></div>
+    <div class="user-area"><div class="avatar">QT</div><span class="user-name">Quản trị viên</span></div></div>
+  <div class="page-head"><div><h1>Quản lý trạng thái sinh viên</h1>
+    <p>Theo dõi đang học, bảo lưu, thôi học, tốt nghiệp. Mỗi lần đổi trạng thái được ghi thành một dòng lịch sử mới.</p></div></div>
+  <div class="stats">
+    <div class="stat" data-st="studying" style="--c:var(--ok)"><span>Đang học</span><strong id="cStudying">0</strong></div>
+    <div class="stat" data-st="suspended" style="--c:var(--warn)"><span>Bảo lưu</span><strong id="cSuspended">0</strong></div>
+    <div class="stat" data-st="dropped" style="--c:var(--err)"><span>Thôi học</span><strong id="cDropped">0</strong></div>
+    <div class="stat" data-st="graduated" style="--c:var(--vio)"><span>Đã tốt nghiệp</span><strong id="cGraduated">0</strong></div></div>
+  <div class="split">
+    <div class="panel"><div class="bar"><input id="q" placeholder="Tìm theo mã SV, họ tên...">
+      <select id="fStatus"><option value="">Mọi trạng thái</option></select><select id="fClass"><option value="">Mọi lớp</option></select></div>
+      <div style="overflow-x:auto"><table><thead><tr><th>Sinh viên</th><th>Lớp</th><th>Biến động</th><th>Hiệu lực</th></tr></thead><tbody id="rows"></tbody></table></div>
+      <div class="pager"><span id="info"></span><div id="pages"></div></div></div>
+    <aside class="panel"><h2 style="margin:0;font-size:17px">Phiếu cập nhật trạng thái</h2>
+      <div id="noSel" class="empty">Chọn một sinh viên trong danh sách để cập nhật trạng thái.</div>
+      <div id="form" style="display:none">
+        <div class="who" id="who"></div>
+        <div class="field" style="margin-top:12px">Chuyển sang trạng thái *</div><div class="picker" id="picker" style="margin-top:6px"></div>
+        <label class="field" style="margin-top:12px">Ngày hiệu lực *<input type="date" id="fDate"></label>
+        <label class="field" style="margin-top:12px"><span id="lblReason">Lý do</span><textarea id="fReason" rows="3" placeholder="Ghi rõ căn cứ, số quyết định..."></textarea></label>
+        <div class="err-box" id="err"></div>
+        <button class="primary" id="btnSave" style="width:100%;justify-content:center;margin-top:14px" disabled>Lưu thay đổi</button>
+        <div class="hist"><b>Lịch sử trạng thái</b><ul id="hist"></ul></div></div></aside>
+  </div>
+</div></div>
+
+<div id="toast"></div>
+<script src="student-status.js"></script></body></html>

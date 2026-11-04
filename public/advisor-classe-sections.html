@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quản lý giảng viên / CVHT | SM University</title>
+<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css"></head>
+<body><div class="layout">
+<aside class="sidebar">
+  <div class="brand"><div class="logo">SM</div><div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div></div>
+  <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+  <a class="nav-item" href="student.html">Quản lý sinh viên</a>
+  <a class="nav-item" href="classes.html">Lớp học</a>
+  <a class="nav-item active" href="advisor-classe-sections.html">Giảng viên / CVHT</a>
+  <a class="nav-item" href="student-status.html">Trạng thái sinh viên</a>
+</aside>
+<div class="content">
+  <div class="topbar"><div class="crumb">Trang chủ / <b>Giảng viên / CVHT</b></div>
+    <div class="user-area"><div class="avatar">QT</div><span class="user-name">Quản trị viên</span></div></div>
+  <div class="page-head"><div><h1>Phân công giảng viên / CVHT</h1>
+    <p>Mỗi lớp chỉ có một cố vấn tại một thời điểm. Phân công cũ được giữ lại làm lịch sử.</p></div>
+    <div class="head-actions"><button class="primary" id="btnAdd">+ Thêm phân công</button></div></div>
+  <div class="stats">
+    <div class="stat" data-st=""><span>Tổng phân công</span><strong id="sTotal">0</strong></div>
+    <div class="stat" data-st="active" style="--c:var(--ok)"><span>Đang phụ trách</span><strong id="sActive">0</strong></div>
+    <div class="stat" data-st="upcoming" style="--c:var(--warn)"><span>Sắp bắt đầu</span><strong id="sUpcoming">0</strong></div>
+    <div class="stat" data-st="ended" style="--c:#8793a6"><span>Đã kết thúc</span><strong id="sEnded">0</strong></div></div>
+  <div class="panel">
+    <div class="bar"><input id="q" placeholder="Tìm theo mã GV, họ tên, lớp...">
+      <select id="fClass"><option value="">Lớp: Tất cả</option></select>
+      <select id="fStatus"><option value="">Trạng thái: Tất cả</option><option value="active">Đang phụ trách</option><option value="upcoming">Sắp bắt đầu</option><option value="ended">Đã kết thúc</option></select>
+      <button id="btnReset">Đặt lại</button></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Mã GV</th><th>Giảng viên</th><th>Lớp hành chính</th><th>Sĩ số</th><th>Nhiệm kỳ</th><th>Trạng thái</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="pager"><span id="info"></span><div id="pages"></div></div></div>
+</div></div>
+<div class="overlay" id="mAdd"><div class="modal"><h2>Thêm phân công CVHT</h2>
+  <div class="grid">
+    <label class="field full">Giảng viên *<select id="fEmp"></select></label>
+    <label class="field full">Lớp hành chính *<select id="fCls"></select></label>
+    <label class="field">Ngày bắt đầu *<input type="date" id="fStart"></label>
+    <label class="field">Ngày kết thúc<input type="date" id="fEnd"></label></div>
+  <div class="err-box" id="eAdd"></div>
+  <div class="modal-actions"><button data-close>Hủy</button><button class="primary" id="btnSave">Lưu phân công</button></div></div></div>
+<div class="overlay" id="mHist"><div class="modal"><h2 id="hTitle">Lịch sử phân công</h2><ul class="hist" id="hList"></ul>
+  <div class="modal-actions"><button data-close>Đóng</button></div></div></div>
+<div id="toast"></div>
+<script src="advisor-classe-sections.js"></script></body></html>
