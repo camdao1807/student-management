@@ -1,14 +1,17 @@
 const API = '/dashboard';
 const STATUS = {
-  studying: { label: 'Đang học', color: '#15966c' },
-  reserved: { label: 'Bảo lưu', color: '#d28a28' },
-  dropped: { label: 'Thôi học', color: '#cf5a61' },
-  graduated: { label: 'Đã tốt nghiệp', color: '#4776d0' },
-  no_status: { label: 'Chưa có trạng thái', color: '#aaa6b7' },
+  studying: { label: 'Đang học', color: '#16a34a' },
+  reserved: { label: 'Bảo lưu', color: '#f59e0b' },
+  dropped: { label: 'Thôi học', color: '#dc2626' },
+  graduated: { label: 'Đã tốt nghiệp', color: '#9333ea' },
+  no_status: { label: 'Chưa có trạng thái', color: '#9ca3af' },
 };
+const CLASS_MIN = 60;
+const CLASS_MAX = 70;
 const GENDER = { male: 'Nam', female: 'Nữ', other: 'Khác' };
 const $ = (id) => document.getElementById(id);
 const number = (value) => Number(value || 0).toLocaleString('vi-VN');
+const percent = (part, whole) => (whole ? `${((part / whole) * 100).toFixed(1)}%` : '0%');
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({
   '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;',
 }[char]));
@@ -21,6 +24,8 @@ const dateLabel = (value) => {
 const state = { page: 1, limit: 20, total: 0, totalPages: 1, sortBy: 'studentCode', sortOrder: 'ASC' };
 let searchTimer;
 let exportInProgress = false;
+let classRows = [];
+let classView = 'chart';
 
 async function api(url) {
   const response = await fetch(url, { headers: { Accept: 'application/json' } });
@@ -48,16 +53,23 @@ async function loadOverview() {
   $('overviewError').hidden = true;
   try {
     const data = await api(`${API}/overview`);
-    $('studentsTotal').textContent = number(data.stats.students.total);
-    $('studentsActive').textContent = number(data.stats.students.active);
-    $('studentsArchived').textContent = number(data.stats.students.archived);
-    $('classesTotal').textContent = number(data.stats.classes.total);
-    $('classesActive').textContent = number(data.stats.classes.active);
-    $('employeesTotal').textContent = number(data.stats.employees.total);
-    $('employeesActive').textContent = number(data.stats.employees.active);
+    const { students, classes, employees } = data.stats;
+    $('studentsTotal').textContent = number(students.total);
+    $('studentsActive').textContent = number(students.active);
+    $('studentsArchived').textContent = number(students.archived);
+    $('classesTotal').textContent = number(classes.total);
+    $('classesActive').textContent = number(classes.active);
+    $('employeesTotal').textContent = number(employees.total);
+    $('employeesActive').textContent = number(employees.active);
     $('studentsStudying').textContent = number(data.stats.studentsStudying);
-    renderStatusChart(data.statusDistribution, data.stats.students.active);
-    renderBarChart('classChart', data.byClass, (item) => `${item.classCode} · ${item.className}`, 'total');
+    $('studentsBadge').textContent = `${percent(students.active, students.total)} hoạt động`;
+    $('studyingBadge').textContent = percent(data.stats.studentsStudying, students.active);
+    $('classesBadge').textContent = `${number(classes.active)} lớp hoạt động`;
+    $('employeesBadge').textContent = percent(employees.active, employees.total);
+    $('lastUpdated').textContent = `(${new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })})`;
+    renderStatusChart(data.statusDistribution, students.active);
+    classRows = data.byClass || [];
+    renderClassChart();
     renderBarChart('cohortChart', data.byAcademicYear, (item) => item.academicYear, 'total');
     $('overviewState').hidden = true;
   } catch (error) {
@@ -69,7 +81,7 @@ async function loadOverview() {
 
 function renderStatusChart(distribution, total) {
   const svg = $('statusDonut');
-  const radius = 82;
+  const radius = 84;
   const circumference = 2 * Math.PI * radius;
   let offset = 0;
   const segments = (distribution || []).filter((item) => item.count > 0).map((item) => {
@@ -85,10 +97,42 @@ function renderStatusChart(distribution, total) {
     const config = STATUS[item.status] || STATUS.no_status;
     return `<div class="legend-item" title="${escapeHtml(item.label)}: ${number(item.count)} sinh viên">
       <span class="legend-dot" style="background:${config.color}"></span>
-      <span>${escapeHtml(item.label)}</span><strong>${number(item.count)}</strong>
-      <small>${item.percentage}%</small>
+      <span>${escapeHtml(item.label)}</span><strong>${number(item.count)}</strong><em>${item.percentage}%</em>
+      <span class="legend-bar"><i style="width:${Math.min(100, Number(item.percentage) || 0)}%;background:${config.color}"></i></span>
     </div>`;
   }).join('');
+}
+
+function renderClassChart() {
+  const container = $('classChart');
+  const avgBox = $('classAvg');
+  container.classList.toggle('is-table', classView === 'table');
+  if (!classRows.length) {
+    container.innerHTML = '<div class="chart-empty">Chưa có dữ liệu phù hợp</div>';
+    avgBox.innerHTML = '';
+    return;
+  }
+  const totals = classRows.map((row) => Number(row.total || 0));
+  const average = totals.reduce((sum, value) => sum + value, 0) / totals.length;
+  const inRange = totals.filter((value) => value >= CLASS_MIN && value <= CLASS_MAX).length;
+  avgBox.innerHTML = `<span>Trung bình: <b>${average.toFixed(1)} SV / lớp</b></span><span class="ok">${percent(inRange, totals.length)} lớp đạt định mức quy định</span>`;
+
+  if (classView === 'table') {
+    container.innerHTML = `<table class="mini-table"><thead><tr><th>Lớp</th><th>Tên lớp</th><th>Sĩ số</th></tr></thead><tbody>${classRows.map((row) =>
+      `<tr><td>${escapeHtml(row.classCode)}</td><td>${escapeHtml(row.className)}</td><td>${number(row.total)}</td></tr>`).join('')}</tbody></table>`;
+    return;
+  }
+  const ceiling = Math.max(CLASS_MAX + 10, ...totals) * 1.05;
+  const pos = (value) => `${(value / ceiling) * 100}%`;
+  container.innerHTML = `<div class="limit max" style="bottom:${pos(CLASS_MAX)}"><span>Tối đa ${CLASS_MAX} SV</span></div>
+    <div class="limit" style="bottom:${pos(CLASS_MIN)}"><span>Chuẩn ${CLASS_MIN} SV</span></div>` +
+    classRows.map((row) => {
+      const value = Number(row.total || 0);
+      const cls = value > CLASS_MAX ? 'over' : value < CLASS_MIN ? 'under' : '';
+      return `<div class="col ${cls}" title="${escapeHtml(row.classCode)} · ${escapeHtml(row.className)}: ${number(value)} sinh viên">
+        <b>${number(value)}</b><i style="height:${pos(value)}"></i>
+        <span class="col-label">${escapeHtml(row.classCode)}</span></div>`;
+    }).join('');
 }
 
 async function loadOptions() {
@@ -206,6 +250,7 @@ async function exportReport(format) {
   exportInProgress = true;
   $('exportCsv').disabled = true;
   $('exportXlsx').disabled = true;
+  $('quickExport').disabled = true;
   try {
     const params = buildParams(false);
     params.set('format', format);
@@ -231,6 +276,7 @@ async function exportReport(format) {
     exportInProgress = false;
     $('exportCsv').disabled = false;
     $('exportXlsx').disabled = false;
+    $('quickExport').disabled = false;
   }
 }
 
@@ -265,6 +311,13 @@ document.querySelectorAll('[data-sort]').forEach((button) => {
     loadReport();
   });
 });
+document.querySelectorAll('.seg [data-view]').forEach((button) => {
+  button.addEventListener('click', () => {
+    classView = button.dataset.view;
+    document.querySelectorAll('.seg [data-view]').forEach((item) => item.classList.toggle('on', item === button));
+    renderClassChart();
+  });
+});
 $('pageLimit').addEventListener('change', () => {
   state.limit = Number($('pageLimit').value);
   state.page = 1;
@@ -278,6 +331,7 @@ $('nextPage').addEventListener('click', () => {
 });
 $('exportCsv').addEventListener('click', () => exportReport('csv'));
 $('exportXlsx').addEventListener('click', () => exportReport('xlsx'));
+$('quickExport').addEventListener('click', () => exportReport('xlsx'));
 
 loadOverview();
 loadOptions();
