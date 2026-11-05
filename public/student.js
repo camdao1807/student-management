@@ -8,7 +8,6 @@ const COLORS = ['#2563eb', '#7c3aed', '#db2777', '#059669', '#d97706', '#0891b2'
 const ICON = {
   eye: '<svg viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',
   edit: '<svg viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"/></svg>',
-  swap: '<svg viewBox="0 0 24 24"><path d="M17 3l4 4-4 4M21 7H8M7 21l-4-4 4-4M3 17h13"/></svg>',
   box: '<svg viewBox="0 0 24 24"><path d="M3 7h18v4H3zM5 11v9h14v-9M10 15h4"/></svg>',
   undo: '<svg viewBox="0 0 24 24"><path d="M3 7v6h6M3.5 13A9 9 0 1112 21"/></svg>',
 };
@@ -29,7 +28,6 @@ let state = { page: 1, limit: 10, totalPages: 1, total: 0 };
 let rows = [];
 let classes = [];
 let editingId = null;
-let statusIds = [];            // danh sách id đang đổi trạng thái
 const selected = new Set();    // id đang được tick
 
 /* ---------- Gọi API ---------- */
@@ -172,7 +170,6 @@ function renderTable() {
         ${archived
           ? ibtn('undo', 'Khôi phục', 'restoreStudent', s.id)
           : ibtn('edit', 'Sửa hồ sơ', 'openEdit', s.id)
-            + ibtn('swap', 'Đổi trạng thái', 'openStatus', s.id)
             + ibtn('box', 'Lưu trữ', 'archiveStudent', s.id, true)}
       </div></td>
     </tr>`;
@@ -209,7 +206,6 @@ function renderPager() {
 /* ---------- Chọn nhiều ---------- */
 function syncSelection() {
   $('selCount').textContent = `Đã chọn ${selected.size} sinh viên`;
-  $('btnBulkStatus').disabled = selected.size === 0 || $('fArchived').value === 'true';
   const chks = [...document.querySelectorAll('.rowchk')];
   $('chkAll').checked = chks.length > 0 && chks.every((c) => c.checked);
 }
@@ -365,41 +361,6 @@ window.openDetail = async (id) => {
     open('mDetail');
   } catch (err) { toast(err.message, false); }
 };
-
-/* ---------- Đổi trạng thái (1 hoặc nhiều) ---------- */
-function openStatusFor(ids, label) {
-  statusIds = ids;
-  $('stName').textContent = label;
-  $('stValue').value = 'studying';
-  $('stDate').value = today();
-  $('stReason').value = '';
-  open('mStatus');
-}
-
-window.openStatus = (id) => {
-  const s = rows.find((r) => r.id === id);
-  openStatusFor([id], `${s.studentCode} - ${s.fullName}`);
-  $('stValue').value = s.currentStatus || 'studying';
-};
-
-$('btnBulkStatus').addEventListener('click', () =>
-  openStatusFor([...selected], `${selected.size} sinh viên đã chọn`));
-
-$('statusForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const body = { status: $('stValue').value, effectiveDate: $('stDate').value };
-  const reason = $('stReason').value.trim();
-  if (reason) body.reason = reason;
-  try {
-    for (const id of statusIds) {
-      await api(`${API}/${id}/status`, { method: 'POST', body: JSON.stringify(body) });
-    }
-    toast(`Đã cập nhật trạng thái cho ${statusIds.length} sinh viên`);
-    close('mStatus');
-    selected.clear();
-    load(); loadStats();
-  } catch (err) { toast(err.message, false); }
-});
 
 /* ---------- Lưu trữ / khôi phục ---------- */
 window.archiveStudent = async (id) => {

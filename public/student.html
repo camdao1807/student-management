@@ -81,7 +81,9 @@
   <div class="content">
 
     <header class="topbar">
-      <div class="crumb">Trang chủ / Hệ thống / <b>Sinh viên</b></div>
+      <div class="crumb">
+  <a href="/student.html">Trang chủ</a> / <b>Sinh viên</b>
+</div>
       <div class="user-area" id="userArea">
         <a class="login-btn" href="/login.html">
           <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập
@@ -143,7 +145,6 @@
             <option value="false">Hồ sơ đang sử dụng</option>
             <option value="true">Hồ sơ đã lưu trữ</option>
           </select>
-          <button id="btnBulkStatus">Chuyển trạng thái</button>
         </div>
       </div>
       <div class="tbl-wrap">
@@ -214,34 +215,6 @@
     <div id="detailBody"></div>
     <div class="modal-actions"><button data-close>Đóng</button></div>
   </div>
-</div>
-
-<!-- Modal đổi trạng thái (1 hoặc nhiều sinh viên) -->
-<div class="overlay" id="mStatus">
-  <form class="modal" id="statusForm">
-    <h2>Đổi trạng thái</h2>
-    <div class="grid">
-      <div class="field full">Áp dụng cho <b id="stName"></b></div>
-      <div class="field">Trạng thái mới *
-        <select id="stValue">
-          <option value="studying">Đang học</option>
-          <option value="reserved">Bảo lưu</option>
-          <option value="dropped">Thôi học</option>
-          <option value="graduated">Đã tốt nghiệp</option>
-        </select>
-      </div>
-      <div class="field">Ngày có hiệu lực *
-        <input id="stDate" type="date" required>
-      </div>
-      <div class="field full">Lý do
-        <textarea id="stReason" rows="3"></textarea>
-      </div>
-    </div>
-    <div class="modal-actions">
-      <button type="button" data-close>Hủy</button>
-      <button type="submit" class="primary">Xác nhận</button>
-    </div>
-  </form>
 </div>
 
 <div id="toast"></div>
