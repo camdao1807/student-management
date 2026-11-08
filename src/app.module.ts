@@ -7,12 +7,10 @@ import { Employee } from './entities/employee.entity';
 import { Student } from './entities/student.entity';
 import { StudentStatus } from './entities/student-status.entity';
 import { AdvisorClasseSection } from './entities/advisor-classe-section.entity';
-<<<<<<< HEAD
 import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
-=======
 import { DashboardModule } from './modules/dashboard/dashboard.module';
->>>>>>> a01764e2d2bbc0daa2c5edfcee56ea21dcc67955
+import { StudentClassesModule } from './modules/student-classes/student-classes.module';
 
 @Module({
   imports: [
@@ -37,6 +35,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     AdvisorsModule,
     StudentStatusModule,
     DashboardModule,
+    StudentClassesModule,
   ],
 })
 export class AppModule {}
