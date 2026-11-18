@@ -10,6 +10,7 @@ import { AdvisorClasseSection } from './entities/advisor-classe-section.entity';
 import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { StudentClassesModule } from './modules/student-classes/student-classes.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     AdvisorsModule,
     StudentStatusModule,
     DashboardModule,
+    StudentClassesModule,
   ],
 })
 export class AppModule {}
