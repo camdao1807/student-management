@@ -11,6 +11,9 @@ import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { StudentClassesModule } from './modules/student-classes/student-classes.module';
+import { CoursesModule } from './modules/courses/courses.module';
+import { GradesModule } from './modules/grades/grades.module';
+// trong imports: [ ..., CoursesModule, GradesModule ]
 
 @Module({
   imports: [
@@ -36,6 +39,8 @@ import { StudentClassesModule } from './modules/student-classes/student-classes.
     StudentStatusModule,
     DashboardModule,
     StudentClassesModule,
+    CoursesModule,
+    GradesModule,
   ],
 })
 export class AppModule {}
