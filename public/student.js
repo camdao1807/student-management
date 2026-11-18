@@ -16,6 +16,7 @@ const STAT_ICON = {
   cap: '<svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>',
   pause: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg>',
   medal: '<svg viewBox="0 0 24 24"><circle cx="12" cy="9" r="5"/><path d="M9 13l-2 8 5-3 5 3-2-8"/></svg>',
+  userx: '<svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5 2.2 0 4 .5 5.3 1.4M17 8l5 5M22 8l-5 5"/></svg>',
 };
 
 const $ = (id) => document.getElementById(id);
@@ -71,6 +72,7 @@ async function loadStats() {
       card('', 'Tổng số sinh viên', s.total, 'users', '<span>Toàn trường</span>') +
       card('s-ok', 'Đang học bình thường', s.studying, 'cap', `<span>Tỷ lệ</span><b>${pct(s.studying)}%</b>`) +
       card('s-warn', 'Đang bảo lưu hồ sơ', s.reserved, 'pause', `<span>Tỷ lệ</span><b>${pct(s.reserved)}%</b>`) +
+      card('s-err', 'Đã thôi học', s.dropped, 'userx', `<span>Tỷ lệ</span><b>${pct(s.dropped)}%</b>`) +
       card('s-gray', 'Đã tốt nghiệp', s.graduated, 'medal', `<span>Tỷ lệ</span><b>${pct(s.graduated)}%</b>`);
   } catch (_) { $('stats').innerHTML = ''; }
 }
@@ -339,24 +341,45 @@ window.openDetail = async (id) => {
     const s = archived ? rows.find((r) => r.id === id) : await api(`${API}/${id}`);
     const history = await api(`${API}/${id}/status-history`);
     const c = s.studentClass;
+
+    const item = (label, value, full = false) =>
+      `<div class="d-item${full ? ' full' : ''}"><span>${label}</span><b>${value || '—'}</b></div>`;
+
     $('detailBody').innerHTML = `
-      <dl>
-        <dt>Mã sinh viên</dt><dd><b>${esc(s.studentCode)}</b></dd>
-        <dt>Họ tên</dt><dd>${esc(s.fullName)}</dd>
-        <dt>Ngày sinh</dt><dd>${fmtDate(s.dateOfBirth)}</dd>
-        <dt>Giới tính</dt><dd>${esc(GENDER[s.gender] || '')}</dd>
-        <dt>Email</dt><dd>${esc(s.email)}</dd>
-        <dt>Số điện thoại</dt><dd>${esc(s.phone || '')}</dd>
-        <dt>Lớp</dt><dd>${c ? esc(c.classCode + ' - ' + c.className) : esc(s.classId)}</dd>
-        <dt>Ngành / Khóa</dt><dd>${c ? esc(c.majorName + ' · ' + c.academicYear) : ''}</dd>
-        <dt>Trạng thái hiện tại</dt><dd>${badge(s.currentStatus)}</dd>
-        <dt>Ngày tạo</dt><dd>${fmtDate(s.createdAt)}</dd>
-      </dl>
-      <h3 class="sub">Lịch sử trạng thái</h3>
-      <div class="hist">
+      <div class="d-hero">
+        <div class="p-avatar d-avatar" style="background:${colorOf(s.studentCode)}">${esc(initial(s.fullName))}</div>
+        <div>
+          <div class="d-name">${esc(s.fullName)}</div>
+          <div class="d-sub"><span class="code">${esc(s.studentCode)}</span>${badge(s.currentStatus)}</div>
+        </div>
+      </div>
+
+      <div class="d-section">Thông tin cá nhân</div>
+      <div class="d-grid">
+        ${item('Ngày sinh', fmtDate(s.dateOfBirth))}
+        ${item('Giới tính', esc(GENDER[s.gender] || ''))}
+        ${item('Email', esc(s.email))}
+        ${item('Số điện thoại', esc(s.phone || ''))}
+      </div>
+
+      <div class="d-section">Thông tin học tập</div>
+      <div class="d-grid">
+        ${item('Lớp hành chính', c ? esc(c.classCode + ' - ' + c.className) : esc(s.classId), true)}
+        ${item('Ngành', c ? esc(c.majorName) : '')}
+        ${item('Khóa', c ? esc(c.academicYear) : '')}
+        ${item('Ngày tạo hồ sơ', fmtDate(s.createdAt))}
+      </div>
+
+      <div class="d-section">Lịch sử trạng thái</div>
+      <div class="timeline">
         ${history.length ? history.map((h) => `
-          <div>${badge(h.status)} <span style="color:var(--mut)">từ ${fmtDate(h.effectiveDate)}</span>
-          ${h.reason ? `<br>${esc(h.reason)}` : ''}</div>`).join('') : 'Chưa có lịch sử.'}
+          <div class="tl-item">
+            <span class="tl-dot"></span>
+            <div class="tl-body">
+              <div>${badge(h.status)} <span class="tl-date">từ ${fmtDate(h.effectiveDate)}</span></div>
+              ${h.reason ? `<div class="tl-reason">${esc(h.reason)}</div>` : ''}
+            </div>
+          </div>`).join('') : '<div class="tl-empty">Chưa có lịch sử.</div>'}
       </div>`;
     open('mDetail');
   } catch (err) { toast(err.message, false); }
