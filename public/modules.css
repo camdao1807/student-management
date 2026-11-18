@@ -21,7 +21,7 @@ tr.pick:hover td, tr.sel td { background:var(--pri-l); }
 
 .tag { display:inline-block; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; }
 .s-studying, .s-active { background:var(--ok-l); color:var(--ok); }
-.s-suspended, .s-upcoming { background:var(--warn-l); color:var(--warn); }
+.s-reserved, .s-upcoming { background:var(--warn-l); color:var(--warn); }
 .s-dropped { background:var(--err-l); color:var(--err); }
 .s-graduated { background:var(--vio-l); color:var(--vio); }
 .s-ended { background:#eceff4; color:#5a6577; }

@@ -24,7 +24,7 @@ async function init() {
 
 async function loadStats() {
   const s = await api(`${API}/stats`);
-  $('cStudying').textContent = s.studying; $('cSuspended').textContent = s.suspended;
+  $('cStudying').textContent = s.studying; $('cReserved').textContent = s.reserved;
   $('cDropped').textContent = s.dropped; $('cGraduated').textContent = s.graduated;
 }
 
