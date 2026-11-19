@@ -1,0 +1,104 @@
+/* Chỉ chứa phần riêng của trang Cổng sinh viên. Màu, sidebar, topbar, modal lấy từ layout.css */
+
+.head-actions.ctx { align-items:flex-end; }
+.head-actions.ctx input { width:130px; }
+
+.panel { background:#fff; border:1px solid var(--bd); border-radius:14px; padding:20px; min-height:220px; }
+.panel h3 { margin:0 0 12px; font-size:16px; }
+.sec-title { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap; }
+.sec-title h3 { margin:0; }
+
+/* ===== Nút ===== */
+button.sm { padding:6px 12px; font-size:13px; }
+button.danger { color:var(--err); border-color:#f3c5c5; }
+button.danger:hover { background:#fff1f1; }
+button.danger-solid { background:var(--err); color:#fff; border-color:var(--err); }
+button.danger-solid:hover { background:#b91c1c; }
+
+/* ===== Hồ sơ ===== */
+.hero { display:flex; align-items:center; gap:16px; padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid var(--bd); }
+.avatar-lg { width:68px; height:68px; border-radius:50%; background:var(--pri); color:#fff; display:grid; place-items:center; font-size:24px; font-weight:700; flex:none; }
+.hero h2 { margin:0; font-size:21px; }
+.hero p { margin:3px 0 0; color:var(--mut); }
+.hero .hero-info { flex:1; }
+.hero button { align-self:flex-start; }
+.info { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:16px 28px; }
+.info .k { font-size:12px; color:var(--mut); margin-bottom:3px; }
+.info .v { font-weight:600; word-break:break-word; }
+
+/* ===== Form chỉnh sửa hồ sơ ===== */
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:14px; }
+.form-grid .field { display:flex; flex-direction:column; gap:5px; font-size:13px; color:var(--mut); }
+.form-grid .field input, .form-grid .field select { width:100%; box-sizing:border-box; padding:9px 11px; border:1px solid var(--bd); border-radius:8px; font:inherit; color:var(--txt); background:#fff; }
+.form-grid .full { grid-column:1 / -1; }
+@media (max-width:520px) { .form-grid { grid-template-columns:1fr; } }
+
+/* ===== Thẻ thống kê ===== */
+.stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:12px; margin-bottom:18px; }
+.stat { border:1px solid var(--bd); border-radius:12px; padding:14px 16px; background:#fff; }
+.stat .l { font-size:12px; color:var(--mut); }
+.stat .n { font-size:26px; font-weight:800; margin-top:4px; line-height:1.15; }
+.stat .n.sm { font-size:20px; }
+.stat.pri { background:var(--pri-l); border-color:#d3e2ff; }
+.stat.pri .n { color:var(--pri); }
+
+/* ===== Bảng ===== */
+.tbl-wrap { overflow-x:auto; border:1px solid var(--bd); border-radius:10px; }
+.panel table { width:100%; border-collapse:collapse; }
+.panel th { text-align:left; background:#f8faff; color:var(--mut); font-size:12px; text-transform:uppercase; letter-spacing:.04em; padding:11px 14px; border-bottom:1px solid var(--bd); white-space:nowrap; }
+.panel td { padding:12px 14px; border-bottom:1px solid #eef1f7; vertical-align:middle; }
+.panel tbody tr:last-child td { border-bottom:0; }
+.panel tbody tr:hover { background:#fafcff; }
+.panel .c { text-align:center; }
+.sub { display:block; font-size:12px; color:var(--mut); margin-top:2px; }
+
+/* ===== Badge ===== */
+.badge { display:inline-flex; align-items:center; padding:3px 10px; border-radius:999px; font-size:12px; font-weight:600; white-space:nowrap; }
+.b-ok { background:#e8f7ee; color:#15803d; }
+.b-err { background:#fdecec; color:#b91c1c; }
+.b-warn { background:#fff4e0; color:#b45309; }
+.b-pri { background:var(--pri-l); color:var(--pri); }
+.b-mut { background:#eef1f7; color:var(--mut); }
+.grade { display:inline-grid; place-items:center; min-width:36px; height:28px; padding:0 8px; border-radius:8px; font-weight:800; }
+
+/* ===== Thanh sĩ số / GPA ===== */
+.cap { display:flex; align-items:center; gap:8px; min-width:120px; }
+.cap .track { flex:1; height:6px; border-radius:99px; background:#eef1f7; overflow:hidden; }
+.cap .track i { display:block; height:100%; background:var(--pri); border-radius:99px; }
+.cap .track i.full { background:var(--err); }
+.cap .track i.warn { background:var(--warn); }
+.cap span { font-size:13px; color:var(--mut); white-space:nowrap; }
+
+/* ===== Thời khóa biểu ===== */
+.week { display:grid; grid-template-columns:repeat(auto-fill,minmax(165px,1fr)); gap:10px; }
+.day { background:#f8faff; border:1px solid var(--bd); border-radius:12px; padding:10px; min-height:110px; }
+.day h4 { margin:0 0 8px; font-size:13px; color:var(--mut); }
+.day.has h4 { color:var(--txt); }
+.day .none { font-size:12px; color:#a3acc2; }
+.slot { background:#fff; border:1px solid var(--bd); border-left:4px solid var(--pri); border-radius:8px; padding:8px 10px; margin-bottom:8px; font-size:13px; }
+.slot b { display:block; margin-bottom:3px; }
+.slot span { display:block; color:var(--mut); }
+
+/* ===== Chuyên cần ===== */
+.att { border:1px solid var(--bd); border-radius:12px; padding:16px; margin-bottom:14px; }
+.att:last-child { margin-bottom:0; }
+.att-head { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+.att-head h3 { margin:0; }
+.stack { display:flex; height:10px; border-radius:99px; overflow:hidden; background:#eef1f7; margin-bottom:10px; }
+.stack i { display:block; height:100%; }
+.legend { display:flex; gap:18px; flex-wrap:wrap; font-size:13px; color:var(--mut); margin-bottom:14px; }
+.legend b { color:var(--txt); margin-left:2px; }
+.dot { width:9px; height:9px; border-radius:50%; display:inline-block; margin-right:6px; }
+
+/* ===== Trạng thái rỗng / tải / lỗi ===== */
+.empty { text-align:center; padding:44px 12px; color:var(--mut); }
+.empty svg { width:36px; height:36px; stroke:#b8c1d6; margin-bottom:8px; fill:none; stroke-width:1.5; stroke-linecap:round; stroke-linejoin:round; }
+.empty.err { color:var(--err); }
+.empty.err svg { stroke:var(--err); }
+.loading { display:flex; align-items:center; justify-content:center; gap:10px; padding:60px 0; color:var(--mut); }
+.spin { width:18px; height:18px; border:2px solid var(--bd); border-top-color:var(--pri); border-radius:50%; animation:sp .7s linear infinite; }
+@keyframes sp { to { transform:rotate(360deg); } }
+
+.raw-box { margin-top:16px; color:var(--mut); }
+.raw-box summary { cursor:pointer; font-size:13px; }
+.raw-box pre { overflow:auto; font-size:12px; background:#fff; border:1px solid var(--bd); padding:12px; border-radius:10px; max-height:320px; color:var(--txt); }

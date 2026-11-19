@@ -11,6 +11,13 @@ import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { StudentClassesModule } from './modules/student-classes/student-classes.module';
+import { ClassSection } from './entities/class-section.entity';
+import { Subject } from './entities/subject.entity';
+import { Term } from './entities/term.entity';
+import { Enrollment } from './entities/enrollment.entity';
+import { Grade } from './entities/grade.entity';
+import { Attendance } from './entities/attendance.entity';
+import { StudentPortalModule } from './modules/student-portal/student-portal.module';
 
 @Module({
   imports: [
@@ -28,6 +35,12 @@ import { StudentClassesModule } from './modules/student-classes/student-classes.
         Student,
         StudentStatus,
         AdvisorClasseSection,
+        ClassSection,
+        Subject,
+        Term,
+        Enrollment,
+        Grade,
+        Attendance,
       ],
       synchronize: false,
     }),
@@ -36,6 +49,7 @@ import { StudentClassesModule } from './modules/student-classes/student-classes.
     StudentStatusModule,
     DashboardModule,
     StudentClassesModule,
+    StudentPortalModule,
   ],
 })
 export class AppModule {}

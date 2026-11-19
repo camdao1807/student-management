@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cổng sinh viên</title>
+<link rel="stylesheet" href="layout.css">
+<link rel="stylesheet" href="student-portal.css">
+</head>
+<body>
+<div class="layout">
+
+  <!-- ===== Sidebar riêng của sinh viên ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SV</div>
+      <div>
+        <div class="brand-name">Cổng sinh viên</div>
+        <div class="brand-sub">Dành cho sinh viên</div>
+      </div>
+    </div>
+
+    <div class="nav-title">CÁ NHÂN</div>
+    <a class="nav-item" href="#profile" data-key="profile">
+      <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Hồ sơ cá nhân
+    </a>
+
+    <div class="nav-title">HỌC PHẦN</div>
+    <a class="nav-item" href="#register" data-key="register">
+      <svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>
+      Đăng ký học phần
+    </a>
+    <a class="nav-item" href="#timetable" data-key="timetable">
+      <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Thời khóa biểu
+    </a>
+
+    <div class="nav-title">KẾT QUẢ HỌC TẬP</div>
+    <a class="nav-item" href="#grades" data-key="grades">
+      <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      Điểm theo môn
+    </a>
+    <a class="nav-item" href="#transcript" data-key="transcript">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Bảng điểm
+    </a>
+    <a class="nav-item" href="#attendance" data-key="attendance">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Chuyên cần
+    </a>
+
+    <div class="side-user">
+      <div class="avatar" id="sideAvatar">SV</div>
+      <div><b id="sideName">Sinh viên</b><span id="sideCode">Chưa tải dữ liệu</span></div>
+    </div>
+  </aside>
+
+  <!-- ===== Nội dung ===== -->
+  <main class="content">
+    <div class="topbar">
+      <div class="crumb">Cổng sinh viên / <b id="crumbPage">Hồ sơ cá nhân</b></div>
+      <div class="user-area">
+        <div class="avatar" id="topAvatar">SV</div>
+        <span class="user-name" id="topName">Sinh viên</span>
+      </div>
+    </div>
+
+    <div class="page-head">
+      <div>
+        <h1 id="pageTitle">Hồ sơ cá nhân</h1>
+        <p id="pageDesc"></p>
+      </div>
+      <div class="head-actions ctx">
+        <label class="field">Mã sinh viên (id)
+          <input id="studentId" type="number" value="1" min="1">
+        </label>
+        <label class="field">Học kỳ (termId)
+          <input id="termId" type="number" value="1" min="1">
+        </label>
+        <button class="primary" id="loadBtn" onclick="load()">
+          <svg class="ic" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Tải dữ liệu
+        </button>
+      </div>
+    </div>
+
+    <div class="panel" id="content"></div>
+
+    <details class="raw-box">
+      <summary>Dữ liệu thô (JSON) để kiểm tra</summary>
+      <pre id="raw">—</pre>
+    </details>
+  </main>
+</div>
+
+<!-- Modal xác nhận hủy -->
+<div class="overlay" id="confirmOverlay">
+  <div class="modal" style="max-width:420px">
+    <h2>Hủy đăng ký học phần</h2>
+    <p id="confirmText" style="margin:0;color:var(--mut)"></p>
+    <div class="modal-actions">
+      <button id="confirmCancel">Giữ lại</button>
+      <button class="danger-solid" id="confirmOk">Hủy đăng ký</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal chỉnh sửa hồ sơ -->
+<div class="overlay" id="editOverlay">
+  <div class="modal" style="max-width:520px">
+    <h2>Chỉnh sửa thông tin cá nhân</h2>
+    <p class="sub" style="margin:4px 0 0">Họ tên, mã sinh viên, lớp, ngành do nhà trường quản lý nên không sửa tại đây.</p>
+    <form id="editForm" class="form-grid" onsubmit="saveProfile(event)" novalidate>
+      <label class="field">Ngày sinh
+        <input id="fDob" type="date">
+      </label>
+      <label class="field">Giới tính
+        <select id="fGender">
+          <option value="">-- Chọn --</option>
+          <option value="male">Nam</option>
+          <option value="female">Nữ</option>
+          <option value="other">Khác</option>
+        </select>
+      </label>
+      <label class="field">Email
+        <input id="fEmail" type="email" maxlength="150">
+      </label>
+      <label class="field">Số điện thoại
+        <input id="fPhone" type="tel" maxlength="20">
+      </label>
+      <label class="field full">Quê quán
+        <input id="fHometown" type="text" maxlength="255" placeholder="VD: Phường Phú Xuân, TP. Huế">
+      </label>
+      <div class="modal-actions full">
+        <button type="button" onclick="closeEdit()">Hủy</button>
+        <button type="submit" class="primary" id="saveBtn">Lưu thay đổi</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="student-portal.js"></script>
+</body>
+</html>
