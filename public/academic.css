@@ -1,0 +1,35 @@
+/* Bổ sung cho 2 trang Môn học & Điểm số. Dùng cùng biến màu với layout.css / modules.css */
+.stat small { display:block; color:var(--mut); margin-top:2px; }
+.stat strong small { display:inline; font-size:13px; font-weight:500; }
+.mut { color:var(--mut); }
+.detail h2 { margin:6px 0 2px; font-size:19px; }
+.detail h4 { margin:18px 0 8px; font-size:12px; letter-spacing:.05em; color:var(--mut); text-transform:uppercase; }
+.scorebox { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+.scorebox div { background:var(--bg); border-radius:10px; padding:10px 6px; text-align:center; }
+.scorebox b { display:block; font-size:20px; color:var(--pri); }
+.scorebox span { font-size:11px; color:var(--mut); }
+.pre { display:flex; align-items:center; gap:8px; padding:8px 0; border-bottom:1px dashed var(--bd); }
+.pre span.grow { flex:1; }
+.t-prerequisite { background:var(--err-l); color:var(--err); font-size:11px; }
+.t-prior { background:var(--pri-l); color:var(--pri); font-size:11px; }
+.pre-add { display:grid; grid-template-columns:1fr 110px auto; gap:6px; margin-top:10px; }
+.wrow { margin-bottom:10px; }
+.wrow div.l { display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px; }
+.progress { height:7px; background:#e9edf5; border-radius:99px; overflow:hidden; }
+.progress i { display:block; height:100%; background:var(--pri); border-radius:99px; }
+.progress.red i { background:var(--err); }
+.progress.amb i { background:var(--warn); }
+.progress.grn i { background:var(--ok); }
+.chips { display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+.chip { background:var(--pri-l); color:var(--pri); border-radius:99px; padding:4px 12px; font-size:12px; font-weight:600; }
+.picker-row { display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:12px; }
+input.sc { width:68px; padding:5px 6px; text-align:center; }
+input.sc:disabled { background:#f1f3f8; color:var(--mut); }
+tr.banned td { background:#fff5f5; }
+.g-A { background:var(--ok-l); color:var(--ok); }
+.g-B, .g-C { background:var(--pri-l); color:var(--pri); }
+.g-D { background:var(--warn-l); color:var(--warn); }
+.g-F { background:var(--err-l); color:var(--err); }
+.cb { display:flex; align-items:center; gap:8px; }
+.cb input { width:auto; }
+@media (max-width:700px) { .picker-row { grid-template-columns:1fr; } }
