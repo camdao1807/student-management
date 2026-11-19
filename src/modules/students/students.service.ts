@@ -139,11 +139,11 @@ export class StudentsService {
     }
 
     const [rows, total] = await qb
-      .orderBy('s.id', 'DESC')
-      .skip((page - 1) * limit)
-      .take(limit)
-      .getManyAndCount();
-
+  .orderBy('s.studentCode', 'ASC')
+  .addOrderBy('s.id', 'ASC')   // phụ, để thứ tự ổn định khi trùng
+  .skip((page - 1) * limit)
+  .take(limit)
+  .getManyAndCount();
     return {
       data: await this.attachCurrentStatus(rows),
       meta: { total, page, limit, totalPages: Math.ceil(total / limit) },
