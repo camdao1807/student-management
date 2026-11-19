@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Patch, Post, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Req,
+} from '@nestjs/common';
 import { StudentsService } from './students.service';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -12,6 +21,7 @@ export class StudentsController {
 
   // Khi có module auth, req.user.id sẽ có giá trị; hiện tại là null
   private uid(req: any): string | null {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return req?.user?.id ?? null;
   }
 
@@ -28,7 +38,10 @@ export class StudentsController {
   // Các route cố định phải đặt TRƯỚC ':id'
   @Get('check-code')
   async checkCode(@Query() q: CheckCodeDto) {
-    return { code: q.code, available: await this.service.isCodeAvailable(q.code, q.excludeId) };
+    return {
+      code: q.code,
+      available: await this.service.isCodeAvailable(q.code, q.excludeId),
+    };
   }
 
   @Get('stats')
@@ -52,7 +65,11 @@ export class StudentsController {
   }
 
   @Post(':id/status')
-  changeStatus(@Param('id') id: string, @Body() dto: ChangeStatusDto, @Req() req: any) {
+  changeStatus(
+    @Param('id') id: string,
+    @Body() dto: ChangeStatusDto,
+    @Req() req: any,
+  ) {
     return this.service.changeStatus(id, dto, this.uid(req));
   }
 
