@@ -48,6 +48,12 @@ export class CreateStudentDto {
   @Matches(/^[0-9+\-\s()]{8,20}$/, { message: 'Số điện thoại không hợp lệ' })
   phone?: string;
 
+  @IsOptional()
+  @Transform(({ value }) => (typeof value === 'string' ? value.trim() : value))
+  @IsString()
+  @MaxLength(255, { message: 'Quê quán tối đa 255 ký tự' })
+  hometown?: string;
+
   @IsNotEmpty()
   @Matches(/^\d+$/, { message: 'classId phải là số' })
   classId: string;
