@@ -2,6 +2,7 @@
 const API = '';
 
 const PAGES = {
+  home:       { title: 'Trang chủ',        desc: '', home: true },
   profile:    { title: 'Hồ sơ cá nhân',    desc: 'Thông tin, lớp, ngành, trạng thái học tập' },
   register:   { title: 'Đăng ký học phần', desc: 'Chọn lớp học phần đang mở (kiểm tra trùng lịch, quá sĩ số)' },
   timetable:  { title: 'Thời khóa biểu',   desc: 'Các lớp học phần đã đăng ký trong học kỳ' },
@@ -10,7 +11,7 @@ const PAGES = {
   attendance: { title: 'Chuyên cần',       desc: 'Số buổi vắng từng môn' },
 };
 const PALETTE = ['#2563eb', '#16a34a', '#d97706', '#9333ea', '#0891b2', '#e11d48'];
-const routeKey = () => { const k = location.hash.slice(1); return PAGES[k] ? k : 'profile'; };
+const routeKey = () => { const k = location.hash.slice(1); return PAGES[k] ? k : 'home'; };
 let current = routeKey();
 
 // ---------- Tiện ích ----------
@@ -87,11 +88,11 @@ const gradeBadge = (l) => {
 // ---------- Người dùng đang xem (sidebar + topbar) ----------
 function setWho(s) {
   const ini = s?.fullName ? initials(s.fullName) : 'SV';
-  const name = s?.fullName || 'Sinh viên';
   $('sideAvatar').textContent = ini;
   $('topAvatar').textContent = ini;
-  $('sideName').textContent = name;
-  $('topName').textContent = name;
+  $('sideName').textContent = s?.fullName || 'Sinh viên';
+  $('topName').textContent = s?.fullName || 'Sinh viên';
+  $('topCode').textContent = s ? s.studentCode || 'Student' : 'Không tìm thấy';
   $('sideCode').textContent = s ? s.studentCode || 'Sinh viên' : 'Không tìm thấy';
 }
 async function refreshWho() {
@@ -115,7 +116,83 @@ const statusBadge = (st) => {
   return `<span class="badge ${m.cls}">${esc(m.label)}</span>`;
 };
 
+const QICON = {
+  cal: '<svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>',
+  reg: '<svg viewBox="0 0 24 24"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><path d="M9 14l2 2 4-4"/></svg>',
+  pulse: '<svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>',
+  clock: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+};
+
 const views = {
+  async home() {
+    const [s, t, tt] = await Promise.all([
+      api('/profile'),
+      api('/transcript').catch(() => null),
+      api('/timetable?termId=' + tid()).catch(() => []),
+    ]);
+    setWho(s);
+
+    const js = new Date().getDay();
+    const dow = js === 0 ? 8 : js + 1;
+    const today = tt.filter((c) => Number(c.dayOfWeek) === dow);
+    const credits = tt.reduce((sum, c) => sum + (c.subject?.credits || 0), 0);
+    const gpa = t ? Number(t.cumulativeGpa) || 0 : 0;
+    const gpaPct = Math.min(100, Math.round((gpa / 4) * 100));
+    const passed = t ? t.passedCredits : 0;
+    const counted = t ? t.totalCredits : 0;
+    const credPct = counted ? Math.round((passed / counted) * 100) : 0;
+
+    const q = (href, color, icon, small, title, desc) => `
+      <a class="qcard" href="${href}">
+        <div class="qicon" style="background:${color}">${QICON[icon]}</div>
+        <div><small>${small}</small><b>${title}</b><span>${desc}</span></div>
+      </a>`;
+
+    const todayHtml = today.length
+      ? today.map((c) => `<div class="today-item">
+          <span class="t">${periods(c)}</span>
+          <div><b>${esc(c.subject?.subjectName)}</b><span class="sub">${c.room ? 'Phòng ' + esc(c.room) : 'Chưa có phòng'} · ${esc(c.sectionCode)}</span></div>
+        </div>`).join('')
+      : '<div class="cap-note" style="padding:20px 0">Hôm nay bạn không có lớp nào.</div>';
+
+    return `
+      <div class="banner">
+        <h2>Chào ${esc(s.fullName)} 👋</h2>
+        <p>Chúc bạn một ngày học tập hiệu quả</p>
+        <span class="chip">Học kỳ hiện tại: ${esc(tid())}</span>
+      </div>
+
+      <div class="quick">
+        ${q('#timetable', '#2563eb', 'cal', 'Tra cứu', 'Thời khóa biểu', 'TKB các lớp đã đăng ký')}
+        ${q('#register', '#0891b2', 'reg', 'Thực hiện', 'Đăng ký học phần', 'Chọn lớp đang mở')}
+        ${q('#grades', '#9333ea', 'pulse', 'Tra cứu', 'Kết quả học tập', 'Xem điểm các học phần')}
+        ${q('#attendance', '#d97706', 'clock', 'Theo dõi', 'Chuyên cần', 'Số buổi vắng từng môn')}
+      </div>
+
+      <div class="home-grid">
+        <div class="card">
+          <h3><i></i>GPA hiện tại</h3>
+          <div class="ring" style="--p:${gpaPct}"><b>${gpa.toFixed(2)}</b></div>
+          <div class="cap-note">Hệ 4 · Xếp loại: <b>${esc(t?.classification || '—')}</b></div>
+        </div>
+        <div class="card">
+          <h3><i></i>Tín chỉ tích lũy</h3>
+          <div class="ring" style="--p:${credPct}"><b>${esc(passed)}</b></div>
+          <div class="cap-note">Đạt ${esc(passed)} / ${esc(counted)} tín chỉ đã tính điểm</div>
+        </div>
+        <div class="card">
+          <h3><i></i>Học kỳ này</h3>
+          <div class="big">${tt.length}</div>
+          <div class="cap-note">lớp học phần · ${credits} tín chỉ</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i></i>Lịch học hôm nay (${dayName(dow)})</h3>
+        ${todayHtml}
+      </div>`;
+  },
+
   async profile() {
     const s = await api('/profile');
     setWho(s);
@@ -345,6 +422,8 @@ async function render(key) {
   $('pageTitle').textContent = pg.title;
   $('pageDesc').textContent = pg.desc;
   $('crumbPage').textContent = pg.title;
+  $('pageHead').classList.toggle('hide', !!pg.home);
+  $('content').classList.toggle('panel', !pg.home);   // trang chủ không bọc khung trắng
   document.title = pg.title + ' - Cổng sinh viên';
   $('content').innerHTML = '<div class="loading"><div class="spin"></div>Đang tải...</div>';
   try {
@@ -360,6 +439,14 @@ async function load() {
   await Promise.all([refreshWho(), render(current)]);
   btn.disabled = false;
 }
+
+// ----- Menu người dùng góc phải -----
+$('userBtn').addEventListener('click', (e) => {
+  e.stopPropagation();
+  $('userMenu').classList.toggle('show');
+});
+document.addEventListener('click', () => $('userMenu').classList.remove('show'));
+$('userMenu').addEventListener('click', () => $('userMenu').classList.remove('show'));
 
 // Bấm menu bên trái -> đổi #hash -> hiện trang tương ứng (có thể F5 hoặc gửi link thẳng tới 1 mục)
 window.addEventListener('hashchange', () => render(routeKey()));
