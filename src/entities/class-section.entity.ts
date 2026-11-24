@@ -3,6 +3,7 @@ import {
 } from 'typeorm';
 import { Subject } from './subject.entity';
 import { Term } from './term.entity';
+import { Employee } from './employee.entity';
 
 /** Lớp học phần = môn học + học kỳ + giảng viên + lịch học */
 @Entity('class_sections')
@@ -32,8 +33,9 @@ export class ClassSection {
    * Giảng viên phụ trách = id trong bảng `employees` (giống advisor_classe_sections).
    * Mới khai báo cột; khi có entity Employee thì thêm @ManyToOne + @JoinColumn({ name: 'employee_id' }).
    */
-  @Column({ name: 'employee_id', type: 'bigint', nullable: true })
-  employeeId: string | null;
+@ManyToOne(() => Employee, { nullable: true })
+@JoinColumn({ name: 'employee_id' })
+employee: Employee | null;
 
   @Column({ name: 'max_students', type: 'smallint', unsigned: true, default: 60 })
   maxStudents: number;

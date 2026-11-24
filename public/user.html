@@ -1,66 +1,243 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Thông tin cá nhân - SM University</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tài khoản của tôi | SM University</title>
+<link rel="stylesheet" href="/layout.css">
 <style>
-  * { box-sizing:border-box; }
-  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:#f8fafc; color:#0f172a; display:flex; min-height:100vh; }
-  aside { width:260px; background:#fff; border-right:1px solid #e2e8f0; padding:20px 14px; flex-shrink:0; }
-  .brand { display:flex; gap:10px; align-items:center; margin-bottom:24px; }
-  .logo { width:44px; height:44px; border-radius:10px; background:#2563eb; color:#fff; display:grid; place-items:center; font-weight:700; }
-  .brand small { color:#64748b; display:block; }
-  aside a { display:block; padding:11px 14px; border-radius:10px; color:#64748b; text-decoration:none; margin-bottom:4px; cursor:pointer; }
-  aside a.active { background:#e0ecff; color:#2563eb; font-weight:600; }
-  main { flex:1; padding:28px 32px; max-width:640px; }
-  .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:20px; margin-bottom:18px; }
-  .row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:14px; }
-  .row:last-child { border:0; } .row span { color:#64748b; }
-  label { display:block; font-size:13px; color:#64748b; margin:12px 0 4px; }
-  input { width:100%; padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; font-size:14px; }
-  button { margin-top:16px; padding:10px 16px; border:0; border-radius:10px; background:#2563eb; color:#fff; cursor:pointer; }
+  .acc-grid { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:18px; align-items:start; }
+  .card { background:#fff; border:1px solid var(--bd); border-radius:14px; padding:22px; }
+  .card h3 { margin:0 0 4px; font-size:16px; }
+  .card .desc { margin:0 0 16px; color:var(--mut); font-size:13px; }
+
+  /* Thẻ hồ sơ */
+  .hero { display:flex; align-items:center; gap:16px; padding-bottom:18px; margin-bottom:6px; border-bottom:1px solid var(--bd); }
+  .avatar-lg { width:64px; height:64px; border-radius:50%; background:var(--pri); color:#fff; display:grid; place-items:center; font-size:24px; font-weight:700; flex:none; }
+  .hero h2 { margin:0; font-size:19px; }
+  .hero p { margin:3px 0 0; color:var(--mut); font-size:13px; }
+  .role-tag { display:inline-block; margin-top:6px; padding:3px 10px; border-radius:999px; background:var(--pri-l); color:var(--pri); font-size:12px; font-weight:600; }
+  .row { display:flex; justify-content:space-between; gap:16px; padding:12px 0; border-bottom:1px solid #eef1f7; font-size:14px; }
+  .row:last-child { border-bottom:0; }
+  .row span { color:var(--mut); flex:none; }
+  .row b { font-weight:600; text-align:right; word-break:break-word; }
+
+  /* Form đổi mật khẩu */
+  .pw { position:relative; }
+  .pw input { width:100%; padding-right:44px; }
+  .pw .eye { position:absolute; right:5px; top:50%; transform:translateY(-50%); width:34px; height:34px; padding:0; border:0; background:transparent; color:var(--mut); justify-content:center; border-radius:8px; }
+  .pw .eye:hover { background:#f2f5fb; color:var(--pri); }
+  .pw .eye svg { width:19px; height:19px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+  .pw .eye .off { display:none; }
+  .pw .eye.on .off { display:block; }
+  .pw .eye.on .show { display:none; }
+  .pw-form { display:grid; gap:14px; }
+  .pw-form .hint-line { margin:-6px 0 0; font-size:12px; color:var(--mut); }
+  .form-actions { display:flex; justify-content:flex-end; margin-top:4px; }
+
+  @media (max-width:900px) { .acc-grid { grid-template-columns:1fr; } }
 </style>
 </head>
 <body>
-<aside>
-  <div class="brand"><div class="logo">SM</div><div><b>SM UNIVERSITY</b><small>QL SINH VIÊN</small></div></div>
-  <a href="profile.html" class="active">Thông tin cá nhân</a>
-  <a onclick="Auth.logout()">Đăng xuất</a>
-</aside>
-<main>
-  <h1>Thông tin cá nhân</h1>
-  <div class="card" id="info"></div>
-  <div class="card">
-    <b>Đổi mật khẩu</b>
-    <label>Mật khẩu cũ</label><input id="old" type="password" />
-    <label>Mật khẩu mới (tối thiểu 6 ký tự)</label><input id="nw" type="password" />
-    <button onclick="changePw()">Cập nhật mật khẩu</button>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
+    </div>
+    <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+
+    <a class="nav-item" href="/dashboard.html">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="/student.html">
+      <svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+      Quản lý sinh viên
+    </a>
+    <a class="nav-item" href="/student-classes.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/></svg>
+      Quản lý lớp học
+    </a>
+    <a class="nav-item" href="/advisor-classe-sections.html">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 18c1-2 3-3 5-3s4 1 5 3"/></svg>
+      Quản lý giảng viên
+    </a>
+    <a class="nav-item" href="/courses.html">
+      <svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg>
+      Quản lý môn học
+    </a>
+    <a class="nav-item" href="/grades.html">
+      <svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+      Quản lý điểm số
+    </a>
+    <a class="nav-item" href="/student-status.html">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+      Trạng thái học vụ
+    </a>
+
+    <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
+    <a class="nav-item" href="/accounts.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M17 11l2 2 4-4"/></svg>
+      Quản lý tài khoản
+    </a>
+    <a class="nav-item active" href="/user.html" aria-current="page">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Tài khoản của tôi
+    </a>
+  </aside>
+
+  <div class="content">
+
+    <header class="topbar">
+      <div class="crumb"><a href="/student.html">Trang chủ</a> / <b>Tài khoản của tôi</b></div>
+      <div class="user-area" id="userArea"></div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Tài khoản của tôi</h1>
+        <p>Xem thông tin đăng nhập và đổi mật khẩu của bạn.</p>
+      </div>
+    </div>
+
+    <div class="acc-grid">
+
+      <section class="card">
+        <h3>Thông tin tài khoản</h3>
+        <p class="desc">Thông tin do nhà trường quản lý, không chỉnh sửa tại đây.</p>
+        <div id="info"><div class="row"><span>Đang tải...</span></div></div>
+      </section>
+
+      <section class="card">
+        <h3>Đổi mật khẩu</h3>
+        <p class="desc">Nên dùng mật khẩu mà bạn chưa dùng ở nơi khác.</p>
+        <form class="pw-form" id="pwForm" novalidate>
+          <label class="field">Mật khẩu hiện tại
+            <div class="pw">
+              <input id="oldPw" type="password" autocomplete="current-password">
+              <button type="button" class="eye" data-target="oldPw" aria-label="Hiện mật khẩu">
+                <svg class="show" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.7 9.7 0 0 1 12 5c6 0 10 7 10 7a18.6 18.6 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </label>
+          <label class="field">Mật khẩu mới
+            <div class="pw">
+              <input id="newPw" type="password" autocomplete="new-password">
+              <button type="button" class="eye" data-target="newPw" aria-label="Hiện mật khẩu">
+                <svg class="show" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.7 9.7 0 0 1 12 5c6 0 10 7 10 7a18.6 18.6 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </label>
+          <p class="hint-line">Tối thiểu 6 ký tự.</p>
+          <label class="field">Nhập lại mật khẩu mới
+            <div class="pw">
+              <input id="newPw2" type="password" autocomplete="new-password">
+              <button type="button" class="eye" data-target="newPw2" aria-label="Hiện mật khẩu">
+                <svg class="show" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg class="off" viewBox="0 0 24 24"><path d="M17.94 17.94A10.5 10.5 0 0 1 12 19c-6 0-10-7-10-7a18.5 18.5 0 0 1 5.06-5.94M9.9 4.24A9.7 9.7 0 0 1 12 5c6 0 10 7 10 7a18.6 18.6 0 0 1-2.16 3.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+              </button>
+            </div>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="primary" id="pwSave">Cập nhật mật khẩu</button>
+          </div>
+        </form>
+      </section>
+
+    </div>
   </div>
-</main>
-<script src="auth.js"></script>
-<script>
-  Auth.require(['student', 'advisor', 'staff', 'admin']);
-  const ROLE = { admin: 'Quản trị viên', staff: 'Nhân viên', advisor: 'Cố vấn học tập', student: 'Sinh viên' };
-  (async () => {
-    const res = await fetch('/auth/me');
-    const u = await res.json();
-    document.getElementById('info').innerHTML = [
-      ['Tên đăng nhập', u.username], ['Họ tên', u.fullName || '—'], ['Email', u.email || '—'],
-      ['Vai trò', ROLE[u.role] || u.role], ['Mã liên kết', u.refCode || '—'],
-    ].map(([k, v]) => `<div class="row"><span>${k}</span><b>${String(v).replace(/</g, '&lt;')}</b></div>`).join('');
-  })();
-  async function changePw() {
-    const res = await fetch('/auth/change-password', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ oldPassword: old.value, newPassword: nw.value }),
-    });
-    const d = await res.json();
-    alert(res.ok ? d.message : (Array.isArray(d.message) ? d.message.join('\n') : d.message));
-    if (res.ok) { old.value = ''; nw.value = ''; }
-  }
-</script>
+</div>
+
+<div id="toast"></div>
+
 <script src="/auth.js"></script>
 <script>Auth.require(['admin', 'staff', 'advisor']);</script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const ROLE = { admin: 'Quản trị viên', staff: 'Nhân viên', advisor: 'Cố vấn học tập', student: 'Sinh viên' };
+
+  function toast(msg, ok = true) {
+    const t = $('toast');
+    t.textContent = msg;
+    t.style.background = ok ? 'var(--ok)' : 'var(--err)';
+    t.style.display = 'block';
+    clearTimeout(toast.timer);
+    toast.timer = setTimeout(() => (t.style.display = 'none'), 3500);
+  }
+
+  const errText = (d, status) =>
+    d && d.message ? (Array.isArray(d.message) ? d.message.join('\n') : d.message) : 'Lỗi ' + status;
+
+  // ----- Thông tin tài khoản -----
+  async function loadInfo() {
+    try {
+      const res = await fetch('/auth/me');
+      const u = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(errText(u, res.status));
+      const name = u.fullName || u.username || '';
+      const ini = (name.trim().split(/\s+/).pop() || '?').charAt(0).toUpperCase();
+      const row = (k, v) => `<div class="row"><span>${esc(k)}</span><b>${esc(v || '—')}</b></div>`;
+      $('info').innerHTML = `
+        <div class="hero">
+          <div class="avatar-lg">${esc(ini)}</div>
+          <div>
+            <h2>${esc(name)}</h2>
+            <p>${esc(u.email || '')}</p>
+            <span class="role-tag">${esc(ROLE[u.role] || u.role)}</span>
+          </div>
+        </div>
+        ${row('Tên đăng nhập', u.username)}
+        ${row('Họ và tên', u.fullName)}
+        ${row('Email', u.email)}
+        ${row('Vai trò', ROLE[u.role] || u.role)}
+        ${row('Mã liên kết', u.refCode)}`;
+    } catch (e) {
+      $('info').innerHTML = `<div class="row"><span style="color:var(--err)">${esc(e.message)}</span></div>`;
+    }
+  }
+
+  // ----- Ẩn / hiện mật khẩu -----
+  document.querySelectorAll('.eye').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const input = $(btn.dataset.target);
+      const show = input.type === 'password';
+      input.type = show ? 'text' : 'password';
+      btn.classList.toggle('on', show);
+      btn.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu');
+    });
+  });
+
+  // ----- Đổi mật khẩu -----
+  $('pwForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const oldPassword = $('oldPw').value;
+    const newPassword = $('newPw').value;
+    if (!oldPassword) return toast('Vui lòng nhập mật khẩu hiện tại', false);
+    if (newPassword.length < 6) return toast('Mật khẩu mới tối thiểu 6 ký tự', false);
+    if (newPassword !== $('newPw2').value) return toast('Mật khẩu nhập lại không khớp', false);
+    if (newPassword === oldPassword) return toast('Mật khẩu mới phải khác mật khẩu hiện tại', false);
+
+    $('pwSave').disabled = true;
+    try {
+      const res = await fetch('/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ oldPassword, newPassword }),
+      });
+      const d = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(errText(d, res.status));
+      toast(d.message || 'Đổi mật khẩu thành công');
+      $('pwForm').reset();
+    } catch (err) { toast(err.message, false); }
+    finally { $('pwSave').disabled = false; }
+  });
+
+  loadInfo();
+</script>
 </body>
 </html>
