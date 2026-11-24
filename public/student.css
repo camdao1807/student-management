@@ -96,3 +96,7 @@ input[type=checkbox] { width:16px; height:16px; padding:0; accent-color:var(--pr
 
 @media (max-width:1100px) { .filters { grid-template-columns:1fr 1fr; } }
 @media (max-width:560px) { .filters { grid-template-columns:1fr; } .d-grid { grid-template-columns:1fr; } }
+/* Màu breadcrumb */
+.crumb b {
+    color: #2563eb;
+}

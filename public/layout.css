@@ -71,3 +71,7 @@ button:disabled { opacity:.5; cursor:not-allowed; }
   .content { padding:0 16px 16px; }
 }
 @media (max-width:560px) { .grid { grid-template-columns:1fr; } }
+/* Màu breadcrumb */
+.crumb b {
+    color: #2563eb;
+}

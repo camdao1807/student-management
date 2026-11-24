@@ -33,3 +33,7 @@ tr.banned td { background:#fff5f5; }
 .cb { display:flex; align-items:center; gap:8px; }
 .cb input { width:auto; }
 @media (max-width:700px) { .picker-row { grid-template-columns:1fr; } }
+/* Màu breadcrumb */
+.crumb b {
+    color: #2563eb;
+}
