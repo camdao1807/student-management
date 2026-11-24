@@ -43,7 +43,7 @@ function renderYearOptions() {
   const current = $('yearFilter').value;
   const years = [...new Set(classes.map((c) => c.academicYear))].sort();
   $('yearFilter').innerHTML =
-    '<option value="all">Niên khóa: Tất cả</option>' +
+    '<option value="all">Tất cả niên khóa</option>' +
     years.map((y) => `<option value="${esc(y)}">${esc(y)}</option>`).join('');
   $('yearFilter').value = years.includes(current) ? current : 'all';
 }
@@ -61,24 +61,25 @@ function renderClasses() {
     return okKw && okStatus && okYear;
   });
 
+  // Dùng cùng class với bảng báo cáo ở dashboard: status-pill / status-*
   $('classBody').innerHTML = shown.length
     ? shown.map((c, i) => `
       <tr data-id="${c.id}" class="${c.id === selectedId ? 'selected' : ''}">
-        <td class="nowrap">${String(i + 1).padStart(2, '0')}</td>
-        <td class="nowrap"><span class="code">${esc(c.classCode)}</span></td>
+        <td>${String(i + 1).padStart(2, '0')}</td>
+        <td><span class="code">${esc(c.classCode)}</span></td>
         <td>${esc(c.className)}</td>
         <td>${esc(c.majorName)}</td>
-        <td class="nowrap">${esc(c.academicYear)}</td>
-        <td class="nowrap">${c.studentCount}</td>
-        <td><span class="tag ${c.isActive ? '' : 'off'}">${c.isActive ? 'Hoạt động' : 'Đã tắt'}</span></td>
+        <td>${esc(c.academicYear)}</td>
+        <td><strong>${c.studentCount}</strong></td>
+        <td><span class="status-pill ${c.isActive ? 'status-studying' : 'status-no_status'}">${c.isActive ? 'Hoạt động' : 'Đã tắt'}</span></td>
         <td>
           <div class="cell-actions">
-            <button class="btn sm" data-act="edit" data-id="${c.id}">Sửa</button>
-            <button class="btn sm danger" data-act="delete" data-id="${c.id}">Xóa</button>
+            <button type="button" class="sm" data-act="edit" data-id="${c.id}">Sửa</button>
+            <button type="button" class="sm danger" data-act="delete" data-id="${c.id}">Xóa</button>
           </div>
         </td>
       </tr>`).join('')
-    : '<tr><td colspan="8" class="empty">Không có lớp nào phù hợp. Chọn "Thêm lớp" để tạo lớp mới.</td></tr>';
+    : '<tr><td colspan="8" class="empty-report">Không có lớp nào phù hợp. Chọn "Thêm lớp" để tạo lớp mới.</td></tr>';
 
   $('tableFoot').textContent = `Hiển thị ${shown.length} trong tổng số ${classes.length} lớp`;
 }
@@ -173,7 +174,7 @@ async function loadStudents() {
   const list = await api(`${API}/${selectedId}/students`);
   $('studentList').innerHTML = list.length
     ? list.map((s) => `<li><span class="code">${esc(s.studentCode)}</span> ${esc(s.fullName)}</li>`).join('')
-    : '<li class="empty">Lớp chưa có sinh viên.</li>';
+    : '<li class="list-empty">Lớp chưa có sinh viên.</li>';
 }
 
 async function loadAvailable() {
@@ -194,7 +195,7 @@ function renderAvailable() {
         <span class="code">${esc(s.studentCode)}</span> ${esc(s.fullName)}
         <span class="sub-class">đang ở ${esc(s.currentClassCode)}</span>
       </label></li>`).join('')
-    : '<li class="empty">Không có sinh viên nào để chuyển.</li>';
+    : '<li class="list-empty">Không có sinh viên nào để chuyển.</li>';
 }
 
 $('searchBox').addEventListener('input', renderAvailable);
