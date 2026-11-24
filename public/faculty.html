@@ -91,7 +91,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
         <circle cx="9" cy="8" r="3.5"/>
         <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/>
       </svg>
-      Quản lý lớp hành chính
+      Quản lý lớp học
     </a>
 
     <a class="nav-item" href="/advisor-classe-sections.html">
@@ -110,22 +110,23 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       Trạng thái học vụ
     </a>
 
-    <a class="nav-item disabled" title="Module của nhóm">
+    <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
+
+    <a class="nav-item" href="/accounts.html">
       <svg viewBox="0 0 24 24">
         <circle cx="9" cy="8" r="3.5"/>
         <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+        <path d="M17 11l2 2 4-4"/>
       </svg>
-      Cố vấn học tập
+      Quản lý tài khoản
     </a>
 
-    <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
-
-    <a class="nav-item disabled" title="Module của nhóm">
+    <a class="nav-item" href="/user.html">
       <svg viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
       </svg>
-      Quản lý tài khoản
+      Tài khoản của tôi
     </a>
   </aside>
 
@@ -453,5 +454,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   renderAll();
 })();
 </script>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
 </body>
 </html>

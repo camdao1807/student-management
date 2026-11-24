@@ -36,4 +36,34 @@ export class User {
 
   @CreateDateColumn({ name: 'created_at', type: 'datetime' })
   createdAt: Date;
+
+  // ====== CÁC CỘT THÊM MỚI ======
+
+  @Column({ name: 'full_name', type: 'varchar', length: 150, nullable: true })
+  fullName: string | null;
+
+  /** Cần để gửi liên kết "quên mật khẩu" */
+  @Column({ type: 'varchar', length: 150, nullable: true })
+  email: string | null;
+
+  /** Mã sinh viên / mã nhân viên / mã cố vấn mà tài khoản gắn vào */
+  @Column({ name: 'ref_code', type: 'varchar', length: 50, nullable: true })
+  refCode: string | null;
+
+  @Column({
+    name: 'reset_token_hash',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    select: false,
+  })
+  resetTokenHash: string | null;
+
+  @Column({
+    name: 'reset_token_expires',
+    type: 'datetime',
+    nullable: true,
+    select: false,
+  })
+  resetTokenExpires: Date | null;
 }

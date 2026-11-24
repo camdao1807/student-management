@@ -35,14 +35,13 @@
       Quản lý sinh viên
     </a>
 
-    <a class="nav-item" href="/faculty.html">
+    <a class="nav-item active" href="/faculty.html" aria-current="page">
       <svg viewBox="0 0 24 24">
         <path d="M3 21h18M5 21V7l7-4 7 4v14"/>
         <path d="M9 9h2m2 0h2M9 13h2m2 0h2M9 17h2m2 0h2"/>
       </svg>
       Quản lý khoa
     </a>
-
     <a class="nav-item" href="student-classes.html" title="Module của bạn nhóm">
       <svg viewBox="0 0 24 24">
         <circle cx="9" cy="8" r="3.5"/>
@@ -72,12 +71,21 @@
 
     <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
 
-    <a class="nav-item disabled" title="Module của bạn nhóm">
+    <a class="nav-item" href="/accounts.html">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5"/>
+        <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+        <path d="M17 11l2 2 4-4"/>
+      </svg>
+      Quản lý tài khoản
+    </a>
+
+    <a class="nav-item" href="/user.html">
       <svg viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
       </svg>
-      Quản lý tài khoản
+      Tài khoản của tôi
     </a>
   </aside>
 
@@ -200,6 +208,9 @@
       <div class="field">Số điện thoại
         <input id="phone" maxlength="20">
       </div>
+      <div class="field full">Quê quán
+        <input id="hometown" maxlength="255" placeholder="VD: Phường Phú Xuân, TP. Huế">
+      </div>
       <div class="field full">Lớp *
         <span id="classFormBox"></span>
       </div>
@@ -221,6 +232,8 @@
 </div>
 
 <div id="toast"></div>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
 <script src="/student.js"></script>
 </body>
 </html>

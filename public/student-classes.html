@@ -3,33 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quản lý lớp hành chính | Student Management</title>
+<title>Quản lý lớp học | Student Management</title>
 <link rel="stylesheet" href="/layout.css">
 <link rel="stylesheet" href="/dashboard.css">
-<style>
-/* Không nạp student-classes.css nữa: trang dùng đúng layout.css + dashboard.css như dashboard.
-   Chỉ style thêm các phần riêng của trang này (chi tiết lớp, danh sách, hộp thoại). */
-#classBody tr{cursor:pointer}
-.detail-empty{padding:28px 12px;text-align:center;color:#64748b}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.two-col h3{margin:0 0 10px;font-size:15px}
-.two-col input[type="search"]{width:100%;height:40px;padding:0 12px;margin-bottom:10px;border:1px solid #dbe2ec;border-radius:10px;font:inherit;box-sizing:border-box}
-.list{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:6px}
-.list.scroll{max-height:280px;overflow:auto}
-.list li{padding:9px 12px;border:1px solid #e5eaf2;border-radius:10px;font-size:14px}
-.full{width:100%}
-dialog{border:0;border-radius:16px;padding:0;width:min(520px,92vw);box-shadow:0 24px 60px rgba(15,23,42,.25)}
-dialog::backdrop{background:rgba(15,23,42,.45)}
-#classForm{padding:24px;display:grid;gap:14px}
-#classForm h2{margin:0;font-size:20px}
-#classForm label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#475569}
-#classForm label.check{flex-direction:row;align-items:center;gap:8px}
-#classForm input:not([type="checkbox"]){height:40px;padding:0 12px;border:1px solid #dbe2ec;border-radius:10px;font:inherit;font-weight:400;color:#0f172a;background:#fff}
-.error{margin:0;color:#b91c1c;font-size:13px}
-.error:empty{display:none}
-.actions{display:flex;justify-content:flex-end;gap:10px}
-@media (max-width:900px){.two-col{grid-template-columns:1fr}}
-</style>
+<link rel="stylesheet" href="/student-classes.css">
 </head>
 <body>
 <div class="layout">
@@ -196,6 +173,10 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
           </div>
         </section>
       </main>
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
     </div>
     <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
 
@@ -230,10 +211,10 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
         <circle cx="9" cy="8" r="3.5"/>
         <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/>
       </svg>
-      Quản lý lớp hành chính
+      Quản lý lớp học
     </a>
 
-    <a class="nav-item" href="/advisor-classe-sections.html">
+    <a class="nav-item" href="advisor-classe-sections.html" title="Module của bạn nhóm">
       <svg viewBox="0 0 24 24">
         <rect x="4" y="3" width="16" height="18" rx="2"/>
         <circle cx="12" cy="10" r="3"/>
@@ -241,37 +222,42 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       </svg>
       Quản lý giảng viên
     </a>
+    <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
+    <a class="nav-item" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
 
-    <a class="nav-item" href="/student-status.html">
+    <a class="nav-item" href="student-status.html" title="Module của bạn nhóm">
       <svg viewBox="0 0 24 24">
         <path d="M3 7h18M3 12h18M3 17h12"/>
       </svg>
       Trạng thái học vụ
     </a>
 
-    <a class="nav-item disabled" title="Module của nhóm">
+    <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
+
+    <a class="nav-item" href="/accounts.html">
       <svg viewBox="0 0 24 24">
         <circle cx="9" cy="8" r="3.5"/>
         <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+        <path d="M17 11l2 2 4-4"/>
       </svg>
-      Cố vấn học tập
+      Quản lý tài khoản
     </a>
 
-    <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
-
-    <a class="nav-item disabled" title="Module của nhóm">
+    <a class="nav-item" href="/user.html">
       <svg viewBox="0 0 24 24">
         <circle cx="12" cy="8" r="4"/>
         <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
       </svg>
-      Quản lý tài khoản
+      Tài khoản của tôi
     </a>
   </aside>
 
   <div class="content dashboard-content">
 
     <header class="topbar">
-      <div class="crumb">Trang chủ / Hệ thống / <b>Quản lý lớp hành chính</b></div>
+      <div class="crumb">
+  <a href="/dashboard.html">Trang chủ</a> / <b>Lớp hành chính</b>
+</div>
       <div class="user-area" id="userArea">
         <a class="login-btn" href="/login.html">
           <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập
@@ -281,7 +267,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
 
     <div class="page-head">
       <div>
-        <h1>Quản lý lớp hành chính</h1>
+        <h1>Quản lý lớp học</h1>
         <p>Tạo lớp, cập nhật thông tin lớp và chuyển sinh viên giữa các lớp.</p>
       </div>
       <div class="head-actions">
@@ -319,7 +305,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
         <strong id="statStudents">0</strong>
         <small>Trong tất cả các lớp</small>
       </article>
-      <article class="metric metric-employees">
+      <article class="metric metric-warn">
         <div class="metric-top">
           <span class="metric-mark"><svg viewBox="0 0 24 24"><path d="M12 8v5m0 3h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></span>
           <span class="badge">Cần xử lý</span>
@@ -342,7 +328,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
         <label class="report-search">Tìm lớp
           <span class="search-input">
             <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-            <input id="classSearch" type="search" placeholder="Mã lớp, tên lớp hoặc khoa">
+            <input id="classSearch" type="search" placeholder="Mã lớp, tên lớp hoặc ngành">
           </span>
         </label>
         <label>Trạng thái
@@ -362,7 +348,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
         <table class="report-table">
           <thead>
             <tr>
-              <th>STT</th><th>Mã lớp</th><th>Tên lớp</th><th>Khoa</th>
+              <th class="index-col">STT</th><th>Mã lớp</th><th>Tên lớp</th><th>Ngành</th>
               <th>Niên khóa</th><th>Sĩ số</th><th>Trạng thái</th><th>Thao tác</th>
             </tr>
           </thead>
@@ -416,6 +402,8 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   </form>
 </dialog>
 
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
 <script src="/student-classes.js"></script>
 </body>
 </html>

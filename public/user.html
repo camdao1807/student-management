@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Thông tin cá nhân - SM University</title>
+<style>
+  * { box-sizing:border-box; }
+  body { margin:0; font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; background:#f8fafc; color:#0f172a; display:flex; min-height:100vh; }
+  aside { width:260px; background:#fff; border-right:1px solid #e2e8f0; padding:20px 14px; flex-shrink:0; }
+  .brand { display:flex; gap:10px; align-items:center; margin-bottom:24px; }
+  .logo { width:44px; height:44px; border-radius:10px; background:#2563eb; color:#fff; display:grid; place-items:center; font-weight:700; }
+  .brand small { color:#64748b; display:block; }
+  aside a { display:block; padding:11px 14px; border-radius:10px; color:#64748b; text-decoration:none; margin-bottom:4px; cursor:pointer; }
+  aside a.active { background:#e0ecff; color:#2563eb; font-weight:600; }
+  main { flex:1; padding:28px 32px; max-width:640px; }
+  .card { background:#fff; border:1px solid #e2e8f0; border-radius:14px; padding:20px; margin-bottom:18px; }
+  .row { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #f1f5f9; font-size:14px; }
+  .row:last-child { border:0; } .row span { color:#64748b; }
+  label { display:block; font-size:13px; color:#64748b; margin:12px 0 4px; }
+  input { width:100%; padding:10px 12px; border:1px solid #e2e8f0; border-radius:10px; font-size:14px; }
+  button { margin-top:16px; padding:10px 16px; border:0; border-radius:10px; background:#2563eb; color:#fff; cursor:pointer; }
+</style>
+</head>
+<body>
+<aside>
+  <div class="brand"><div class="logo">SM</div><div><b>SM UNIVERSITY</b><small>QL SINH VIÊN</small></div></div>
+  <a href="profile.html" class="active">Thông tin cá nhân</a>
+  <a onclick="Auth.logout()">Đăng xuất</a>
+</aside>
+<main>
+  <h1>Thông tin cá nhân</h1>
+  <div class="card" id="info"></div>
+  <div class="card">
+    <b>Đổi mật khẩu</b>
+    <label>Mật khẩu cũ</label><input id="old" type="password" />
+    <label>Mật khẩu mới (tối thiểu 6 ký tự)</label><input id="nw" type="password" />
+    <button onclick="changePw()">Cập nhật mật khẩu</button>
+  </div>
+</main>
+<script src="auth.js"></script>
+<script>
+  Auth.require(['student', 'advisor', 'staff', 'admin']);
+  const ROLE = { admin: 'Quản trị viên', staff: 'Nhân viên', advisor: 'Cố vấn học tập', student: 'Sinh viên' };
+  (async () => {
+    const res = await fetch('/auth/me');
+    const u = await res.json();
+    document.getElementById('info').innerHTML = [
+      ['Tên đăng nhập', u.username], ['Họ tên', u.fullName || '—'], ['Email', u.email || '—'],
+      ['Vai trò', ROLE[u.role] || u.role], ['Mã liên kết', u.refCode || '—'],
+    ].map(([k, v]) => `<div class="row"><span>${k}</span><b>${String(v).replace(/</g, '&lt;')}</b></div>`).join('');
+  })();
+  async function changePw() {
+    const res = await fetch('/auth/change-password', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ oldPassword: old.value, newPassword: nw.value }),
+    });
+    const d = await res.json();
+    alert(res.ok ? d.message : (Array.isArray(d.message) ? d.message.join('\n') : d.message));
+    if (res.ok) { old.value = ''; nw.value = ''; }
+  }
+</script>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
+</body>
+</html>

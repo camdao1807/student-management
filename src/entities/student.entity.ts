@@ -36,6 +36,9 @@ export class Student {
   @Column({ type: 'varchar', length: 20, nullable: true })
   phone: string | null;
 
+  @Column({ type: 'nvarchar', length: 255, nullable: true })
+  hometown: string | null;
+
   @Index('idx_students_class_id')
   @Column({ name: 'class_id', type: 'bigint' })
   classId: string;

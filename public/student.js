@@ -284,6 +284,7 @@ window.openEdit = (id) => {
   $('gender').value = s.gender || '';
   $('email').value = s.email;
   $('phone').value = s.phone || '';
+  $('hometown').value = s.hometown || '';
   $('classId').value = s.classId;
   setHint('');
   open('mForm');
@@ -309,6 +310,7 @@ $('form').addEventListener('submit', async (e) => {
     gender: $('gender').value,
     email: $('email').value.trim(),
     phone: $('phone').value.trim(),
+    hometown: $('hometown').value.trim(),
     classId: String($('classId').value),
   };
   if (!body.gender) delete body.gender;
@@ -360,6 +362,7 @@ window.openDetail = async (id) => {
         ${item('Giới tính', esc(GENDER[s.gender] || ''))}
         ${item('Email', esc(s.email))}
         ${item('Số điện thoại', esc(s.phone || ''))}
+        ${item('Quê quán', esc(s.hometown || ''), true)}
       </div>
 
       <div class="d-section">Thông tin học tập</div>
