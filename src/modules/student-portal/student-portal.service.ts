@@ -362,4 +362,9 @@ export class StudentPortalService {
       absentRate: s.total ? +((s.absent / s.total) * 100).toFixed(1) : 0,
     }));
   }
+  async getIdByCode(code: string) {
+  const s = await this.studentRepo.findOne({ where: { studentCode: code } });
+  if (!s) throw new NotFoundException('Không tìm thấy hồ sơ sinh viên');
+  return { id: s.id };
+}
 }

@@ -1,6 +1,12 @@
 // Cùng origin với server NestJS nên để rỗng. Nếu mở file này từ nơi khác thì đổi thành 'http://localhost:3000'
 const API = '';
 
+// Học kỳ đang dùng cho Trang chủ / Đăng ký / TKB / Chuyên cần. Đổi số này khi sang học kỳ mới.
+const TERM_ID = 1;
+
+// id sinh viên đang đăng nhập, lấy từ /student-portal/me khi mở trang
+let studentId = null;
+
 const PAGES = {
   home:       { title: 'Trang chủ',        desc: '', home: true },
   profile:    { title: 'Hồ sơ cá nhân',    desc: 'Thông tin, lớp, ngành, trạng thái học tập' },
@@ -17,8 +23,8 @@ let current = routeKey();
 // ---------- Tiện ích ----------
 const $ = (id) => document.getElementById(id);
 const esc = (v) => String(v ?? '—').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const sid = () => $('studentId').value;
-const tid = () => $('termId').value;
+const sid = () => studentId;
+const tid = () => TERM_ID;
 
 const dayName = (d) => (d == null ? '—' : Number(d) === 8 ? 'Chủ nhật' : 'Thứ ' + d);
 const periods = (c) => (c.startPeriod != null ? `Tiết ${c.startPeriod}–${c.endPeriod}` : 'Chưa xếp tiết');
@@ -62,12 +68,23 @@ async function api(path, options) {
   const res = await fetch(API + '/student-portal/' + sid() + path, options);
   let data = null;
   try { data = await res.json(); } catch (_) {}
-  $('raw').textContent = JSON.stringify(data, null, 2);
   if (!res.ok) {
     const m = data && data.message ? (Array.isArray(data.message) ? data.message.join(', ') : data.message) : 'Lỗi ' + res.status;
     throw new Error(m);
   }
   return data;
+}
+
+// Lấy id sinh viên của tài khoản đang đăng nhập
+async function resolveStudent() {
+  const res = await fetch(API + '/student-portal/me');
+  let data = null;
+  try { data = await res.json(); } catch (_) {}
+  if (!res.ok || !data || data.id == null) {
+    const m = data && data.message ? (Array.isArray(data.message) ? data.message.join(', ') : data.message) : 'Lỗi ' + res.status;
+    throw new Error(m || 'Không xác định được sinh viên');
+  }
+  studentId = data.id;
 }
 
 function table(headers, rows, centerCols = []) {
@@ -415,6 +432,43 @@ async function saveProfile(ev) {
   finally { $('saveBtn').disabled = false; }
 }
 
+// ----- Đổi mật khẩu -----
+function openPwd() {
+  $('pwdForm').reset();
+  $('pwdOverlay').classList.add('show');
+  $('pwdOld').focus();
+}
+function closePwd() { $('pwdOverlay').classList.remove('show'); }
+
+async function savePassword(ev) {
+  ev.preventDefault();
+  const currentPassword = $('pwdOld').value;
+  const newPassword = $('pwdNew').value;
+  if (!currentPassword) return toast('Vui lòng nhập mật khẩu hiện tại', 'err');
+  if (newPassword.length < 8 || !/[A-Za-z]/.test(newPassword) || !/\d/.test(newPassword)) {
+    return toast('Mật khẩu mới tối thiểu 8 ký tự, gồm cả chữ và số', 'err');
+  }
+  if (newPassword !== $('pwdNew2').value) return toast('Mật khẩu nhập lại không khớp', 'err');
+
+  $('pwdSave').disabled = true;
+  try {
+    const res = await fetch(API + '/student-portal/me/change-password', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ currentPassword, newPassword }),
+    });
+    let data = null;
+    try { data = await res.json(); } catch (_) {}
+    if (!res.ok) {
+      const m = data && data.message ? (Array.isArray(data.message) ? data.message.join(', ') : data.message) : 'Lỗi ' + res.status;
+      throw new Error(m);
+    }
+    closePwd();
+    toast('Đổi mật khẩu thành công');
+  } catch (e) { toast(e.message, 'err'); }
+  finally { $('pwdSave').disabled = false; }
+}
+
 async function render(key) {
   current = key;
   document.querySelectorAll('.nav-item[data-key]').forEach((a) => a.classList.toggle('active', a.dataset.key === key));
@@ -433,13 +487,6 @@ async function render(key) {
   }
 }
 
-async function load() {
-  const btn = $('loadBtn');
-  btn.disabled = true;
-  await Promise.all([refreshWho(), render(current)]);
-  btn.disabled = false;
-}
-
 // ----- Menu người dùng góc phải -----
 $('userBtn').addEventListener('click', (e) => {
   e.stopPropagation();
@@ -448,6 +495,29 @@ $('userBtn').addEventListener('click', (e) => {
 document.addEventListener('click', () => $('userMenu').classList.remove('show'));
 $('userMenu').addEventListener('click', () => $('userMenu').classList.remove('show'));
 
+// Đổi mật khẩu
+$('pwdBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  openPwd();
+});
+
+// Đăng xuất: xóa token rồi về trang đăng nhập
+$('logoutBtn').addEventListener('click', (e) => {
+  e.preventDefault();
+  Auth.logout();
+});
+
 // Bấm menu bên trái -> đổi #hash -> hiện trang tương ứng (có thể F5 hoặc gửi link thẳng tới 1 mục)
 window.addEventListener('hashchange', () => render(routeKey()));
-load();
+
+// ----- Khởi động: xác định sinh viên đang đăng nhập rồi hiển thị trang -----
+(async function init() {
+  try {
+    await resolveStudent();
+  } catch (e) {
+    $('content').innerHTML = `<div class="empty err">${ICON_ERR}<div>${esc(e.message)}</div></div>`;
+    setWho(null);
+    return;
+  }
+  await Promise.all([refreshWho(), render(current)]);
+})();

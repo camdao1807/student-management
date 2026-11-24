@@ -13,10 +13,6 @@ import { StudentPortalService } from './student-portal.service';
 import { RegisterCourseDto } from './dto/register-course.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 
-// Chưa có phân quyền nên tạm truyền studentId qua URL.
-// Sau này có đăng nhập thì thay :studentId bằng id lấy từ người đăng nhập.
-// Id trong DB là bigint (TypeORM đọc thành string) nên service nhận string,
-// ParseIntPipe ở đây chỉ để chặn giá trị không phải số.
 @Controller('student-portal/:studentId')
 export class StudentPortalController {
   constructor(private readonly service: StudentPortalService) {}

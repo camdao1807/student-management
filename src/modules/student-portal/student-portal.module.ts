@@ -8,12 +8,14 @@ import { Grade } from '../../entities/grade.entity';
 import { Attendance } from '../../entities/attendance.entity';
 import { StudentPortalController } from './student-portal.controller';
 import { StudentPortalService } from './student-portal.service';
+import { StudentPortalMeController } from './student-portal-me.controller';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Student, StudentStatus, ClassSection, Enrollment, Grade, Attendance]),
   ],
-  controllers: [StudentPortalController],
+  // Controller 'me' phải đứng TRƯỚC để /student-portal/me không bị hiểu là :studentId
+  controllers: [StudentPortalMeController, StudentPortalController],
   providers: [StudentPortalService],
 })
 export class StudentPortalModule {}
