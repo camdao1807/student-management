@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý tài khoản</title>
+<link rel="stylesheet" href="/layout.css">
+<style>
+  .panel { background:#fff; border:1px solid var(--bd); border-radius:14px; padding:16px; margin-bottom:16px; }
+  .filters { display:grid; grid-template-columns:2fr 1fr 1fr; gap:10px; }
+  .search { display:flex; align-items:center; gap:8px; border:1px solid #d6dcea; border-radius:8px; padding:0 10px; background:#fff; color:var(--mut); }
+  .search input { border:0; flex:1; padding:9px 0; outline:none; }
+  .table-card { background:#fff; border:1px solid var(--bd); border-radius:14px; overflow:hidden; }
+  .tbl-wrap { overflow-x:auto; }
+  table { width:100%; border-collapse:collapse; }
+  th { text-align:left; font-size:11.5px; font-weight:700; color:var(--mut); text-transform:uppercase; letter-spacing:.04em; padding:12px; background:#fafbfe; border-bottom:1px solid var(--bd); white-space:nowrap; }
+  td { padding:12px; border-bottom:1px solid #eef1f7; vertical-align:middle; }
+  tr:hover td { background:#f8faff; }
+  .code { display:inline-block; background:#eaf1ff; color:#1e40af; font-family:ui-monospace,Consolas,monospace; font-weight:700; padding:3px 8px; border-radius:6px; font-size:12.5px; }
+  .sub { display:block; font-size:12px; color:var(--mut); }
+  .badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:700; white-space:nowrap; }
+  .r-student { background:#dbeafe; color:#1e40af; }
+  .r-advisor { background:#ede9fe; color:#5b21b6; }
+  .r-staff { background:#fef3c7; color:#92400e; }
+  .r-admin { background:#fee2e2; color:#991b1b; }
+  .s-on { background:#dcfce7; color:#166534; }
+  .s-off { background:#eceff5; color:#55607a; }
+  button.sm { padding:6px 11px; font-size:13px; }
+  button.danger { color:var(--err); border-color:#f3c5c5; }
+  .actions { display:flex; gap:6px; flex-wrap:wrap; }
+  .pager { display:flex; justify-content:space-between; align-items:center; padding:12px 16px; color:var(--mut); gap:10px; flex-wrap:wrap; }
+  .pager .pg { display:flex; gap:6px; align-items:center; }
+  .empty { text-align:center; padding:40px; color:var(--mut); }
+  .pwd-box { font-family:ui-monospace,Consolas,monospace; font-size:18px; font-weight:700; background:#f5f8ff; border:1px dashed var(--pri); border-radius:10px; padding:12px; text-align:center; margin:12px 0; user-select:all; }
+  @media (max-width:700px) { .filters { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
+    </div>
+    <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+
+    <a class="nav-item" href="/dashboard.html">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="/student.html">
+      <svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+      Quản lý sinh viên
+    </a>
+    <a class="nav-item" href="student-classes.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/></svg>
+      Quản lý lớp hành chính
+    </a>
+    <a class="nav-item" href="advisor-classe-sections.html">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 18c1-2 3-3 5-3s4 1 5 3"/></svg>
+      Quản lý giảng viên
+    </a>
+    <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
+    <a class="nav-item" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
+    <a class="nav-item" href="student-status.html">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+      Trạng thái học vụ
+    </a>
+
+    <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
+    <a class="nav-item active" href="/accounts.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M17 11l2 2 4-4"/></svg>
+      Quản lý tài khoản
+    </a>
+    <a class="nav-item" href="/user.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Tài khoản của tôi
+    </a>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div class="crumb"><a href="/student.html">Trang chủ</a> / <b>Quản lý tài khoản</b></div>
+      <div class="user-area" id="userArea"></div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Quản lý tài khoản</h1>
+        <p>Tài khoản đăng nhập của sinh viên và giảng viên: khóa, mở khóa, đặt lại mật khẩu.</p>
+      </div>
+      <div class="head-actions">
+        <button class="primary" id="btnProvision">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>Tạo tài khoản còn thiếu
+        </button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="filters">
+        <div class="search">
+          <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+          <input id="q" placeholder="Tìm theo tên đăng nhập, họ tên, email...">
+        </div>
+        <select id="fRole">
+          <option value="">Vai trò: Tất cả</option>
+          <option value="student">Sinh viên</option>
+          <option value="advisor">Giảng viên / CVHT</option>
+          <option value="staff">Nhân viên</option>
+          <option value="admin">Quản trị viên</option>
+        </select>
+        <select id="fStatus">
+          <option value="">Trạng thái: Tất cả</option>
+          <option value="active">Đang hoạt động</option>
+          <option value="locked">Đã khóa</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-card">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Tên đăng nhập</th><th>Họ và tên</th><th>Vai trò</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div id="empty" class="empty" style="display:none">Không có tài khoản nào.</div>
+      <div class="pager">
+        <span id="info"></span>
+        <div class="pg" id="pg"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal hiện mật khẩu mới sau khi đặt lại -->
+<div class="overlay" id="mPwd">
+  <div class="modal" style="max-width:420px">
+    <h2>Đã đặt lại mật khẩu</h2>
+    <p style="margin:0;color:var(--mut)">Tài khoản <b id="pwdUser"></b> có mật khẩu mới. Hãy gửi cho người dùng và nhắc họ đổi lại sau khi đăng nhập.</p>
+    <div class="pwd-box" id="pwdValue"></div>
+    <div class="modal-actions"><button class="primary" data-close>Đã hiểu</button></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin']);</script>
+<script src="/accounts.js"></script>
+</body>
+</html>

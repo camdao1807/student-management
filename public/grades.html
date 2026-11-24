@@ -46,4 +46,7 @@
   <div class="err-box" id="eEnroll"></div>
   <div class="modal-actions"><button data-close>Hủy</button><button class="primary" id="btnDoEnroll">Thêm vào bảng điểm</button></div></div></div>
 <div id="toast"></div>
-<script src="grades.js"></script></body></html>
+<script src="grades.js"></script>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
+</body></html>

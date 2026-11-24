@@ -60,5 +60,7 @@
     if (res.ok) { old.value = ''; nw.value = ''; }
   }
 </script>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
 </body>
 </html>

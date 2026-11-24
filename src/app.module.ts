@@ -20,8 +20,9 @@ import { StudentClassesModule } from './modules/student-classes/student-classes.
 import { CoursesModule } from './modules/courses/courses.module';
 import { GradesModule } from './modules/grades/grades.module';
 import { StudentPortalModule } from './modules/student-portal/student-portal.module';
-import { AuthModule } from './modules/auth/auth.module';   // <-- THÊM (kiểm tra đúng đường dẫn)
-import { UsersModule } from './modules/users/users.module'; // <-- THÊM (kiểm tra đúng đường dẫn)
+import { AuthModule } from './modules/auth/auth.module';
+import { UsersModule } from './modules/users/users.module';
+import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊM
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { UsersModule } from './modules/users/users.module'; // <-- THÊM (kiểm
     GradesModule,
     AuthModule,
     UsersModule,
+    AccountsModule, // <-- THÊM
   ],
 })
 export class AppModule {}

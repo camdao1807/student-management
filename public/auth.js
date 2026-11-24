@@ -29,10 +29,11 @@ const Auth = {
     if (!u) return;
     const staffPages = [
       'dashboard.html', 'student.html', 'student-classes.html',
-      'advisor-classe-sections.html', 'courses.html', 'grades.html', 'student-status.html',
+      'advisor-classe-sections.html', 'courses.html', 'grades.html',
+      'student-status.html', 'user.html',
     ];
     const allowed = {
-      admin: [...staffPages, 'user.html'],
+      admin: [...staffPages, 'accounts.html'],
       staff: staffPages,
       advisor: staffPages,
       student: ['student-portal.html'],
