@@ -13,6 +13,7 @@ import { Term } from './entities/term.entity';
 import { Enrollment } from './entities/enrollment.entity';
 import { Grade } from './entities/grade.entity';
 import { Attendance } from './entities/attendance.entity';
+import { AttendanceSession } from './entities/attendance-session.entity'; // <-- THÊM
 import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -47,6 +48,7 @@ import { CourseTeachingsModule } from './modules/course-teachings/course-teachin
         Enrollment,
         Grade,
         Attendance,
+        AttendanceSession, // <-- THÊM
       ],
       synchronize: false,
     }),
@@ -61,8 +63,12 @@ import { CourseTeachingsModule } from './modules/course-teachings/course-teachin
     AuthModule,
     UsersModule,
     AccountsModule,
+<<<<<<< HEAD
     SubstitutesModule,
     CourseTeachingsModule, // <-- THÊM
+=======
+    AttendanceModule, // <-- THÊM
+>>>>>>> 5be436fedb8c806d3bb46354662ca4eeee9fd2c0
   ],
 })
 export class AppModule {}

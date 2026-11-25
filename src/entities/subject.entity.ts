@@ -31,4 +31,7 @@ export class Subject {
 
   @DeleteDateColumn({ name: 'deleted_at' })
   deletedAt: Date | null;
+
+  @Column({ name: 'course_id', type: 'bigint', nullable: true })
+  courseId: string | null;
 }

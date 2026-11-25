@@ -24,6 +24,10 @@
       <svg viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h14V10"/></svg>
       Trang chủ
     </a>
+    <a class="nav-item" href="#notices" data-key="notices">
+      <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      Thông báo <span class="nav-badge" id="navNoticeCount" hidden>0</span>
+    </a>
 
     <div class="nav-title">HỌC PHẦN</div>
     <a class="nav-item" href="#register" data-key="register">
@@ -49,6 +53,12 @@
       Chuyên cần
     </a>
 
+    <div class="nav-title">TÀI CHÍNH</div>
+    <a class="nav-item" href="#tuition" data-key="tuition">
+      <svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Học phí
+    </a>
+
     <div class="side-user">
       <div class="avatar" id="sideAvatar">SV</div>
       <div><b id="sideName">Sinh viên</b><span id="sideCode">Đang tải...</span></div>
@@ -59,6 +69,15 @@
   <main class="content">
     <div class="topbar">
       <div class="crumb">Cổng sinh viên / <b id="crumbPage">Trang chủ</b></div>
+
+      <div class="top-right">
+      <div class="bell-wrap">
+        <button class="bell" id="bellBtn" type="button" aria-label="Thông báo">
+          <svg viewBox="0 0 24 24"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="bell-dot" id="bellCount" hidden>0</span>
+        </button>
+        <div class="bell-menu" id="bellMenu"></div>
+      </div>
 
       <div class="user-wrap" id="userWrap">
         <div class="user-area" id="userBtn" role="button" tabindex="0">
@@ -79,6 +98,7 @@
             Đăng xuất
           </a>
         </div>
+      </div>
       </div>
     </div>
 
@@ -159,6 +179,14 @@
         <button type="submit" class="primary" id="pwdSave">Đổi mật khẩu</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Modal đọc thông báo -->
+<div class="overlay" id="annOverlay">
+  <div class="modal" style="max-width:580px">
+    <div id="annBody"></div>
+    <div class="modal-actions"><button type="button" onclick="closeAnn()">Đóng</button></div>
   </div>
 </div>
 
