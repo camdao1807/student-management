@@ -69,8 +69,27 @@ async function load() {
     const pages = Math.max(1, Math.ceil(d.total / state.limit));
     $('info').textContent = `Hiển thị ${d.items.length} / ${d.total} sinh viên`;
     $('pages').innerHTML = Array.from({ length: pages }, (_, i) => `<button class="sm ${i + 1 === state.page ? 'on' : ''}" data-p="${i + 1}">${i + 1}</button>`).join('');
+    loadTrend();
   } catch (e) { toast(e.message, false); }
 }
+
+// Theo dõi điểm trung bình qua các học kỳ (một môn hoặc tất cả các môn)
+async function loadTrend() {
+  try {
+    const all = $('tScope').value === 'all';
+    const d = await api(`${API}/trend${all || !state.courseId ? '' : `?courseId=${state.courseId}`}`);
+    $('trendRows').innerHTML = d.items.length ? d.items.map((r) => `<tr class="pick ${r.term === state.term ? 'sel' : ''}" data-term="${r.term}">
+      <td><b>${termLabel(r.term)}</b></td><td>${r.graded} / ${r.total}</td><td>${r.avg10 === null ? '—' : r.avg10.toFixed(2)}</td>
+      <td>${r.avg4 === null ? '—' : r.avg4.toFixed(2)}</td><td>${r.passRate === null ? '—' : r.passRate + '%'}</td>
+      <td><div class="progress"><i style="width:${r.avg4 === null ? 0 : Math.round((r.avg4 / 4) * 100)}%"></i></div></td></tr>`).join('')
+      : '<tr><td colspan="6" class="empty">Chưa có dữ liệu điểm.</td></tr>';
+  } catch (e) { toast(e.message, false); }
+}
+$('tScope').onchange = loadTrend;
+$('trendRows').onclick = (e) => {
+  const tr = e.target.closest('tr[data-term]'); if (!tr) return;
+  state.term = tr.dataset.term; $('fTerm').value = state.term; state.page = 1; load();
+};
 
 // Lưu từng ô điểm khi rời ô nhập, cập nhật tại chỗ để không mất vị trí con trỏ
 $('rows').onchange = async (e) => {

@@ -1,5 +1,5 @@
 /** Giữ lại để DTO cũ (nếu có @IsIn(TERMS)) vẫn chạy. Service mới lấy học kỳ từ bảng `terms`. */
-export const TERMS = ['2025-2026-HK1', '2025-2026-HK2', '2026-2027-HK1', '2026-2027-HK2'];
+export const TERMS = ['2023-2024-HK1', '2023-2024-HK2', '2024-2025-HK1', '2024-2025-HK2', '2025-2026-HK1', '2025-2026-HK2', '2026-2027-HK1', '2026-2027-HK2'];
 export const CURRENT_TERM = '2026-2027-HK1';
 export const FAIL_ATTENDANCE = 5; // Chuyên cần dưới 5.0 → cấm thi, điểm F
 
