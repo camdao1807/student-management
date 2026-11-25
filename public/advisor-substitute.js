@@ -2,10 +2,11 @@
 const SAPI = '/substitute-teachings';
 const SLABEL = { assigned: 'Đã phân công', completed: 'Đã hoàn thành' };
 const SCOLOR = { assigned: 's-upcoming', completed: 's-active' };
-const sq = { search: '', date: '', classId: '', employeeId: '', status: '' };
+const sq = { search: '', date: '', sectionId: '', employeeId: '', status: '' };
 const now = new Date();
 let sTimer, workLast = null;
 const q2 = (o) => { const p = new URLSearchParams(); Object.entries(o).forEach(([k, v]) => v !== '' && v != null && p.set(k, v)); return p; };
+const optSec = (arr, first) => `<option value="">${first}</option>` + arr.map((x) => `<option value="${x.id}" data-lec="${esc(x.lecturerName || '')}">${esc(x.code)} - ${esc(x.name)} (${esc(x.termLabel)})</option>`).join('');
 const opt = (arr, first) => `<option value="">${first}</option>` + arr.map((x) => `<option value="${x.id}">${esc(x.code)} - ${esc(x.name)}</option>`).join('');
 
 function showTab(name) {
@@ -16,9 +17,9 @@ function showTab(name) {
 document.querySelectorAll('.av-tab').forEach((b) => (b.onclick = () => showTab(b.dataset.tab)));
 
 async function loadSubOptions() {
-  const { classes, employees } = await api(`${SAPI}/options`);
-  $('hClass').innerHTML = opt(classes, 'Lớp: Tất cả'); $('sClass').innerHTML = opt(classes, 'Lớp: Tất cả');
-  $('mClass').innerHTML = opt(classes, '-- Chọn lớp --'); $('mEmp').innerHTML = opt(employees, '-- Chọn giáo viên --');
+  const { classes, sections, employees } = await api(`${SAPI}/options`);
+  $('hClass').innerHTML = opt(classes, 'Lớp: Tất cả'); $('sClass').innerHTML = optSec(sections, 'Lớp học phần: Tất cả');
+  $('mClass').innerHTML = optSec(sections, '-- Chọn lớp học phần --'); $('mEmp').innerHTML = opt(employees, '-- Chọn giáo viên --');
   $('sEmp').innerHTML = opt(employees, 'Giáo viên: Tất cả'); $('wEmp').innerHTML = opt(employees, 'Giáo viên: Tất cả');
   $('wMonth').innerHTML = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">Tháng ${i + 1}</option>`).join('');
   $('wYear').innerHTML = [-2, -1, 0, 1].map((d) => `<option>${now.getFullYear() + d}</option>`).join('');
@@ -55,14 +56,14 @@ async function loadSub() {
     $('ssDaysSub').textContent = `Tháng ${st.month}/${st.year}`;
     $('sInfo').innerHTML = `Hiển thị <b>${list.items.length}</b> phân công`;
     $('sRows').innerHTML = list.items.length ? list.items.map((r, i) => `<tr><td>${String(i + 1).padStart(2, '0')}</td>
-      <td><b>${fmt(r.date)}</b></td><td><span class="av-code">${esc(r.classCode)}</span></td><td>${esc(r.mainName)}</td>
+      <td><b>${fmt(r.date)}</b></td><td><span class="av-code">${esc(r.sectionCode)}</span><small>${esc(r.subjectName)}</small></td><td>${esc(r.mainName || '—')}</td>
       <td><b>${esc(r.subName)}</b></td><td><span class="av-st ${SCOLOR[r.status]}">${SLABEL[r.status]}</span></td><td>${esc(r.note || '—')}</td>
       <td class="av-act">${r.status === 'assigned' ? `<button class="sm" data-done="${r.id}">Xác nhận</button>` : ''}<button class="sm" data-del="${r.id}">Xóa</button></td></tr>`).join('')
       : '<tr><td colspan="8" class="empty">Chưa có phân công dạy thay nào khớp bộ lọc.</td></tr>';
     workLast = wd; $('wTotal').textContent = wd.total;
     $('wSum').innerHTML = wd.summary.length ? wd.summary.map((r, i) => `<tr><td>${String(i + 1).padStart(2, '0')}</td><td><b>${esc(r.name)}</b> <span class="av-code">${esc(r.code)}</span></td><td style="text-align:right"><b style="color:var(--pri)">${r.days}</b> ngày</td></tr>`).join('')
       : '<tr><td colspan="3" class="empty">Không có ngày công trong kỳ này.</td></tr>';
-    $('wDet').innerHTML = wd.details.length ? wd.details.map((r) => `<tr><td>${esc(r.subName)}</td><td>${fmt(r.date)}</td><td><span class="av-code">${esc(r.classCode)}</span></td><td>${esc(r.mainName)}</td><td>${esc(r.note || '—')}</td></tr>`).join('')
+    $('wDet').innerHTML = wd.details.length ? wd.details.map((r) => `<tr><td>${esc(r.subName)}</td><td>${fmt(r.date)}</td><td><span class="av-code">${esc(r.sectionCode)}</span></td><td>${esc(r.mainName || '—')}</td><td>${esc(r.note || '—')}</td></tr>`).join('')
       : '<tr><td colspan="5" class="empty">Không có dữ liệu.</td></tr>';
   } catch (e) { alert(e.message); }
 }
@@ -74,15 +75,16 @@ $('sRows').onclick = async (e) => {
     if (b.dataset.del && confirm('Xóa phân công dạy thay này?')) { await api(`${SAPI}/${b.dataset.del}`, { method: 'DELETE' }); loadSub(); }
   } catch (err) { alert(err.message); }
 };
-$('btnAddSub').onclick = () => { $('eSub').style.display = 'none'; $('mDate').value = now.toISOString().slice(0, 10); $('mNote').value = ''; open('mSub'); };
+$('mClass').onchange = () => { const o = $('mClass').selectedOptions[0]; $('mMain').textContent = o && o.value ? `Giảng viên phụ trách lớp học phần: ${o.dataset.lec || 'Chưa phân công'}` : ''; };
+$('btnAddSub').onclick = () => { $('eSub').style.display = 'none'; $('mMain').textContent = ''; $('mDate').value = now.toISOString().slice(0, 10); $('mNote').value = ''; open('mSub'); };
 $('btnSaveSub').onclick = async () => {
   try {
-    await api(SAPI, { method: 'POST', body: JSON.stringify({ studentClassId: +$('mClass').value, substituteEmployeeId: +$('mEmp').value, teachingDate: $('mDate').value, note: $('mNote').value }) });
+    await api(SAPI, { method: 'POST', body: JSON.stringify({ sectionId: +$('mClass').value, substituteEmployeeId: +$('mEmp').value, teachingDate: $('mDate').value, note: $('mNote').value }) });
     closeAll(); loadSub();
   } catch (e) { $('eSub').textContent = e.message; $('eSub').style.display = 'block'; }
 };
 const sFilter = (id, key, ev = 'onchange') => ($(id)[ev] = (e) => { sq[key] = e.target.value.trim(); loadSub(); });
-sFilter('sDate', 'date'); sFilter('sClass', 'classId'); sFilter('sEmp', 'employeeId'); sFilter('sStatus', 'status');
+sFilter('sDate', 'date'); sFilter('sClass', 'sectionId'); sFilter('sEmp', 'employeeId'); sFilter('sStatus', 'status');
 $('sQ').oninput = (e) => { clearTimeout(sTimer); sTimer = setTimeout(() => { sq.search = e.target.value.trim(); loadSub(); }, 300); };
 $('sReset').onclick = () => { Object.keys(sq).forEach((k) => (sq[k] = '')); ['sQ', 'sDate', 'sClass', 'sEmp', 'sStatus'].forEach((id) => ($(id).value = '')); loadSub(); };
 ['wEmp', 'wMonth', 'wYear'].forEach((id) => ($(id).onchange = loadSub));
@@ -90,7 +92,7 @@ document.querySelectorAll('[data-sst]').forEach((c) => (c.onclick = () => { sq.s
 $('wExport').onclick = () => {
   if (!workLast) return;
   const q = (v) => `"${String(v ?? '').replace(/"/g, '""')}"`;
-  const rows = [['Giáo viên dạy thay', 'Ngày dạy', 'Lớp', 'GV chính', 'Ghi chú'], ...workLast.details.map((r) => [r.subName, r.date, r.classCode, r.mainName, r.note || '']),
+  const rows = [['Giáo viên dạy thay', 'Ngày dạy', 'Lớp học phần', 'GV chính', 'Ghi chú'], ...workLast.details.map((r) => [r.subName, r.date, r.sectionCode, r.mainName, r.note || '']),
     [], ['Tổng số ngày công', workLast.total]];
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob(['\ufeff' + rows.map((r) => r.map(q).join(',')).join('\r\n')], { type: 'text/csv;charset=utf-8' }));

@@ -63,12 +63,8 @@ import { CourseTeachingsModule } from './modules/course-teachings/course-teachin
     AuthModule,
     UsersModule,
     AccountsModule,
-<<<<<<< HEAD
     SubstitutesModule,
     CourseTeachingsModule, // <-- THÊM
-=======
-    AttendanceModule, // <-- THÊM
->>>>>>> 5be436fedb8c806d3bb46354662ca4eeee9fd2c0
   ],
 })
 export class AppModule {}
