@@ -13,6 +13,7 @@ import { Term } from './entities/term.entity';
 import { Enrollment } from './entities/enrollment.entity';
 import { Grade } from './entities/grade.entity';
 import { Attendance } from './entities/attendance.entity';
+import { AttendanceSession } from './entities/attendance-session.entity'; // <-- THÊM
 import { AdvisorsModule } from './modules/advisors/advisors.module';
 import { StudentStatusModule } from './modules/student-status/student-status.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
@@ -22,7 +23,8 @@ import { GradesModule } from './modules/grades/grades.module';
 import { StudentPortalModule } from './modules/student-portal/student-portal.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊM
+import { AccountsModule } from './modules/accounts/accounts.module';
+import { AttendanceModule } from './modules/attendance/attendance.module'; // <-- THÊM
 
 @Module({
   imports: [
@@ -46,6 +48,7 @@ import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊ
         Enrollment,
         Grade,
         Attendance,
+        AttendanceSession, // <-- THÊM
       ],
       synchronize: false,
     }),
@@ -59,7 +62,8 @@ import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊ
     GradesModule,
     AuthModule,
     UsersModule,
-    AccountsModule, // <-- THÊM
+    AccountsModule,
+    AttendanceModule, // <-- THÊM
   ],
 })
 export class AppModule {}

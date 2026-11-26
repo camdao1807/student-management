@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Điểm danh sinh viên | Student Management</title>
+<link rel="stylesheet" href="/layout.css">
+<link rel="stylesheet" href="/dashboard.css">
+<link rel="stylesheet" href="/attendance.css">
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
+    </div>
+    <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+
+    <a class="nav-item" href="/dashboard.html">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="8" height="8" rx="1"/>
+        <rect x="13" y="3" width="8" height="5" rx="1"/>
+        <rect x="13" y="10" width="8" height="11" rx="1"/>
+        <rect x="3" y="13" width="8" height="8" rx="1"/>
+      </svg>
+      Dashboard
+    </a>
+
+    <a class="nav-item" href="/student.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M22 10L12 5 2 10l10 5 10-5z"/>
+        <path d="M6 12v5c3 2 9 2 12 0v-5"/>
+      </svg>
+      Quản lý sinh viên
+    </a>
+
+    <a class="nav-item" href="/faculty.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 21h18M5 21V7l7-4 7 4v14"/>
+        <path d="M9 9h2m2 0h2M9 13h2m2 0h2M9 17h2m2 0h2"/>
+      </svg>
+      Quản lý khoa
+    </a>
+
+    <a class="nav-item" href="/student-classes.html">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5"/>
+        <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/>
+      </svg>
+      Quản lý lớp học
+    </a>
+
+    <a class="nav-item" href="advisor-classe-sections.html" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <circle cx="12" cy="10" r="3"/>
+        <path d="M7 18c1-2 3-3 5-3s4 1 5 3"/>
+      </svg>
+      Quản lý giảng viên
+    </a>
+    <a class="nav-item active" href="attendance.html">
+      <svg viewBox="0 0 24 24">
+        <rect x="4" y="3" width="16" height="18" rx="2"/>
+        <path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14 9h2.5M14 15h2.5"/>
+      </svg>
+      Điểm danh sinh viên
+    <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
+    <a class="nav-item" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
+
+    <a class="nav-item" href="student-status.html" title="Module của bạn nhóm">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 7h18M3 12h18M3 17h12"/>
+      </svg>
+      Trạng thái học vụ
+    </a>
+
+    <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
+
+    <a class="nav-item" href="/accounts.html">
+      <svg viewBox="0 0 24 24">
+        <circle cx="9" cy="8" r="3.5"/>
+        <path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/>
+        <path d="M17 11l2 2 4-4"/>
+      </svg>
+      Quản lý tài khoản
+    </a>
+
+    <a class="nav-item" href="/user.html">
+      <svg viewBox="0 0 24 24">
+        <circle cx="12" cy="8" r="4"/>
+        <path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>
+      </svg>
+      Tài khoản của tôi
+    </a>
+  </aside>
+
+  <div class="content dashboard-content">
+
+    <header class="topbar">
+      <div class="crumb">
+  <a href="/dashboard.html">Trang chủ</a> / <b>Điểm danh</b>
+</div>
+      <div class="user-area" id="userArea">
+        <a class="login-btn" href="/login.html">
+          <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập
+        </a>
+      </div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Điểm danh &amp; Theo dõi chuyên cần</h1>
+        <p>Kiểm soát tỷ lệ chuyên cần từng buổi học, phát hiện sinh viên vắng quá 20% định mức cấm thi.</p>
+      </div>
+      <div class="head-actions">
+        <button type="button" id="btnExport"><svg viewBox="0 0 24 24" class="ic"><path d="M12 3v12m0 0l-4-4m4 4l4-4M5 17v4h14v-4"/></svg>Xuất báo cáo (CSV)</button>
+        <button type="button" id="btnBan" class="danger-soft"><svg viewBox="0 0 24 24" class="ic"><path d="M12 8v5m0 3h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg>Danh sách nguy cơ cấm thi</button>
+      </div>
+    </div>
+
+    <div id="pageError" class="state-line error-state" role="alert" hidden></div>
+
+    <section class="metric-grid" aria-label="Chỉ số chuyên cần">
+      <article class="metric metric-studying">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 11l2 2 3-3"/></svg></span><span class="badge" id="mPresentBadge">—</span></div>
+        <span class="metric-label">Tỷ lệ có mặt buổi này</span>
+        <strong id="mPresent">—</strong>
+        <small id="mPresentSub">—</small>
+      </article>
+      <article class="metric metric-classes">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg></span><span class="badge" id="mSessionsPct">—</span></div>
+        <span class="metric-label">Buổi đã khóa sổ</span>
+        <strong><span id="mSessions">—</span> <em class="of">/ <span id="mSessionsTotal">—</span></em></strong>
+        <div class="mini-bar"><i id="mSessionsBar"></i></div>
+      </article>
+      <article class="metric metric-warn">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><path d="M12 8v5m0 3h.01M10.3 3.9L2.4 18a2 2 0 001.7 3h15.8a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z"/></svg></span><span class="badge">Nguy cơ cấm thi</span></div>
+        <span class="metric-label">Cảnh báo vắng &gt; 20%</span>
+        <strong id="mWarn">—</strong>
+        <small>sinh viên của học phần này</small>
+      </article>
+      <article class="metric metric-employees">
+        <div class="metric-top"><span class="metric-mark"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 12l3 3 5-6"/></svg></span><span class="badge">Có phép</span></div>
+        <span class="metric-label">Vắng có phép buổi này</span>
+        <strong id="mExcused">—</strong>
+        <small>không tính vào số buổi vắng</small>
+      </article>
+    </section>
+
+    <section class="panel section-panel">
+      <div class="section-top">
+        <label class="section-pick">Môn học &amp; lớp học phần
+          <select id="sectionSelect"><option value="">Đang tải...</option></select>
+        </label>
+        <ul class="section-info" id="sectionInfo"></ul>
+      </div>
+      <div class="chips-head"><span>Tiến độ giảng dạy &amp; buổi học (<span id="sessionTotal">—</span> buổi)</span><button type="button" class="link-btn" id="btnOpenSession" hidden>+ Mở buổi học tiếp theo</button></div>
+      <div class="session-chips" id="sessionChips"></div>
+    </section>
+
+    <div class="att-layout">
+      <section class="panel att-main">
+        <div class="att-filters">
+          <span class="search-input"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Tìm MSSV hoặc họ tên"></span>
+          <select id="statusFilter">
+            <option value="all">Tất cả trạng thái</option>
+            <option value="present">Có mặt</option><option value="excused">Có phép</option>
+            <option value="absent">Vắng</option><option value="late">Đi muộn</option>
+            <option value="unmarked">Chưa điểm danh</option>
+          </select>
+          <button type="button" id="btnRisk" class="risk-btn">Lọc nguy cơ (&gt;15% vắng)</button>
+        </div>
+        <div class="legend-row">
+          <span><i class="lg lg-present"></i>Có mặt</span><span><i class="lg lg-excused"></i>Có phép</span>
+          <span><i class="lg lg-absent"></i>Không phép</span><span><i class="lg lg-late"></i>Muộn</span>
+          <button type="button" class="link-btn" id="btnAllPresent">Chọn tất cả có mặt</button>
+          <button type="button" class="link-btn" id="btnResetMarks">Đặt lại</button>
+        </div>
+
+        <div id="reportState" class="state-line" role="status" aria-live="polite" hidden></div>
+        <div class="table-scroll">
+          <table class="report-table att-table">
+            <thead><tr>
+              <th class="index-col">STT</th><th>MSSV</th><th>Họ và tên</th><th>Lớp HC</th>
+              <th>Tình trạng <span id="sessionLabel"></span></th><th>Vắng lũy kế</th>
+            </tr></thead>
+            <tbody id="attBody"></tbody>
+          </table>
+        </div>
+        <div id="attEmpty" class="empty-report" hidden>Không có sinh viên phù hợp.</div>
+        <div class="report-footer">
+          <span id="recordCount">0 sinh viên</span>
+          <div class="pager">
+            <label>Số dòng<select id="pageLimit"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></label>
+            <button type="button" id="prevPage" aria-label="Trang trước">‹</button>
+            <span id="pageNumber">Trang 1 / 1</span>
+            <button type="button" id="nextPage" aria-label="Trang sau">›</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="att-side">
+        <section class="panel side-card">
+          <div class="side-head"><div><small>PHIẾU ĐIỂM DANH</small><h2 id="sumTitle">—</h2></div><span class="lock-badge" id="lockBadge"></span></div>
+          <div class="sum-total">Tổng số sinh viên: <b id="sumTotal">—</b></div>
+          <div class="stack-bar" id="sumBar"></div>
+          <ul class="sum-list" id="sumList"></ul>
+          <label class="note-label">Ghi chú giảng viên cho buổi học
+            <textarea id="note" rows="3" placeholder="Ghi chú về nội dung bài tập, sinh viên vi phạm..."></textarea>
+          </label>
+          <button type="button" id="btnLock" class="primary full">Lưu &amp; Khóa sổ điểm danh</button>
+          <button type="button" id="btnSave" class="full">Lưu nháp</button>
+          <button type="button" id="btnPrint" class="full">Xuất biên bản điểm danh (In / PDF)</button>
+        </section>
+
+        <section class="panel side-card">
+          <div class="side-head"><h2>Lịch sử điểm danh gần đây</h2></div>
+          <ul class="history" id="historyList"></ul>
+        </section>
+      </div>
+    </div>
+
+    <section class="panel rule-note">
+      <b>Quy chế đào tạo tín chỉ:</b> sinh viên vắng quá <b class="red">20% tổng số tiết quy định</b> của học phần sẽ bị cấm thi kết thúc học phần. Buổi vắng <b>có phép</b> (có minh chứng) không tính vào số buổi vắng.
+    </section>
+  </div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
+<script src="/attendance.js"></script>
+</body>
+</html>
