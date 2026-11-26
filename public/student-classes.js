@@ -77,7 +77,7 @@ function renderClasses() {
   const year = $('yearFilter').value;
 
   const shown = classes.filter((c) => {
-    const text = `${c.classCode} ${c.className} ${c.majorName}`.toLowerCase();
+    const text = `${c.classCode} ${c.className} ${Catalog.canonical(c.majorName)}`.toLowerCase();
     const adv = advisorsMap.get(String(c.id));
     const advText = adv ? `${adv.name} ${adv.code}`.toLowerCase() : '';
     const okKw = !kw || text.includes(kw);
@@ -95,7 +95,7 @@ function renderClasses() {
         <td>${String(i + 1).padStart(2, '0')}</td>
         <td><span class="code">${esc(c.classCode)}</span></td>
         <td>${esc(c.className)}</td>
-        <td>${esc(c.majorName)}</td>
+        <td>${esc(Catalog.canonical(c.majorName))}</td>
         <td>${adv ? esc(adv.name) : '<span class="muted">Chưa có</span>'}</td>
         <td>${esc(c.academicYear)}</td>
         <td><strong>${c.studentCount}</strong></td>
@@ -147,6 +147,16 @@ async function deleteClass(id) {
 const dialog = $('classDialog');
 const form = $('classForm');
 
+// Ô Ngành học lấy từ danh sách khoa/ngành dùng chung
+function populateMajors() {
+  form.majorName.innerHTML =
+    '<option value="">-- Chọn ngành --</option>' +
+    Catalog.FACULTIES.map((f) =>
+      `<optgroup label="${esc(f.name)}">${f.majors.map((m) => `<option value="${esc(m)}">${esc(m)}</option>`).join('')}</optgroup>`,
+    ).join('');
+}
+populateMajors();
+
 function openDialog(cls) {
   editingId = cls ? cls.id : null;
   $('dialogTitle').textContent = cls ? 'Sửa lớp' : 'Thêm lớp';
@@ -155,7 +165,11 @@ function openDialog(cls) {
   if (cls) {
     form.classCode.value = cls.classCode;
     form.clsName.value = cls.className;
-    form.majorName.value = cls.majorName;
+    const major = Catalog.canonical(cls.majorName);
+    if (![...form.majorName.options].some((o) => o.value === major)) {
+      form.majorName.add(new Option(major, major)); // ngành lạ chưa có trong danh sách chung
+    }
+    form.majorName.value = major;
     form.academicYear.value = cls.academicYear;
     form.isActive.checked = cls.isActive;
   }
