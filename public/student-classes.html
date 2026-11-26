@@ -13,6 +13,7 @@
 @media (max-width:1100px){.report-filters{grid-template-columns:1fr 1fr}}
 @media (max-width:640px){.report-filters{grid-template-columns:1fr}}
 .muted{color:#94a3b8}
+.head-actions{display:flex;gap:10px;flex-wrap:wrap}
 .report-table th,.report-table td{white-space:nowrap}
 </style>
 </head>
@@ -77,13 +78,6 @@
       </svg>
       Trạng thái học vụ
     </a>
-    <a class="nav-item" href="/announcements.html">
-      <svg viewBox="0 0 24 24">
-        <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/>
-        <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>
-      </svg>
-      Thông báo sinh viên
-    </a>
 
     <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
 
@@ -124,6 +118,7 @@
         <p>Tạo lớp, cập nhật thông tin lớp và chuyển sinh viên giữa các lớp.</p>
       </div>
       <div class="head-actions">
+        <button type="button" id="btnSeed" title="Tự tạo 2 lớp cho mỗi ngành chưa có lớp">Thêm lớp mẫu</button>
         <button type="button" class="primary" id="btnAdd">
           <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>Thêm lớp
         </button>
