@@ -3,7 +3,7 @@ const CAT = { general: 'Đại cương', foundation: 'Cơ sở ngành', major: '
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const state = { page: 1, limit: 10, search: '', department: '', category: '', status: '', credits: '' };
-let current = null, courseList = [], editing = null, timer;
+let current = null, courseList = [], editing = null, timer, teach = {};
 
 function toast(msg, ok = true) {
   const t = $('toast'); t.textContent = msg; t.style.background = ok ? '#16a34a' : '#dc2626'; t.style.display = 'block';
@@ -16,11 +16,18 @@ async function api(url, opt = {}) {
   return data;
 }
 const creditText = (c) => `${c.credits} (${c.theoryCredits}+${c.practiceCredits})`;
+const loadTeach = async () => { teach = Object.fromEntries((await api('/course-teachings')).map((t) => [t.courseId, t])); };
+const termCell = (id) => (teach[id]?.termLabel ? `<span class="tag s-graduated">${esc(teach[id].termLabel)}</span>` : '<span class="mut">—</span>');
+const lecCell = (id) => (teach[id]?.lecturerName ? `${esc(teach[id].lecturerName)}<small>${esc(teach[id].lecturerCode)}</small>` : '<span class="mut">—</span>');
 const pct = (a, b) => (b ? Math.round((a / b) * 1000) / 10 : 0);
 
 async function init() {
   const o = await api(`${API}/options`);
   courseList = o.courses;
+  const to = await api('/course-teachings/options');
+  $('fTerm').innerHTML += to.terms.map((t) => `<option value="${t.id}">${esc(t.label)}</option>`).join('');
+  $('fLecturer').innerHTML += to.employees.map((e) => `<option value="${e.id}">${esc(e.code)} - ${esc(e.name)}</option>`).join('');
+  await loadTeach();
   $('fDept').innerHTML += o.departments.map((d) => `<option>${esc(d)}</option>`).join('');
   $('deptList').innerHTML = o.departments.map((d) => `<option value="${esc(d)}">`).join('');
   loadStats(); load();
@@ -46,9 +53,9 @@ async function load() {
     <tr class="pick ${current === c.id ? 'sel' : ''}" data-id="${c.id}">
       <td>${String(off + i + 1).padStart(2, '0')}</td><td><b>${esc(c.code)}</b></td>
       <td>${esc(c.name)}<small>${esc(c.description)}</small></td><td>${creditText(c)}</td>
-      <td>${esc(c.department)}</td><td>${c.prerequisiteCount || '—'}</td>
+      <td>${esc(c.department)}</td><td>${termCell(c.id)}</td><td>${lecCell(c.id)}</td><td>${c.prerequisiteCount || '—'}</td>
       <td><span class="tag ${c.status === 'active' ? 's-active' : 's-ended'}">${c.status === 'active' ? 'Đang giảng dạy' : 'Ngưng'}</span></td></tr>`).join('')
-    : '<tr><td colspan="7" class="empty">Không có môn học nào khớp bộ lọc.</td></tr>';
+    : '<tr><td colspan="9" class="empty">Không có môn học nào khớp bộ lọc.</td></tr>';
   const pages = Math.max(1, Math.ceil(total / state.limit));
   $('info').textContent = `Hiển thị ${items.length} / ${total} môn học`;
   $('pages').innerHTML = Array.from({ length: pages }, (_, i) => `<button class="sm ${i + 1 === state.page ? 'on' : ''}" data-p="${i + 1}">${i + 1}</button>`).join('');
@@ -66,7 +73,7 @@ async function showDetail(id) {
     <div><span class="tag s-graduated">${esc(c.code)}</span>
       <span class="tag ${c.status === 'active' ? 's-active' : 's-ended'}">${c.status === 'active' ? 'Đang giảng dạy' : 'Ngưng giảng dạy'}</span></div>
     <h2>${esc(c.name)}</h2>
-    <div class="mut">${esc(c.description)}<br>${CAT[c.category]} • ${c.isRequired ? 'Bắt buộc' : 'Tự chọn'} • ${esc(c.department)}</div>
+    <div class="mut">${esc(c.description)}<br>${CAT[c.category]} • ${c.isRequired ? 'Bắt buộc' : 'Tự chọn'} • ${esc(c.department)}<br>${esc(teach[c.id]?.termLabel || 'Chưa có học kỳ')} • GV phụ trách: ${esc(teach[c.id]?.lecturerName || 'Chưa phân công')}</div>
     <div style="margin-top:10px"><button id="btnEdit">Chỉnh sửa</button>
       <span class="tag ${c.syllabusApproved ? 's-active' : 's-suspended'}" style="margin-left:6px">${c.syllabusApproved ? 'Đề cương đã nghiệm thu' : 'Đề cương chưa nghiệm thu'}</span></div>
     <h4>Cơ cấu khối lượng (${c.credits} tín chỉ)</h4>
@@ -106,6 +113,7 @@ function openModal(c) {
   $('fCode').value = d.code; $('fName').value = d.name; $('fDesc').value = d.description || ''; $('fDepartment').value = d.department;
   $('fCategory').value = d.category; $('fTheory').value = d.theoryCredits; $('fPractice').value = d.practiceCredits;
   $('wAtt').value = d.wAttendance; $('wAss').value = d.wAssignment; $('wMid').value = d.wMidterm; $('wFin').value = d.wFinal;
+  $('fTerm').value = (c && teach[c.id]?.termId) || ''; $('fLecturer').value = (c && teach[c.id]?.lecturerId) || '';
   $('fRequired').checked = d.isRequired; $('fApproved').checked = d.syllabusApproved; $('fStat').value = d.status;
   $('eCourse').style.display = 'none'; $('btnSave').dataset.id = c ? c.id : ''; sumW(); open('mCourse');
 }
@@ -120,6 +128,8 @@ $('btnSave').onclick = async () => {
   };
   try {
     const saved = await api(id ? `${API}/${id}` : API, { method: id ? 'PATCH' : 'POST', body: JSON.stringify(body) });
+    await api(`/course-teachings/${saved.id}`, { method: 'PATCH', body: JSON.stringify({ termId: $('fTerm').value || null, lecturerId: $('fLecturer').value || null }) });
+    await loadTeach();
     closeAll(); toast(id ? 'Đã cập nhật môn học' : 'Đã thêm môn học');
     const o = await api(`${API}/options`); courseList = o.courses;
     await Promise.all([loadStats(), showDetail(saved.id)]);

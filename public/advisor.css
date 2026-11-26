@@ -1,0 +1,47 @@
+/* Giao diện trang Quản lý giảng viên / CVHT — nạp sau modules.css */
+.av-head{display:flex;align-items:center;gap:14px;margin:4px 0 18px;flex-wrap:wrap}
+.av-icon{width:44px;height:44px;border-radius:12px;background:var(--pri-l);color:var(--pri);display:grid;place-items:center;flex:none}
+.av-icon svg,.av-ico svg,.av-reset svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.av-title{flex:1;min-width:240px}.av-title h1{margin:0;font-size:24px}.av-title p{margin:2px 0 0;color:var(--mut)}
+.av-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
+.av-card{position:relative;overflow:hidden;background:#fff;border:1px solid var(--bd);border-radius:12px;padding:16px 18px 20px;cursor:pointer;transition:box-shadow .15s}
+.av-card:hover{box-shadow:0 4px 14px rgba(37,99,235,.12)}
+.av-ctop{display:flex;justify-content:space-between;align-items:center}
+.av-lbl{font-size:12px;font-weight:700;letter-spacing:.04em;color:#3b4660;display:flex;align-items:center;gap:7px}
+.av-lbl:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--c)}
+.av-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 12%,#fff);color:var(--c)}
+.av-num{margin-top:8px;font-size:34px;font-weight:800;line-height:1.1}.av-num span{font-size:14px;font-weight:600;color:var(--mut)}
+.av-sub{margin-top:6px;font-size:12px;color:var(--mut)}.av-sub b{color:var(--c)}
+.av-line{position:absolute;left:0;bottom:0;height:4px;background:var(--c);width:100%;transition:width .3s}
+.av-panel{background:#fff;border:1px solid var(--bd);border-radius:12px;padding:18px 20px}
+.av-tools{display:flex;gap:10px;flex-wrap:wrap}.av-tools input{flex:1;min-width:220px}
+.av-reset{padding:9px 11px}
+.av-meta{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font-size:13px;color:var(--mut);margin:12px 0}
+.av-meta b{color:var(--txt)}.av-legend{display:flex;gap:14px}
+.av-legend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:5px}
+.av-table{width:100%;border-collapse:collapse}
+.av-table th{text-align:left;font-size:12px;letter-spacing:.04em;color:#6b7794;padding:12px 10px;border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);background:#fafbfe;white-space:nowrap}
+.av-table td{padding:13px 10px;border-bottom:1px solid #eef1f7;vertical-align:middle}
+.av-table small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.av-table .empty{text-align:center;color:var(--mut);padding:28px}
+.av-code{font-family:ui-monospace,Consolas,monospace;font-size:12px;font-weight:600;background:#eef1f7;color:#3b4660;padding:3px 8px;border-radius:6px;white-space:nowrap}
+.av-who{display:flex;align-items:center;gap:12px}
+.av-ava{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none}
+.av-who b{font-size:15px}
+.av-st{display:inline-block;padding:4px 10px;border-radius:8px;font-size:12px;font-weight:600;white-space:nowrap}
+.av-st.s-active{background:#dcfce7;color:#15803d}.av-st.s-upcoming{background:#fef3c7;color:#b45309}.av-st.s-ended{background:#eef1f7;color:#64748b}
+.av-act{white-space:nowrap;text-align:right}
+@media(max-width:1100px){.av-stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.av-stats{grid-template-columns:1fr}}
+/* ===== Tab + 2 phần: phân công CVHT / dạy thay & ngày công ===== */
+.av-tabs{display:flex;gap:6px;border-bottom:1px solid var(--bd);margin:0 0 18px}
+.av-tab{border:0;border-bottom:2px solid transparent;border-radius:0;background:none;padding:10px 16px;color:var(--mut);font-weight:600}
+.av-tab:hover{background:none;color:var(--pri)}.av-tab.on{color:var(--pri);border-bottom-color:var(--pri)}
+.av-pane[hidden]{display:none}.av-pane>.av-panel+.av-panel{margin-top:16px}
+.av-h{margin:0 0 14px;font-size:17px}.av-h2{margin:18px 0 8px;font-size:15px}
+.av-arrow{color:var(--mut);text-align:center;width:40px}
+.av-total{display:flex;gap:24px;align-items:center;background:#eaf1ff;border:1px solid #cfe0ff;border-radius:10px;padding:16px 20px;margin:14px 0}
+.av-total span{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--pri);display:block}
+.av-total b{font-size:34px;color:var(--pri)}.av-total p{margin:0;color:var(--mut);font-size:13px;max-width:640px}
+.av-two{display:grid;grid-template-columns:1fr 1.5fr;gap:24px}
+@media(max-width:1000px){.av-two{grid-template-columns:1fr}}

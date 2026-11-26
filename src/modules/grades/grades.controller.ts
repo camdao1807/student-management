@@ -13,6 +13,7 @@ export class GradesController {
   @Get('options') options() { return this.service.options(); }
   @Get('sheet') sheet(@Query() q: QueryGradeDto) { return this.service.sheet(q); }
   @Get('summary') summary(@Query() q: QueryGradeDto) { return this.service.summary(q); }
+  @Get('trend') trend(@Query('courseId') courseId?: string) { return this.service.trend(courseId ? Number(courseId) : undefined); }
   @Post('enroll') enroll(@Body() dto: EnrollGradeDto) { return this.service.enroll(dto); }
   @Post('lock') lock(@Body() dto: LockGradeDto) { return this.service.lock(dto); }
 

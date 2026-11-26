@@ -35,7 +35,7 @@
       </svg>
       Quản lý sinh viên
     </a>
-
+    <a class="nav-item" href="attendance.html"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14 9h2.5M14 15h2.5"/></svg><span>Điểm danh sinh viên</span></a>
     <a class="nav-item" href="/faculty.html">
       <svg viewBox="0 0 24 24">
         <path d="M3 21h18M5 21V7l7-4 7 4v14"/>
@@ -60,20 +60,21 @@
       </svg>
       Quản lý giảng viên
     </a>
-    <a class="nav-item active" href="attendance.html">
-      <svg viewBox="0 0 24 24">
-        <rect x="4" y="3" width="16" height="18" rx="2"/>
-        <path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14 9h2.5M14 15h2.5"/>
-      </svg>
-      Điểm danh sinh viên
     <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
     <a class="nav-item" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
-
     <a class="nav-item" href="student-status.html" title="Module của bạn nhóm">
       <svg viewBox="0 0 24 24">
         <path d="M3 7h18M3 12h18M3 17h12"/>
       </svg>
       Trạng thái học vụ
+    </a>
+
+    <a class="nav-item" href="/announcements.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>
+      </svg>
+      Thông báo sinh viên
     </a>
 
     <div class="nav-title">HỆ THỐNG & CẤU HÌNH</div>
@@ -163,7 +164,7 @@
     <div class="att-layout">
       <section class="panel att-main">
         <div class="att-filters">
-          <span class="search-input"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Tìm MSSV hoặc họ tên"></span>
+          <span class="search-input"><svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input id="q" type="search" placeholder="Tìm trong lớp học phần: MSSV hoặc họ tên"></span>
           <select id="statusFilter">
             <option value="all">Tất cả trạng thái</option>
             <option value="present">Có mặt</option><option value="excused">Có phép</option>

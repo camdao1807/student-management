@@ -24,6 +24,8 @@ const esc = (v) => String(v ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const pct = (a, b) => (b ? (a / b) * 100 : 0);
 const fmtDate = (v) => (v ? String(v).slice(0, 10).split('-').reverse().join('/') : '—');
 const pad = (n) => String(n).padStart(2, '0');
+/** Bỏ dấu tiếng Việt để tìm kiếm "nguyen" vẫn ra "Nguyễn" */
+const norm = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase();
 
 const state = {
   sections: [], section: null, sessions: [], session: null,
@@ -143,9 +145,9 @@ function renderChips() {
   }).join('');
 }
 function filtered() {
-  const q = state.q.toLowerCase();
+  const q = norm(state.q);
   return state.records.filter((r) => {
-    if (q && !`${r.studentCode} ${r.fullName}`.toLowerCase().includes(q)) return false;
+    if (q && !norm(`${r.studentCode} ${r.fullName} ${r.email || ''}`).includes(q)) return false;
     if (state.status === 'unmarked' ? r.status : state.status !== 'all' && r.status !== state.status) return false;
     if (state.risk && rateOf(r) <= state.risk) return false;
     return true;
@@ -171,6 +173,9 @@ function renderTable() {
     </tr>`;
   }).join('');
   $('attEmpty').hidden = rows.length !== 0;
+  $('attEmpty').textContent = state.records.length
+    ? `Không có sinh viên nào khớp trong lớp học phần này (chỉ tìm trong ${state.records.length} sinh viên đã ghi danh).`
+    : 'Lớp học phần chưa có sinh viên ghi danh.';
   $('recordCount').textContent = `Hiển thị ${Math.min(state.limit, Math.max(0, rows.length - start))} / ${rows.length} sinh viên`;
   $('pageNumber').textContent = `Trang ${state.page} / ${pages}`;
   $('prevPage').disabled = state.page <= 1;
