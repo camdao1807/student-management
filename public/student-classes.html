@@ -7,6 +7,14 @@
 <link rel="stylesheet" href="/layout.css">
 <link rel="stylesheet" href="/dashboard.css">
 <link rel="stylesheet" href="/student-classes.css">
+<style>
+/* Bộ lọc 4 ô trên một hàng (đã bỏ nút Xóa bộ lọc) */
+.report-filters{grid-template-columns:2fr 2fr 1fr 1fr;align-items:end}
+@media (max-width:1100px){.report-filters{grid-template-columns:1fr 1fr}}
+@media (max-width:640px){.report-filters{grid-template-columns:1fr}}
+.muted{color:#94a3b8}
+.report-table th,.report-table td{white-space:nowrap}
+</style>
 </head>
 <body>
 <div class="layout">
@@ -158,7 +166,7 @@
       <div class="report-heading">
         <div>
           <h2 id="classTitle">Danh sách lớp học</h2>
-          <p>Tìm kiếm và lọc theo trạng thái, niên khóa</p>
+          <p>Tìm kiếm và lọc theo lớp, CVHT, trạng thái, niên khóa</p>
         </div>
       </div>
 
@@ -167,6 +175,12 @@
           <span class="search-input">
             <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
             <input id="classSearch" type="search" placeholder="Mã lớp, tên lớp hoặc ngành">
+          </span>
+        </label>
+        <label class="report-search">Tìm CVHT
+          <span class="search-input">
+            <svg viewBox="0 0 24 24" class="ic"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+            <input id="advisorSearch" type="search" placeholder="Tên hoặc mã CVHT">
           </span>
         </label>
         <label>Trạng thái
@@ -179,14 +193,13 @@
         <label>Niên khóa
           <select id="yearFilter"><option value="all">Tất cả niên khóa</option></select>
         </label>
-        <button type="button" id="btnReset" class="clear-filter">Xóa bộ lọc</button>
       </div>
 
       <div class="table-scroll">
         <table class="report-table">
           <thead>
             <tr>
-              <th class="index-col">STT</th><th>Mã lớp</th><th>Tên lớp</th><th>Ngành</th>
+              <th class="index-col">STT</th><th>Mã lớp</th><th>Tên lớp</th><th>Ngành</th><th>CVHT</th>
               <th>Niên khóa</th><th>Sĩ số</th><th>Trạng thái</th><th>Thao tác</th>
             </tr>
           </thead>

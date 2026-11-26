@@ -1,5 +1,6 @@
 const API = '/student-classes';
 let classes = [];
+let advisorsMap = new Map(); // id lớp -> { name, code }
 let selectedId = null;
 let editingId = null;
 let available = [];
@@ -20,6 +21,27 @@ async function api(url, method = 'GET', body) {
     throw new Error(msg || 'Có lỗi xảy ra');
   }
   return data;
+}
+
+// ===== CVHT đang phụ trách (cùng API với trang Quản lý khoa) =====
+async function fetchActiveAdvisors(limit) {
+  const map = new Map();
+  let got = 0;
+  for (let page = 1; page <= 100; page++) {
+    const { items, total } = await api(`/advisor-assignments?status=active&limit=${limit}&page=${page}`);
+    items.forEach((r) => map.set(String(r.studentClassId), { name: r.employeeName, code: r.employeeCode }));
+    got += items.length;
+    if (!items.length || got >= total) break;
+  }
+  return map;
+}
+
+async function loadAdvisors() {
+  try { return await fetchActiveAdvisors(50); }
+  catch (_) {
+    try { return await fetchActiveAdvisors(10); }
+    catch (__) { return new Map(); }
+  }
 }
 
 // ===== Danh sách lớp =====
@@ -50,25 +72,31 @@ function renderYearOptions() {
 
 function renderClasses() {
   const kw = $('classSearch').value.trim().toLowerCase();
+  const advKw = $('advisorSearch').value.trim().toLowerCase();
   const status = $('statusFilter').value;
   const year = $('yearFilter').value;
 
   const shown = classes.filter((c) => {
     const text = `${c.classCode} ${c.className} ${c.majorName}`.toLowerCase();
+    const adv = advisorsMap.get(String(c.id));
+    const advText = adv ? `${adv.name} ${adv.code}`.toLowerCase() : '';
     const okKw = !kw || text.includes(kw);
+    const okAdv = !advKw || advText.includes(advKw);
     const okStatus = status === 'all' || (status === 'active' ? c.isActive : !c.isActive);
     const okYear = year === 'all' || c.academicYear === year;
-    return okKw && okStatus && okYear;
+    return okKw && okAdv && okStatus && okYear;
   });
 
-  // Dùng cùng class với bảng báo cáo ở dashboard: status-pill / status-*
   $('classBody').innerHTML = shown.length
-    ? shown.map((c, i) => `
+    ? shown.map((c, i) => {
+      const adv = advisorsMap.get(String(c.id));
+      return `
       <tr data-id="${c.id}" class="${c.id === selectedId ? 'selected' : ''}">
         <td>${String(i + 1).padStart(2, '0')}</td>
         <td><span class="code">${esc(c.classCode)}</span></td>
         <td>${esc(c.className)}</td>
         <td>${esc(c.majorName)}</td>
+        <td>${adv ? esc(adv.name) : '<span class="muted">Chưa có</span>'}</td>
         <td>${esc(c.academicYear)}</td>
         <td><strong>${c.studentCount}</strong></td>
         <td><span class="status-pill ${c.isActive ? 'status-studying' : 'status-no_status'}">${c.isActive ? 'Hoạt động' : 'Đã tắt'}</span></td>
@@ -78,22 +106,16 @@ function renderClasses() {
             <button type="button" class="sm danger" data-act="delete" data-id="${c.id}">Xóa</button>
           </div>
         </td>
-      </tr>`).join('')
-    : '<tr><td colspan="8" class="empty-report">Không có lớp nào phù hợp. Chọn "Thêm lớp" để tạo lớp mới.</td></tr>';
+      </tr>`;
+    }).join('')
+    : '<tr><td colspan="9" class="empty-report">Không có lớp nào phù hợp. Chọn "Thêm lớp" để tạo lớp mới.</td></tr>';
 
   $('tableFoot').textContent = `Hiển thị ${shown.length} trong tổng số ${classes.length} lớp`;
 }
 
-['classSearch', 'statusFilter', 'yearFilter'].forEach((id) =>
-  $(id).addEventListener(id === 'classSearch' ? 'input' : 'change', renderClasses),
+['classSearch', 'advisorSearch', 'statusFilter', 'yearFilter'].forEach((id) =>
+  $(id).addEventListener(['classSearch', 'advisorSearch'].includes(id) ? 'input' : 'change', renderClasses),
 );
-
-$('btnReset').addEventListener('click', () => {
-  $('classSearch').value = '';
-  $('statusFilter').value = 'all';
-  $('yearFilter').value = 'all';
-  renderClasses();
-});
 
 $('classBody').addEventListener('click', async (e) => {
   const btn = e.target.closest('button[data-act]');
@@ -210,4 +232,7 @@ $('btnAssign').addEventListener('click', async () => {
   } catch (err) { alert(err.message); }
 });
 
-loadClasses();
+(async function init() {
+  advisorsMap = await loadAdvisors();
+  await loadClasses();
+})();
