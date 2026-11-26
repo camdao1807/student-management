@@ -1,20 +1,12 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quản lý giảng viên / CVHT | SM University</title>
-<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css"></head>
+<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css"><link rel="stylesheet" href="advisor.css"></head>
 <body><div class="layout">
 <aside class="sidebar">
   <div class="brand"><div class="logo">SM</div><div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div></div>
   <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
-  <a class="nav-item" href="/dashboard.html">
-      <svg viewBox="0 0 24 24">
-        <rect x="3" y="3" width="8" height="8" rx="1"/>
-        <rect x="13" y="3" width="8" height="5" rx="1"/>
-        <rect x="13" y="10" width="8" height="11" rx="1"/>
-        <rect x="3" y="13" width="8" height="8" rx="1"/>
-      </svg>
-      Dashboard
-  </a>
+  <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
   <a class="nav-item" href="student.html"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span>Quản lý sinh viên</span></a>
   <a class="nav-item" href="attendance.html"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14 9h2.5M14 15h2.5"/></svg><span>Điểm danh sinh viên</span></a>
   <a class="nav-item" href="/faculty.html"><svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 9h2m2 0h2M9 13h2m2 0h2M9 17h2m2 0h2"/></svg><span>Quản lý khoa</span></a>
@@ -30,22 +22,56 @@
 <div class="content">
   <div class="topbar"><div class="crumb">Trang chủ / <b>Quản lý giảng viên</b></div>
     <div class="user-area" id="userArea"><a class="login-btn" href="/login.html"><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</a></div></div>
-  <div class="page-head"><div><h1>Phân công giảng viên / CVHT</h1>
-    <p>Mỗi lớp chỉ có một cố vấn tại một thời điểm. Phân công cũ được giữ lại làm lịch sử.</p></div>
-    <div class="head-actions"><button class="primary" id="btnAdd">+ Thêm phân công</button></div></div>
-  <div class="stats">
-    <div class="stat" data-st=""><span>Tổng phân công</span><strong id="sTotal">0</strong></div>
-    <div class="stat" data-st="active" style="--c:var(--ok)"><span>Đang phụ trách</span><strong id="sActive">0</strong></div>
-    <div class="stat" data-st="upcoming" style="--c:var(--warn)"><span>Sắp bắt đầu</span><strong id="sUpcoming">0</strong></div>
-    <div class="stat" data-st="ended" style="--c:#8793a6"><span>Đã kết thúc</span><strong id="sEnded">0</strong></div></div>
-  <div class="panel">
-    <div class="bar"><input id="q" placeholder="Tìm theo mã GV, họ tên, lớp...">
+  <div class="av-head"><div class="av-icon"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 19c.8-2.3 2.6-3.5 5-3.5s4.2 1.2 5 3.5"/></svg></div>
+    <div class="av-title"><h1>Quản lý giảng viên / CVHT</h1><p>Quản lý phân công giảng viên làm Cố vấn học tập cho từng lớp hành chính.</p></div>
+    <div class="head-actions"><button id="btnExport"><svg viewBox="0 0 24 24"><path d="M12 3v12m0 0-4-4m4 4 4-4M5 17v4h14v-4"/></svg>Xuất CSV</button><button class="primary" id="btnAdd">+ Thêm phân công</button></div></div>
+  <div class="av-tabs"><button class="av-tab on" data-tab="cvht">Phân công giảng viên</button><button class="av-tab" data-tab="sub">Dạy thay &amp; ngày công</button></div>
+  <div id="tabCvht" class="av-pane">
+  <div class="av-stats">
+    <div class="av-card" data-st="" style="--c:#2563eb"><div class="av-ctop"><span class="av-lbl">TỔNG PHÂN CÔNG</span><span class="av-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 5a3 3 0 0 1 0 6M21 20c0-2.5-1.5-4.6-3.5-5.5"/></svg></span></div><div class="av-num"><b id="sTotal">0</b> <span>PC</span></div><div class="av-sub" id="sTotalSub">Toàn trường</div><i class="av-line" id="bTotal"></i></div>
+    <div class="av-card" data-st="active" style="--c:#16a34a"><div class="av-ctop"><span class="av-lbl">ĐANG PHỤ TRÁCH</span><span class="av-ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 11l2 2 4-4"/></svg></span></div><div class="av-num"><b id="sActive">0</b> <span>PC</span></div><div class="av-sub" id="sActiveSub"></div><i class="av-line" id="bActive"></i></div>
+    <div class="av-card" data-st="upcoming" style="--c:#d97706"><div class="av-ctop"><span class="av-lbl">SẮP BẮT ĐẦU</span><span class="av-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="av-num"><b id="sUpcoming">0</b> <span>PC</span></div><div class="av-sub" id="sUpcomingSub"></div><i class="av-line" id="bUpcoming"></i></div>
+    <div class="av-card" data-st="ended" style="--c:#64748b"><div class="av-ctop"><span class="av-lbl">ĐÃ KẾT THÚC</span><span class="av-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11h14V8M10 12h4"/></svg></span></div><div class="av-num"><b id="sEnded">0</b> <span>PC</span></div><div class="av-sub" id="sEndedSub"></div><i class="av-line" id="bEnded"></i></div>
+  </div>
+  <div class="av-panel">
+    <div class="av-tools"><input id="q" placeholder="Tìm theo mã GV, họ tên, lớp...">
       <select id="fClass"><option value="">Lớp: Tất cả</option></select>
       <select id="fStatus"><option value="">Trạng thái: Tất cả</option><option value="active">Đang phụ trách</option><option value="upcoming">Sắp bắt đầu</option><option value="ended">Đã kết thúc</option></select>
-      <button id="btnReset">Đặt lại</button></div>
-    <div style="overflow-x:auto"><table><thead><tr><th>Mã GV</th><th>Giảng viên</th><th>Lớp hành chính</th><th>Sĩ số</th><th>Nhiệm kỳ</th><th>Trạng thái</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
-    <div class="pager"><span id="info"></span><div id="pages"></div></div></div>
+      <button id="btnReset" class="av-reset" title="Đặt lại"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5"/></svg></button></div>
+    <div class="av-meta"><span id="info"></span><span class="av-legend"><span><i style="background:#16a34a"></i>Đang phụ trách</span><span><i style="background:#d97706"></i>Sắp bắt đầu</span><span><i style="background:#94a3b8"></i>Đã kết thúc</span></span></div>
+    <div style="overflow-x:auto"><table class="av-table"><thead><tr><th>STT</th><th>MÃ GV</th><th>HỌ VÀ TÊN</th><th>LỚP HC</th><th>QUY MÔ</th><th>NHIỆM KỲ</th><th>TRẠNG THÁI</th><th></th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="pager"><span></span><div id="pages"></div></div></div>
+  <div class="av-panel" style="margin-top:16px"><h2 class="av-h">Lịch sử đổi giảng viên</h2>
+    <div class="av-tools"><select id="hClass"><option value="">Lớp: Tất cả</option></select></div>
+    <div style="overflow-x:auto"><table class="av-table"><thead><tr><th>STT</th><th>LỚP HC</th><th>GIẢNG VIÊN CŨ</th><th></th><th>GIẢNG VIÊN MỚI</th><th>NGÀY HIỆU LỰC</th><th>LÝ DO</th><th>NGƯỜI THỰC HIỆN</th></tr></thead><tbody id="hRows"></tbody></table></div>
+    <div class="av-meta"><span id="hInfo"></span></div></div>
+  </div>
+  <div id="tabSub" class="av-pane" hidden>
+  <div class="av-stats"><div class="av-card" data-sst="" style="--c:#2563eb"><div class="av-ctop"><span class="av-lbl">TỔNG PHÂN CÔNG DẠY THAY</span><span class="av-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18M8 2v4M16 2v4"/></svg></span></div><div class="av-num"><b id="ssTotal">0</b> <span>LƯỢT</span></div><div class="av-sub" id="ssTotalSub">Tất cả lịch dạy thay</div><i class="av-line" id="sbTotal"></i></div><div class="av-card" data-sst="completed" style="--c:#16a34a"><div class="av-ctop"><span class="av-lbl">ĐÃ HOÀN THÀNH</span><span class="av-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg></span></div><div class="av-num"><b id="ssDone">0</b> <span>LƯỢT</span></div><div class="av-sub" id="ssDoneSub"></div><i class="av-line" id="sbDone"></i></div><div class="av-card" data-sst="assigned" style="--c:#d97706"><div class="av-ctop"><span class="av-lbl">CHỜ XÁC NHẬN</span><span class="av-ico"><svg viewBox="0 0 24 24"><path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9"/></svg></span></div><div class="av-num"><b id="ssPend">0</b> <span>LƯỢT</span></div><div class="av-sub" id="ssPendSub"></div><i class="av-line" id="sbPend"></i></div><div class="av-card" data-sst="" style="--c:#7c3aed"><div class="av-ctop"><span class="av-lbl">NGÀY CÔNG KỲ ĐANG CHỌN</span><span class="av-ico"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 10h18m-11 5 2 2 4-4"/></svg></span></div><div class="av-num"><b id="ssDays">0</b> <span>NGÀY</span></div><div class="av-sub" id="ssDaysSub"></div><i class="av-line" id="sbDays"></i></div></div>
+  <div class="av-panel"><h2 class="av-h">Phân công giáo viên dạy thay</h2>
+    <p class="hint" style="margin:-8px 0 12px">Dạy thay áp dụng cho <b>lớp học phần</b>. Lớp hành chính có CVHT cố định, việc đổi CVHT thực hiện trong tab Phân công giảng viên.</p>
+    <div class="av-tools"><input id="sQ" placeholder="Tìm theo lớp học phần, môn, giáo viên, ghi chú..."><input type="date" id="sDate"><select id="sClass"></select><select id="sEmp"></select>
+      <select id="sStatus"><option value="">Trạng thái: Tất cả</option><option value="assigned">Đã phân công</option><option value="completed">Đã hoàn thành</option></select>
+      <button id="sReset" class="av-reset" title="Đặt lại"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.5-5.8M20 4v5h-5"/></svg></button>
+      <button class="primary" id="btnAddSub">+ Thêm phân công dạy thay</button></div>
+    <div class="av-meta"><span id="sInfo"></span><span class="av-legend"><span><i style="background:#d97706"></i>Đã phân công</span><span><i style="background:#16a34a"></i>Đã hoàn thành</span></span></div>
+    <div style="overflow-x:auto"><table class="av-table"><thead><tr><th>STT</th><th>NGÀY DẠY</th><th>LỚP HỌC PHẦN</th><th>GIÁO VIÊN CHÍNH</th><th>GIÁO VIÊN DẠY THAY</th><th>TRẠNG THÁI</th><th>GHI CHÚ</th><th></th></tr></thead><tbody id="sRows"></tbody></table></div></div>
+  <div class="av-panel"><h2 class="av-h">Thống kê ngày công giáo viên dạy thay</h2>
+    <div class="av-tools"><select id="wEmp"></select><select id="wMonth"></select><select id="wYear"></select><button id="wExport">Xuất Excel (CSV)</button></div>
+    <div class="av-total"><div><span>TỔNG SỐ NGÀY CÔNG</span><b id="wTotal">0</b></div><p>Chỉ tính lịch đã xác nhận hoàn thành. Giáo viên dạy nhiều lớp trong cùng một ngày chỉ tính 1 ngày công. Không có dữ liệu tiền lương trong chức năng này.</p></div>
+    <div class="av-two"><div><h3 class="av-h2">Tổng hợp theo giáo viên</h3><table class="av-table"><thead><tr><th>STT</th><th>GIÁO VIÊN DẠY THAY</th><th style="text-align:right">SỐ NGÀY CÔNG</th></tr></thead><tbody id="wSum"></tbody></table></div>
+      <div><h3 class="av-h2">Chi tiết ngày dạy thay</h3><div style="overflow-x:auto"><table class="av-table"><thead><tr><th>GIÁO VIÊN</th><th>NGÀY DẠY</th><th>LỚP HỌC PHẦN</th><th>GV CHÍNH</th><th>GHI CHÚ</th></tr></thead><tbody id="wDet"></tbody></table></div></div></div></div>
+  </div>
 </div></div>
+<div class="overlay" id="mSub"><div class="modal"><h2>Thêm phân công dạy thay</h2><div class="grid">
+  <label class="field full">Lớp học phần *<select id="mClass"></select></label>
+  <label class="field full">Giáo viên dạy thay *<select id="mEmp"></select></label>
+  <label class="field full">Ngày dạy *<input type="date" id="mDate"></label>
+  <label class="field full">Ghi chú<input id="mNote" maxlength="255" placeholder="VD: Giáo viên chính đi công tác"></label></div>
+  <p class="hint" id="mMain"></p>
+  <p class="hint">Giáo viên chính là giảng viên phụ trách lớp học phần. CVHT của lớp hành chính cố định, nếu cần đổi thì thực hiện ở tab Phân công giảng viên.</p>
+  <div class="err-box" id="eSub"></div>
+  <div class="modal-actions"><button data-close>Hủy</button><button class="primary" id="btnSaveSub">Lưu phân công</button></div></div></div>
 <div class="overlay" id="mAdd"><div class="modal"><h2>Thêm phân công CVHT</h2>
   <div class="grid">
     <label class="field full">Giảng viên *<select id="fEmp"></select></label>
@@ -59,4 +85,5 @@
 <div id="toast"></div>
 <script src="/auth.js"></script>
 <script>Auth.require(['admin', 'staff', 'advisor']);</script>
-<script src="advisor-classe-sections.js"></script></body></html>
+<script src="advisor-classe-sections.js"></script>
+<script src="advisor-substitute.js"></script></body></html>

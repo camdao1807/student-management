@@ -126,6 +126,26 @@ export class GradesService {
     };
   }
 
+  /** Điểm trung bình theo từng học kỳ (một môn hoặc toàn bộ các môn) để theo dõi qua thời gian. */
+  async trend(courseId?: number) {
+    const p: any[] = [];
+    let w = 's.deleted_at IS NULL';
+    if (courseId) { w += ' AND cs.subject_id = ?'; p.push(courseId); }
+    const rows = await this.ds.query(
+      `SELECT t.term_code AS code, COUNT(*) AS total, SUM(g.letter_grade IS NOT NULL) AS graded, AVG(g.total_score) AS avg10,
+              AVG(${GPA_CASE}) AS avg4, SUM(g.letter_grade IS NOT NULL AND g.letter_grade <> 'F') AS passed
+       ${FROM_SHEET} WHERE ${w} GROUP BY t.id, t.term_code ORDER BY t.term_code`, p);
+    const r2 = (x: any) => (x === null || x === undefined ? null : Math.round(Number(x) * 100) / 100);
+    return {
+      scope: courseId ? 'subject' : 'all',
+      items: rows.map((r: any) => {
+        const graded = Number(r.graded ?? 0);
+        return { term: toTermLabel(r.code), total: Number(r.total), graded, avg10: r2(r.avg10), avg4: r2(r.avg4),
+                 passRate: graded ? Math.round((Number(r.passed) / graded) * 1000) / 10 : null };
+      }),
+    };
+  }
+
   async update(id: number, dto: UpdateGradeDto) {
     const [g] = await this.ds.query(`SELECT * FROM grades WHERE id = ?`, [id]);
     if (!g) throw new NotFoundException('Không tìm thấy dòng điểm');

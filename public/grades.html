@@ -23,12 +23,19 @@
   <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
   <a class="nav-item active" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
   <a class="nav-item" href="student-status.html"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h10"/></svg><span>Trạng thái học vụ</span></a>
+  <a class="nav-item" href="/announcements.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>
+      </svg>
+      Thông báo sinh viên
+    </a>
   <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
   <a class="nav-item" href="/accounts.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M17 11l2 2 4-4"/></svg><span>Quản lý tài khoản</span></a>
   <a class="nav-item" href="/user.html"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg><span>Tài khoản của tôi</span></a>
 </aside>
 <div class="content">
-  <div class="topbar"><div class="crumb">Trang chủ / <b>Quản lý điểm số</b></div><div class="user-area" id="userArea"><a class="login-btn" href="/login.html"><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</a></div></div>
+  <div class="topbar"><div class="crumb">Trang chủ / <b>Quản lý điểm số</b></div><div class="user-area"><a class="login-btn" href="login.html"><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</a></div></div>
   <div class="page-head"><div><h1>Quản lý điểm số &amp; Bảng điểm học phần</h1>
     <p>Nhập điểm thành phần, tự động tính điểm tổng kết hệ 10, thang chữ và thang 4 theo trọng số của từng môn.</p></div>
     <div class="head-actions"><button id="btnEnroll">+ Thêm lớp vào bảng điểm</button><button class="primary" id="btnLock">Khóa sổ điểm</button></div></div>
@@ -50,6 +57,11 @@
     <aside class="panel"><h2 style="margin:0 0 12px;font-size:17px">Phổ điểm học phần</h2><div id="dist"><div class="empty">Chưa có dữ liệu</div></div>
       <p class="hint mut" style="margin-top:14px">Quy chế: chuyên cần dưới 5.0 bị cấm thi cuối kỳ và nhận điểm F.</p></aside>
   </div>
+  <div class="panel" style="margin-top:16px">
+    <div class="bar" style="justify-content:space-between"><h2 style="margin:0;font-size:17px">Theo dõi điểm qua các học kỳ</h2>
+      <select id="tScope"><option value="subject">Môn đang chọn</option><option value="all">Tất cả các môn</option></select></div>
+    <div style="overflow-x:auto"><table><thead><tr><th>Học kỳ</th><th>SV có điểm</th><th>Điểm TB (hệ 10)</th><th>GPA (thang 4)</th><th>Tỷ lệ đạt</th><th style="width:30%">Xu hướng GPA</th></tr></thead><tbody id="trendRows"></tbody></table></div>
+    <p class="hint mut" style="margin-top:10px">Bấm vào một học kỳ để xem bảng điểm của học kỳ đó.</p></div>
 </div></div>
 <div class="overlay" id="mEnroll"><div class="modal"><h2>Thêm lớp vào bảng điểm</h2>
   <p class="mut" style="margin-top:0">Chỉ thêm các sinh viên đang học của lớp, sinh viên đã có trong bảng điểm sẽ được bỏ qua.</p>

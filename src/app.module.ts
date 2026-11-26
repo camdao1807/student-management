@@ -23,9 +23,9 @@ import { GradesModule } from './modules/grades/grades.module';
 import { StudentPortalModule } from './modules/student-portal/student-portal.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { AccountsModule } from './modules/accounts/accounts.module';
-import { AttendanceModule } from './modules/attendance/attendance.module'; // <-- THÊM
-
+import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊM
+import { SubstitutesModule } from './modules/substitutes/substitutes.module';
+import { CourseTeachingsModule } from './modules/course-teachings/course-teachings.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -63,7 +63,8 @@ import { AttendanceModule } from './modules/attendance/attendance.module'; // <-
     AuthModule,
     UsersModule,
     AccountsModule,
-    AttendanceModule, // <-- THÊM
+    SubstitutesModule,
+    CourseTeachingsModule, // <-- THÊM
   ],
 })
 export class AppModule {}
