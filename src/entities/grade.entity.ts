@@ -26,6 +26,10 @@ export class Grade {
   @Column({ name: 'attendance_score', type: 'decimal', precision: 4, scale: 2, nullable: true, transformer: decimal })
   attendanceScore: number | null;
 
+  /** Điểm bài tập / lab */
+  @Column({ name: 'assignment_score', type: 'decimal', precision: 4, scale: 2, nullable: true, transformer: decimal })
+  assignmentScore: number | null;
+
   /** Điểm giữa kỳ (gợi ý 30%) */
   @Column({ name: 'midterm_score', type: 'decimal', precision: 4, scale: 2, nullable: true, transformer: decimal })
   midtermScore: number | null;
