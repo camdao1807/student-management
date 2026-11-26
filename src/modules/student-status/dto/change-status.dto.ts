@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
+import { IsIn, IsISO8601, IsOptional, IsString, Matches, MaxLength } from 'class-validator';
 import { STATUSES } from '../student-status.constants';
 
 export class ChangeStatusDto {
@@ -6,6 +6,7 @@ export class ChangeStatusDto {
   status: string;
 
   @Matches(/^\d{4}-\d{2}-\d{2}$/, { message: 'Ngày hiệu lực phải có dạng YYYY-MM-DD' })
+  @IsISO8601({ strict: true }, { message: 'Ngày hiệu lực không tồn tại' })
   effectiveDate: string;
 
   @IsOptional() @IsString() @MaxLength(1000)

@@ -32,8 +32,8 @@ const Auth = {
       'student-status.html', 'user.html',
     ];
     const allowed = {
-      admin: [...staffPages, 'accounts.html'],
-      staff: staffPages,
+      admin: [...staffPages, 'accounts.html', 'announcements.html'],
+      staff: [...staffPages, 'announcements.html'],
       advisor: staffPages,
       student: ['student-portal.html'],
     }[u.role] || [];

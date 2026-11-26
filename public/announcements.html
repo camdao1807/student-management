@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý thông báo</title>
+<link rel="stylesheet" href="/layout.css">
+<style>
+  .an-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+  .an-stat{background:#fff;border:1px solid var(--bd,#e5e9f2);border-radius:14px;padding:16px 18px}
+  .an-stat span{display:block;font-size:13px;color:var(--mut,#64748b)}
+  .an-stat b{display:block;font-size:26px;margin-top:4px}
+  .an-card{background:#fff;border:1px solid var(--bd,#e5e9f2);border-radius:14px;overflow:hidden}
+  .an-tools{display:flex;gap:10px;flex-wrap:wrap;padding:14px 16px;border-bottom:1px solid var(--bd,#e5e9f2)}
+  .an-in{padding:9px 12px;border:1px solid var(--bd,#e5e9f2);border-radius:10px;background:#fff;font:inherit;color:inherit;box-sizing:border-box}
+  .an-tools .an-in{min-width:150px}
+  .an-tools #q{flex:1;min-width:220px}
+  .an-wrap{overflow-x:auto}
+  .an-tbl{width:100%;border-collapse:collapse;font-size:14px}
+  .an-tbl th{text-align:left;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--mut,#64748b);padding:11px 16px;background:#f8fafd;border-bottom:1px solid var(--bd,#e5e9f2)}
+  .an-tbl td{padding:13px 16px;border-bottom:1px solid #eef1f7;vertical-align:top}
+  .an-tbl tr:last-child td{border-bottom:0}
+  .an-title{font-weight:600}
+  .an-snip{display:block;color:var(--mut,#64748b);font-size:13px;margin-top:2px;max-width:420px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .an-tag{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600;white-space:nowrap}
+  .an-ok{background:#ecfdf3;color:#15803d}.an-wait{background:#fff7ed;color:#c2410c}
+  .an-pin{color:#d97706;margin-right:4px}
+  .an-act{display:flex;gap:6px}
+  .an-ib{width:34px;height:34px;padding:0;border:1px solid var(--bd,#e5e9f2);border-radius:9px;background:#fff;color:var(--mut,#64748b);cursor:pointer;display:grid;place-items:center}
+  .an-ib:hover{color:var(--pri,#2563eb);border-color:var(--pri,#2563eb)}
+  .an-ib.del:hover{color:#dc2626;border-color:#dc2626}
+  .an-ib svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+  .an-empty{padding:40px 16px;text-align:center;color:var(--mut,#64748b)}
+  .an-btn{padding:10px 16px;border-radius:10px;border:1px solid var(--bd,#e5e9f2);background:#fff;font:inherit;font-weight:600;cursor:pointer;color:inherit}
+  .an-btn.pri{background:var(--pri,#2563eb);border-color:var(--pri,#2563eb);color:#fff}
+  .an-btn.sm{padding:7px 12px;font-size:13px}
+  .an-btn:disabled{opacity:.6;cursor:not-allowed}
+
+  .an-ov{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:flex-start;justify-content:center;padding:32px 16px;overflow:auto;z-index:100}
+  .an-ov.show{display:flex}
+  .an-modal{background:#fff;border-radius:16px;width:100%;max-width:640px;padding:24px;box-shadow:0 24px 60px rgba(15,23,42,.25)}
+  .an-modal h2{margin:0 0 16px;font-size:20px}
+  .an-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .an-f{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--mut,#64748b)}
+  .an-f.full{grid-column:1/-1}
+  .an-f .an-in{width:100%;color:#0f172a}
+  .an-f textarea{min-height:140px;resize:vertical}
+  .an-box{grid-column:1/-1;padding:14px;border-radius:12px;background:#fffbeb;border:1px solid #fde68a;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .an-box .full{grid-column:1/-1}
+  .an-send{grid-column:1/-1;padding:14px;border-radius:12px;background:#f6f8fc;border:1px solid var(--bd,#e5e9f2)}
+  .an-send label.r{display:inline-flex;align-items:center;gap:6px;margin-right:18px;color:#0f172a;font-size:14px;cursor:pointer}
+  .an-later{display:none;gap:10px;margin-top:12px;align-items:flex-end;flex-wrap:wrap}
+  .an-later.show{display:flex}
+  .an-later .an-f{flex:1;min-width:140px}
+  .an-chk{display:flex;align-items:center;gap:8px;color:#0f172a;font-size:14px;cursor:pointer}
+  .an-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:20px}
+  #toast{position:fixed;right:20px;bottom:20px;padding:12px 16px;border-radius:10px;color:#fff;display:none;z-index:200;max-width:360px;font-size:14px}
+  @media(max-width:900px){.an-stats{grid-template-columns:1fr 1fr}.an-grid,.an-box{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">SM</div>
+      <div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div>
+    </div>
+    <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
+
+    <a class="nav-item" href="/dashboard.html">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="13" y="3" width="8" height="5" rx="1"/><rect x="13" y="10" width="8" height="11" rx="1"/><rect x="3" y="13" width="8" height="8" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="nav-item" href="/student.html">
+      <svg viewBox="0 0 24 24"><path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg>
+      Quản lý sinh viên
+    </a>
+    <a class="nav-item" href="/faculty.html">
+      <svg viewBox="0 0 24 24"><path d="M3 21h18M5 21V7l7-4 7 4v14"/><path d="M9 9h2m2 0h2M9 13h2m2 0h2M9 17h2m2 0h2"/></svg>
+      Quản lý khoa
+    </a>
+    <a class="nav-item" href="/student-classes.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5M17 4a3.5 3.5 0 010 7M22 20c0-3-2-4.8-5-5.3"/></svg>
+      Quản lý lớp học
+    </a>
+    <a class="nav-item" href="/advisor-classe-sections.html">
+      <svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 18c1-2 3-3 5-3s4 1 5 3"/></svg>
+      Quản lý giảng viên
+    </a>
+    <a class="nav-item" href="/courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
+    <a class="nav-item" href="/grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
+    <a class="nav-item" href="/student-status.html">
+      <svg viewBox="0 0 24 24"><path d="M3 7h18M3 12h18M3 17h12"/></svg>
+      Trạng thái học vụ
+    </a>
+    <a class="nav-item active" href="/announcements.html" aria-current="page">
+      <svg viewBox="0 0 24 24"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+      Thông báo sinh viên
+    </a>
+
+    <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
+    <a class="nav-item" href="/accounts.html">
+      <svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/><path d="M17 11l2 2 4-4"/></svg>
+      Quản lý tài khoản
+    </a>
+    <a class="nav-item" href="/user.html">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      Tài khoản của tôi
+    </a>
+  </aside>
+
+  <div class="content">
+    <header class="topbar">
+      <div class="crumb"><a href="/student.html">Trang chủ</a> / <b>Thông báo sinh viên</b></div>
+      <div class="user-area" id="userArea"></div>
+    </header>
+
+    <div class="page-head">
+      <div>
+        <h1>Thông báo sinh viên</h1>
+        <p>Soạn thông báo lịch nghỉ, lịch thi, học phí… gửi tới toàn trường hoặc từng lớp, có thể hẹn giờ gửi.</p>
+      </div>
+      <div class="head-actions">
+        <button class="an-btn pri" id="btnAdd">+ Soạn thông báo</button>
+      </div>
+    </div>
+
+    <div class="an-stats" id="stats"></div>
+
+    <div class="an-card">
+      <div class="an-tools">
+        <input class="an-in" id="q" placeholder="Tìm theo tiêu đề, nội dung...">
+        <select class="an-in" id="fCat"><option value="">Mọi loại</option></select>
+        <select class="an-in" id="fStatus">
+          <option value="">Mọi trạng thái</option>
+          <option value="sent">Đã gửi</option>
+          <option value="scheduled">Hẹn giờ</option>
+        </select>
+      </div>
+      <div class="an-wrap">
+        <table class="an-tbl">
+          <thead><tr><th>Thông báo</th><th>Loại</th><th>Gửi tới</th><th>Thời gian gửi</th><th>Đã đọc</th><th></th></tr></thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="an-empty" id="empty" style="display:none">Chưa có thông báo nào.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Soạn / sửa thông báo -->
+<div class="an-ov" id="mForm">
+  <form class="an-modal" id="form" novalidate>
+    <h2 id="formTitle">Soạn thông báo</h2>
+    <div class="an-grid">
+      <label class="an-f full">Tiêu đề *
+        <input class="an-in" id="aTitle" maxlength="200" placeholder="VD: Thông báo nghỉ lễ Quốc khánh">
+      </label>
+      <label class="an-f">Loại thông báo
+        <select class="an-in" id="aCat"></select>
+      </label>
+      <label class="an-f">Gửi tới
+        <select class="an-in" id="aClass"><option value="">Toàn trường</option></select>
+      </label>
+
+      <div class="an-box" id="rowHoliday" style="display:none">
+        <label class="an-f">Nghỉ từ ngày *
+          <input class="an-in" id="aStart" type="date">
+        </label>
+        <label class="an-f">Đến hết ngày
+          <input class="an-in" id="aEnd" type="date">
+        </label>
+        <label class="an-f full">Lý do nghỉ (tuỳ chọn)
+          <input class="an-in" id="aReason" maxlength="100" placeholder="VD: Quốc khánh 2/9">
+        </label>
+        <div class="full"><button type="button" class="an-btn sm" id="btnTpl">✨ Soạn nội dung mẫu từ ngày nghỉ</button></div>
+      </div>
+
+      <label class="an-f full">Nội dung *
+        <textarea class="an-in" id="aContent" maxlength="5000"></textarea>
+      </label>
+
+      <div class="an-send" id="rowSend">
+        <label class="r"><input type="radio" name="sendMode" value="now" checked> Gửi ngay</label>
+        <label class="r"><input type="radio" name="sendMode" value="later"> Hẹn giờ gửi</label>
+        <div class="an-later" id="rowLater">
+          <label class="an-f">Ngày gửi<input class="an-in" id="aDate" type="date"></label>
+          <label class="an-f" style="max-width:110px">Giờ<select class="an-in" id="aHour"></select></label>
+          <label class="an-f" style="max-width:110px">Phút<select class="an-in" id="aMin"></select></label>
+        </div>
+      </div>
+
+      <label class="an-chk" style="grid-column:1/-1"><input type="checkbox" id="aPin"> Ghim lên đầu danh sách của sinh viên</label>
+    </div>
+    <div class="an-actions">
+      <button type="button" class="an-btn" id="btnCancel">Hủy</button>
+      <button type="submit" class="an-btn pri" id="btnSave">Gửi thông báo</button>
+    </div>
+  </form>
+</div>
+
+<div id="toast"></div>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff']);</script>
+<script src="/announcements.js"></script>
+</body>
+</html>

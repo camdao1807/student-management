@@ -1,0 +1,84 @@
+/* ===== Trang Trạng thái học vụ (nạp sau layout.css và modules.css, dùng chung biến màu) ===== */
+
+/* Thanh người dùng */
+:where(.user-area) { display: flex; align-items: center; gap: 12px; }
+:where(.avatar) { width: 40px; height: 40px; border-radius: 50%; background: var(--pri); color: #fff; display: grid; place-items: center; font-weight: 700; }
+:where(.user-name) { font-weight: 600; }
+
+/* ===== Thẻ thống kê ===== */
+.kpis { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 20px; }
+.kpis .kpi {
+  display: flex; flex-direction: column; align-items: stretch; justify-content: flex-start; gap: 8px;
+  width: 100%; height: auto; margin: 0; padding: 18px;
+  background: #fff; border: 1px solid var(--bd); border-radius: 16px;
+  font: inherit; line-height: 1.35; text-align: left; color: #1a2236; cursor: pointer;
+  transition: transform .15s, box-shadow .15s;
+}
+.kpis .kpi:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, .08); }
+.kpis .kpi.on { border-color: var(--c); box-shadow: 0 0 0 1px var(--c); }
+
+.kpis .kpi-total     { --c: var(--pri); --bg: var(--pri-l); }
+.kpis .kpi-studying  { --c: var(--ok); --bg: var(--ok-l); }
+.kpis .kpi-reserved  { --c: var(--warn); --bg: var(--warn-l); }
+.kpis .kpi-dropped   { --c: var(--err); --bg: var(--err-l); }
+.kpis .kpi-graduated { --c: var(--vio); --bg: var(--vio-l); }
+
+.kpi-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; min-height: 44px; }
+.kpis .kpi-title { font-size: 12.5px; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; color: var(--mut); }
+.kpis .kpi-icon { flex: none; width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center; background: var(--bg); color: var(--c); }
+.kpi-icon svg { width: 23px; height: 23px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.kpis .kpi strong { margin: 0; font-size: 32px; line-height: 1.1; }
+.kpis .kpi-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 4px; padding: 7px 12px; border-radius: 10px; background: #f5f8ff; font-size: 13.5px; color: var(--mut); }
+.kpi-foot b { color: var(--pri); }
+
+/* ===== Bộ lọc ===== */
+.split { grid-template-columns: minmax(0, 1fr); }
+.filters { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 14px; }
+.filters input, .filters select, .filters button {
+  box-sizing: border-box; height: 42px; width: auto; margin: 0; padding: 0 12px;
+  border: 1px solid var(--bd); border-radius: 10px; background: #fff; font: inherit; font-size: 14px; color: #1a2236;
+}
+.filters input:focus, .filters select:focus { outline: 2px solid #bfd3ff; border-color: var(--pri); }
+.filters #q { flex: 1 1 240px; }
+.filters label { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 14px; color: var(--mut); white-space: nowrap; }
+.filters button { cursor: pointer; font-weight: 600; }
+.filters #btnExport { background: var(--pri); border-color: var(--pri); color: #fff; }
+.filters #btnExport:hover { background: #1d4ed8; }
+
+/* ===== Bảng ===== */
+.table-wrap { overflow-x: auto; }
+.table-wrap th:first-child, .table-wrap td:first-child { width: 36px; }
+.table-wrap input[type="checkbox"] { width: 17px; height: 17px; margin: 0; cursor: pointer; accent-color: var(--pri); }
+.table-wrap .tag { white-space: nowrap; }
+.reason { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* ===== Phiếu cập nhật (ngăn trượt bên phải) ===== */
+#drawer { display: none; position: fixed; top: 0; right: 0; bottom: 0; z-index: 900; box-sizing: border-box; width: min(420px, 100%); margin: 0; overflow-y: auto; border-radius: 16px 0 0 16px; box-shadow: -12px 0 32px rgba(15, 23, 42, .18); }
+#drawer.open { display: block; }
+#drawer .drawer-title { margin: 0; padding-right: 32px; font-size: 17px; }
+#drawer .field { margin-top: 12px; }
+#drawer .picker { margin-top: 6px; }
+#drawer .picker-empty { grid-column: 1 / -1; }
+#drawer .who-status { margin-top: 6px; }
+#drawer small.inline { display: inline; }
+#drawer #btnSave { width: 100%; justify-content: center; margin-top: 14px; }
+#btnClose { position: absolute; top: 12px; right: 14px; border: 0; background: none; font-size: 26px; line-height: 1; cursor: pointer; color: var(--mut); }
+
+/* ===== Thông báo ===== */
+#toast { display: none; position: fixed; right: 20px; bottom: 20px; z-index: 1000; max-width: 360px; padding: 12px 18px; border-radius: 10px; background: var(--ok); color: #fff; box-shadow: 0 8px 24px rgba(0, 0, 0, .18); }
+#toast.show { display: block; opacity: 1; visibility: visible; transform: none; }
+#toast.error { background: var(--err); }
+
+/* ===== Màn hình nhỏ ===== */
+@media (max-width: 1200px) { .kpis { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 700px)  { .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+/* ===== Ô nhập trong phiếu ===== */
+#drawer .who { margin-top: 14px; }
+#drawer .field { display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; font-weight: 600; }
+#drawer .field input, #drawer .field textarea { box-sizing: border-box; width: 100%; margin: 0; padding: 10px 12px; border: 1px solid var(--bd); border-radius: 10px; background: #fff; font: inherit; font-size: 14px; font-weight: 400; }
+#drawer .field textarea { resize: vertical; }
+#drawer .picker button { display: flex; align-items: center; border: 1px solid var(--bd); border-radius: 10px; background: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+#drawer .picker button.on { border-color: var(--pri); background: var(--pri-l); color: var(--pri); }
+#drawer #btnSave { display: flex; align-items: center; height: 44px; border: 0; border-radius: 10px; background: var(--pri); color: #fff; font: inherit; font-weight: 600; cursor: pointer; }
+#drawer #btnSave:disabled { opacity: .5; cursor: not-allowed; }

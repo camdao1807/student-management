@@ -24,7 +24,11 @@ import { StudentPortalModule } from './modules/student-portal/student-portal.mod
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { AccountsModule } from './modules/accounts/accounts.module';
+<<<<<<< HEAD
 import { AttendanceModule } from './modules/attendance/attendance.module'; // <-- THÊM
+=======
+import { AnnouncementsModule } from './modules/announcements/announcements.module';
+>>>>>>> d5d2c40f4c31b9d8699685c37112409aafb39a68
 
 @Module({
   imports: [
