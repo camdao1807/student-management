@@ -1,4 +1,3 @@
-/* Dùng chung cho mọi trang: <script src="/auth.js"></script> */
 const Auth = {
   token: () => localStorage.getItem('token'),
   user: () => JSON.parse(localStorage.getItem('user') || 'null'),
@@ -28,13 +27,13 @@ const Auth = {
     const u = this.user();
     if (!u) return;
     const staffPages = [
-      'dashboard.html', 'student.html', 'student-classes.html',
+      'dashboard.html', 'student.html', 'faculty.html', 'student-classes.html',
       'advisor-classe-sections.html', 'courses.html', 'grades.html',
       'student-status.html', 'user.html',
     ];
     const allowed = {
-      admin: [...staffPages, 'accounts.html'],
-      staff: staffPages,
+      admin: [...staffPages, 'accounts.html', 'announcements.html'],
+      staff: [...staffPages, 'announcements.html'],
       advisor: staffPages,
       student: ['student-portal.html'],
     }[u.role] || [];

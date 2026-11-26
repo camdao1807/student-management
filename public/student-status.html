@@ -1,20 +1,21 @@
 <!doctype html>
 <html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Quản lý trạng thái sinh viên | SM University</title>
-<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css"></head>
+<link rel="stylesheet" href="layout.css"><link rel="stylesheet" href="modules.css">
+<link rel="stylesheet" href="student-status.css"></head>
 <body><div class="layout">
 <aside class="sidebar">
   <div class="brand"><div class="logo">SM</div><div><div class="brand-name">SM UNIVERSITY</div><div class="brand-sub">QL SINH VIÊN</div></div></div>
   <div class="nav-title">ĐIỀU HÀNH CHÍNH</div>
-    <a class="nav-item " href="/dashboard.html">
+  <a class="nav-item" href="dashboard.html"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span>Dashboard</span></a>
+  <a class="nav-item" href="student.html"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span>Quản lý sinh viên</span></a>
+  <a class="nav-item" href="/faculty.html">
       <svg viewBox="0 0 24 24">
-        <rect x="3" y="3" width="8" height="8" rx="1"/>
-        <rect x="13" y="3" width="8" height="5" rx="1"/>
-        <rect x="13" y="10" width="8" height="11" rx="1"/>
-        <rect x="3" y="13" width="8" height="8" rx="1"/>
+        <path d="M3 21h18M5 21V7l7-4 7 4v14"/>
+        <path d="M9 9h2m2 0h2M9 13h2m2 0h2M9 17h2m2 0h2"/>
       </svg>
-      Dashboard
-    </a>  <a class="nav-item" href="student.html"><svg viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/></svg><span>Quản lý sinh viên</span></a>
+      Quản lý khoa
+  </a>
   <a class="nav-item" href="student-classes.html"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M16 5a3 3 0 0 1 0 6M21 20c0-2.5-1.5-4.6-3.5-5.5"/></svg><span>Quản lý lớp học</span></a>
   <a class="nav-item" href="advisor-classe-sections.html"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><circle cx="12" cy="10" r="3"/><path d="M7 19c.8-2.3 2.6-3.5 5-3.5s4.2 1.2 5 3.5"/></svg><span>Quản lý giảng viên</span></a>
   <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
@@ -41,29 +42,49 @@
 </aside>
 <div class="content">
   <div class="topbar"><div class="crumb">Trang chủ / <b>Trạng thái học vụ</b></div>
-    <div class="user-area"><a class="login-btn" href="login.html"><svg class="ic" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><path d="M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập</a></div></div>
+    <div class="user-area" id="userArea"></div></div>
   <div class="page-head"><div><h1>Quản lý trạng thái sinh viên</h1>
     <p>Theo dõi đang học, bảo lưu, thôi học, tốt nghiệp. Mỗi lần đổi trạng thái được ghi thành một dòng lịch sử mới.</p></div></div>
-  <div class="stats">
-    <div class="stat" data-st="studying" style="--c:var(--ok)"><span>Đang học</span><strong id="cStudying">0</strong></div>
-    <div class="stat" data-st="reserved" style="--c:var(--warn)"><span>Bảo lưu</span><strong id="cReserved">0</strong></div>
-    <div class="stat" data-st="dropped" style="--c:var(--err)"><span>Thôi học</span><strong id="cDropped">0</strong></div>
-    <div class="stat" data-st="graduated" style="--c:var(--vio)"><span>Đã tốt nghiệp</span><strong id="cGraduated">0</strong></div></div>
+  <div class="kpis">
+    <button type="button" class="kpi kpi-total" data-st="">
+      <span class="kpi-head"><span class="kpi-title">Tổng số sinh viên</span><span class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 4.8a3.5 3.5 0 0 1 0 6.4M18 14.5c2.2.8 3.5 2.800 3.5 5.5"/></svg></span></span>
+      <strong id="cTotal">0</strong>
+      <span class="kpi-foot"><span>Toàn trường</span></span></button>
+    <button type="button" class="kpi kpi-studying" data-st="studying">
+      <span class="kpi-head"><span class="kpi-title">Đang học</span><span class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 9 12 4 2 9l10 5 10-5z"/><path d="M6 11.500V16c3 2.500 9 2.500 12 0v-4.500"/></svg></span></span>
+      <strong id="cStudying">0</strong>
+      <span class="kpi-foot"><span>Tỷ lệ</span><b id="pStudying">0%</b></span></button>
+    <button type="button" class="kpi kpi-reserved" data-st="reserved">
+      <span class="kpi-head"><span class="kpi-title">Bảo lưu</span><span class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M10 9v6M14 9v6"/></svg></span></span>
+      <strong id="cReserved">0</strong>
+      <span class="kpi-foot"><span>Tỷ lệ</span><b id="pReserved">0%</b></span></button>
+    <button type="button" class="kpi kpi-dropped" data-st="dropped">
+      <span class="kpi-head"><span class="kpi-title">Thôi học</span><span class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16.5 9l5 5M21.5 9l-5 5"/></svg></span></span>
+      <strong id="cDropped">0</strong>
+      <span class="kpi-foot"><span>Tỷ lệ</span><b id="pDropped">0%</b></span></button>
+    <button type="button" class="kpi kpi-graduated" data-st="graduated">
+      <span class="kpi-head"><span class="kpi-title">Đã tốt nghiệp</span><span class="kpi-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="9" r="5.500"/><path d="M8.500 13.500 7 21l5-2.500 5 2.500-1.500-7.500"/></svg></span></span>
+      <strong id="cGraduated">0</strong>
+      <span class="kpi-foot"><span>Tỷ lệ</span><b id="pGraduated">0%</b></span></button>
+  </div>
   <div class="split">
-    <div class="panel"><div class="bar"><input id="q" placeholder="Tìm theo mã SV, họ tên...">
-      <select id="fStatus"><option value="">Mọi trạng thái</option></select><select id="fClass"><option value="">Mọi lớp</option></select></div>
-      <div style="overflow-x:auto"><table><thead><tr><th>Sinh viên</th><th>Lớp</th><th>Biến động</th><th>Hiệu lực</th></tr></thead><tbody id="rows"></tbody></table></div>
+    <div class="panel"><div class="filters"><input id="q" placeholder="Tìm theo mã SV, họ tên...">
+      <select id="fStatus"><option value="">Mọi trạng thái</option></select><select id="fClass"><option value="">Mọi lớp</option></select>
+        <label>Từ ngày <input type="date" id="fFrom"></label>
+        <label>Đến ngày <input type="date" id="fTo"></label>
+        <button class="sm" id="btnExport">Xuất Excel</button>
+        <button class="sm" id="btnClear" style="display:none">Bỏ chọn</button></div>
+      <div class="table-wrap"><table><thead><tr><th><input type="checkbox" id="chkAll" aria-label="Chọn cả trang"></th><th>Sinh viên</th><th>Lớp</th><th>Biến động</th><th>Hiệu lực</th><th>Lý do</th></tr></thead><tbody id="rows"></tbody></table></div>
       <div class="pager"><span id="info"></span><div id="pages"></div></div></div>
-    <aside class="panel"><h2 style="margin:0;font-size:17px">Phiếu cập nhật trạng thái</h2>
-      <div id="noSel" class="empty">Chọn một sinh viên trong danh sách để cập nhật trạng thái.</div>
-      <div id="form" style="display:none">
+    <aside class="panel" id="drawer"><button type="button" id="btnClose" aria-label="Đóng">&times;</button><h2 class="drawer-title">Phiếu cập nhật trạng thái</h2>
+      <div id="form">
         <div class="who" id="who"></div>
-        <div class="field" style="margin-top:12px">Chuyển sang trạng thái *</div><div class="picker" id="picker" style="margin-top:6px"></div>
-        <label class="field" style="margin-top:12px">Ngày hiệu lực *<input type="date" id="fDate"></label>
-        <label class="field" style="margin-top:12px"><span id="lblReason">Lý do</span><textarea id="fReason" rows="3" placeholder="Ghi rõ căn cứ, số quyết định..."></textarea></label>
+        <div class="field">Chuyển sang trạng thái *</div><div class="picker" id="picker"></div>
+        <label class="field">Ngày hiệu lực *<input type="date" id="fDate"></label>
+        <label class="field"><span id="lblReason">Lý do</span><textarea id="fReason" rows="3" placeholder="Ghi rõ căn cứ, số quyết định..."></textarea></label>
         <div class="err-box" id="err"></div>
-        <button class="primary" id="btnSave" style="width:100%;justify-content:center;margin-top:14px" disabled>Lưu thay đổi</button>
-        <div class="hist"><b>Lịch sử trạng thái</b><ul id="hist"></ul></div></div></aside>
+        <button class="primary" id="btnSave" disabled>Lưu thay đổi</button>
+        <div class="hist" id="histBox"><b>Lịch sử trạng thái</b><ul id="hist"></ul></div></div></aside>
   </div>
 </div></div>
 

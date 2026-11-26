@@ -22,7 +22,8 @@ import { GradesModule } from './modules/grades/grades.module';
 import { StudentPortalModule } from './modules/student-portal/student-portal.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊM
+import { AccountsModule } from './modules/accounts/accounts.module';
+import { AnnouncementsModule } from './modules/announcements/announcements.module';
 
 @Module({
   imports: [
@@ -59,7 +60,8 @@ import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊ
     GradesModule,
     AuthModule,
     UsersModule,
-    AccountsModule, // <-- THÊM
+    AccountsModule,
+    AnnouncementsModule,
   ],
 })
 export class AppModule {}
