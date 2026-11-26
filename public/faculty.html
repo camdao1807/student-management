@@ -12,42 +12,38 @@
 #facultyBody tr{cursor:pointer}
 #facultyBody tr.selected{background:#eef4ff}
 .code-tag{display:inline-block;padding:3px 8px;border-radius:6px;background:#e8efff;color:#1d4ed8;font-size:12px;font-weight:700}
-.st{display:inline-block;padding:3px 10px;border-radius:999px;font-size:12px;font-weight:600}
-.st-on{background:#dcfce7;color:#15803d}
-.st-off{background:#f1f5f9;color:#64748b}
-.row-actions{display:flex;gap:6px}
-.row-actions button{padding:4px 10px;font-size:13px}
-.row-actions .danger{color:#b91c1c}
-.detail-head{display:flex;gap:14px;align-items:center;margin-bottom:14px}
-.detail-logo{width:52px;height:52px;border-radius:12px;background:#1d4ed8;color:#fff;display:grid;place-items:center;font-weight:700}
-.detail-head h3{margin:0 0 2px;font-size:17px}
-.detail-head small{color:#64748b}
-.info-box{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;margin-bottom:16px;background:#f6f8fb;border-radius:10px;font-size:13px}
-.info-box span{display:block;color:#64748b;font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.section-label{margin:0 0 8px;color:#64748b;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
-.person{display:flex;gap:10px;align-items:center;padding:10px;margin-bottom:8px;border-radius:10px;background:#f6f8fb}
-.person.avatar{flex:none;width:36px;height:36px;border-radius:50%;background:#dbe6ff;color:#1d4ed8;display:grid;place-items:center;font-weight:700;font-size:13px}
-.person b{display:block;font-size:14px}
-.person small{color:#64748b}
-.detail-empty{padding:28px 12px;text-align:center;color:#64748b}
-.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}
-.quick div{padding:12px;border-radius:10px;background:#f6f8fb;text-align:center}
-.quick strong{display:block;font-size:22px}
-.quick small{color:#64748b}
-dialog{border:0;border-radius:16px;padding:0;width:min(560px,92vw);box-shadow:0 24px 60px rgba(15,23,42,.25)}
-dialog::backdrop{background:rgba(15,23,42,.45)}
-#facultyForm{padding:24px;display:grid;gap:14px}
-#facultyForm h2{margin:0;font-size:20px}
-#facultyForm .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-#facultyForm label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#475569}
-#facultyForm label.check{flex-direction:row;align-items:center;gap:8px}
-#facultyForm input:not([type="checkbox"]){height:40px;padding:0 12px;border:1px solid #dbe2ec;border-radius:10px;font:inherit;font-weight:400;color:#0f172a;background:#fff}
-.error{margin:0;color:#b91c1c;font-size:13px}
-.error:empty{display:none}
-.actions{display:flex;justify-content:flex-end;gap:10px}
-.pager button.on{background:#1d4ed8;color:#fff}
+.report-table th,.report-table td{white-space:nowrap}
+.report-table td.majors-cell{white-space:normal;min-width:260px;max-width:340px}
+.chip{display:inline-block;margin:2px 4px 2px 0;padding:2px 8px;border-radius:999px;background:#f1f5f9;color:#475569;font-size:12px}
+#detailPanel{position:sticky;top:16px;padding:20px;background:#fff;border:1px solid #e5eaf2;border-radius:16px;box-shadow:0 1px 3px rgba(15,23,42,.06)}
+.detail-head{display:flex;gap:14px;align-items:center;margin-bottom:18px}
+.detail-logo{flex:none;width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px;box-shadow:0 6px 14px rgba(37,99,235,.28)}
+.detail-head h3{margin:0 0 3px;font-size:18px;line-height:1.25}
+.detail-head p{margin:0;color:#64748b;font-size:13px}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px}
+.quick div{padding:12px 4px;border-radius:12px;text-align:center}
+.quick strong{display:block;font-size:22px;line-height:1.2}
+.quick small{font-size:12px;font-weight:600}
+.q-blue{background:#eff6ff;color:#1d4ed8}
+.q-green{background:#ecfdf5;color:#15803d}
+.q-purple{background:#f5f3ff;color:#6d28d9}
+.q-amber{background:#fffbeb;color:#b45309}
+.section-label{margin:0 0 10px;color:#64748b;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.major{margin-bottom:12px;padding:12px;border:1px solid #e5eaf2;border-left:4px solid #2563eb;border-radius:12px;background:#fff}
+.major-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+.major-head b{font-size:14px;line-height:1.3}
+.pill{flex:none;padding:2px 10px;border-radius:999px;background:#f1f5f9;color:#64748b;font-size:12px;font-weight:600}
+.pill.on{background:#dbeafe;color:#1d4ed8}
+.cls{padding:10px;margin-top:6px;border-radius:10px;background:#f8fafc}
+.cls-top{display:flex;align-items:center;gap:8px}
+.cls-name{font-size:14px;font-weight:600}
+.cls-meta{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;color:#64748b;font-size:12px}
+.no-cls{padding:12px;border:1px dashed #dbe2ec;border-radius:10px;color:#94a3b8;font-size:13px;text-align:center}
+.detail-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:36px 12px;text-align:center;color:#94a3b8;font-size:13px}
+.detail-empty b{color:#475569;font-size:15px}
+.faculty-grid .report-table{min-width:0;width:100%}
+.faculty-grid .report-table th,.faculty-grid .report-table td{padding-left:10px;padding-right:10px}
 @media (max-width:1100px){.faculty-grid{grid-template-columns:1fr}}
-@media (max-width:600px){#facultyForm .two{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -77,7 +73,6 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       </svg>
       Quản lý sinh viên
     </a>
-    
 
     <a class="nav-item active" href="/faculty.html" aria-current="page">
       <svg viewBox="0 0 24 24">
@@ -103,17 +98,21 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
       </svg>
       Quản lý giảng viên
     </a>
-
-    <a class="nav-item" href="attendance.html"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8l1.5 1.5L12 7M8 14l1.5 1.5L12 13M14 9h2.5M14 15h2.5"/></svg><span>Điểm danh sinh viên</span></a>
-
-    <a class="nav-item" href="courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
-    <a class="nav-item" href="grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
+    <a class="nav-item" href="/courses.html"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg><span>Quản lý môn học</span></a>
+    <a class="nav-item" href="/grades.html"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>Quản lý điểm số</span></a>
 
     <a class="nav-item" href="/student-status.html">
       <svg viewBox="0 0 24 24">
         <path d="M3 7h18M3 12h18M3 17h12"/>
       </svg>
       Trạng thái học vụ
+    </a>
+    <a class="nav-item" href="/announcements.html">
+      <svg viewBox="0 0 24 24">
+        <path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/>
+        <path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/>
+      </svg>
+      Thông báo sinh viên
     </a>
 
     <div class="nav-title">HỆ THỐNG &amp; CẤU HÌNH</div>
@@ -139,7 +138,7 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
   <div class="content dashboard-content">
 
     <header class="topbar">
-      <div class="crumb">Trang chủ / <b>Quản lý khoa</b></div>
+      <div class="crumb"><a href="/dashboard.html">Trang chủ</a> / <b>Quản lý khoa</b></div>
       <div class="user-area" id="userArea">
         <a class="login-btn" href="/login.html">
           <svg viewBox="0 0 24 24" class="ic"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4M10 17l5-5-5-5M15 12H3"/></svg>Đăng nhập
@@ -150,14 +149,11 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
     <div class="page-head">
       <div>
         <h1>Quản lý khoa</h1>
-        <p>Quản lý danh mục các khoa, ban chủ nhiệm khoa, số lượng giảng viên và sinh viên của từng khoa.</p>
-      </div>
-      <div class="head-actions">
-        <button type="button" class="primary" id="btnAdd">
-          <svg viewBox="0 0 24 24" class="ic"><path d="M12 5v14M5 12h14"/></svg>Thêm khoa
-        </button>
+        <p>Danh sách khoa, các ngành thuộc khoa và các lớp học của từng ngành. Số lớp, sinh viên và CVHT lấy trực tiếp từ hệ thống.</p>
       </div>
     </div>
+
+    <div id="facultyError" class="state-line error-state" role="alert" hidden></div>
 
     <section class="metric-grid" aria-label="Thống kê khoa">
       <article class="metric metric-classes">
@@ -166,45 +162,44 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
           <span class="badge">Toàn trường</span>
         </div>
         <span class="metric-label">Tổng số khoa</span>
-        <strong id="statTotal">0</strong>
-        <small>Tất cả khoa trong hệ thống</small>
+        <strong id="statFaculties">—</strong>
+        <small>Các khoa đang quản lý</small>
       </article>
       <article class="metric metric-studying">
         <div class="metric-top">
-          <span class="metric-mark"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span>
-          <span class="badge" id="statActiveRate">0%</span>
+          <span class="metric-mark"><svg viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5M9 7h6M9 11h6"/></svg></span>
+          <span class="badge">Ngành</span>
         </div>
-        <span class="metric-label">Khoa đang hoạt động</span>
-        <strong id="statActive">0</strong>
-        <small>Trên tổng số khoa</small>
+        <span class="metric-label">Tổng số ngành</span>
+        <strong id="statMajors">—</strong>
+        <small>Ngành thuộc các khoa</small>
       </article>
       <article class="metric metric-employees">
         <div class="metric-top">
-          <span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg></span>
-          <span class="badge">Giảng viên</span>
+          <span class="metric-mark"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18"/></svg></span>
+          <span class="badge">Lớp</span>
         </div>
-        <span class="metric-label">Tổng giảng viên</span>
-        <strong id="statLecturers">0</strong>
-        <small>Của các khoa đang hoạt động</small>
+        <span class="metric-label">Tổng số lớp</span>
+        <strong id="statClasses">—</strong>
+        <small>Tất cả lớp hành chính</small>
       </article>
       <article class="metric metric-students">
         <div class="metric-top">
           <span class="metric-mark"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-3.5 3-5.5 7-5.5s7 2 7 5.5"/></svg></span>
           <span class="badge">Sinh viên</span>
         </div>
-        <span class="metric-label">Tổng sinh viên</span>
-        <strong id="statStudents">0</strong>
-        <small>Của các khoa đang hoạt động</small>
+        <span class="metric-label">Sinh viên đã xếp lớp</span>
+        <strong id="statStudents">—</strong>
+        <small>Trong tất cả các lớp</small>
       </article>
     </section>
 
     <div class="faculty-grid">
-
       <section class="panel report-panel" aria-labelledby="facultyTitle">
         <div class="report-heading">
           <div>
             <h2 id="facultyTitle">Danh sách khoa</h2>
-            <p>Bấm vào một dòng để xem chi tiết khoa</p>
+            <p>Bấm vào một khoa để xem các ngành và lớp</p>
           </div>
         </div>
 
@@ -212,255 +207,216 @@ dialog::backdrop{background:rgba(15,23,42,.45)}
           <label class="report-search">Tìm khoa
             <span class="search-input">
               <svg viewBox="0 0 24 24" class="ic"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
-              <input id="fSearch" type="search" placeholder="Mã khoa, tên khoa hoặc trưởng khoa">
+              <input id="fSearch" type="search" placeholder="Tên khoa, ngành hoặc mã lớp">
             </span>
           </label>
-          <label>Trạng thái
-            <select id="fStatus">
-              <option value="">Tất cả trạng thái</option>
-              <option value="active">Đang hoạt động</option>
-              <option value="off">Ngừng hoạt động</option>
-            </select>
-          </label>
-          <button type="button" id="btnReset" class="clear-filter">Xóa bộ lọc</button>
         </div>
 
         <div class="table-scroll">
           <table class="report-table">
             <thead>
-              <tr>
-                <th>STT</th><th>Mã</th><th>Tên khoa</th><th>Trưởng khoa</th>
-                <th>Giảng viên</th><th>Sinh viên</th><th>Trạng thái</th><th>Thao tác</th>
-              </tr>
+              <tr><th>STT</th><th>Mã</th><th>Khoa</th><th>Số ngành</th><th>Số lớp</th><th>Sinh viên</th><th>CVHT</th></tr>
             </thead>
             <tbody id="facultyBody"></tbody>
           </table>
         </div>
-        <div id="emptyList" class="empty-report" hidden>Không tìm thấy khoa phù hợp.</div>
-
-        <div class="report-footer">
-          <span id="tableFoot"></span>
-          <div class="pager" id="pager"></div>
-        </div>
+        <div id="emptyList" class="empty-report" hidden>Không có khoa phù hợp.</div>
+        <div class="report-footer"><span id="tableFoot"></span></div>
       </section>
 
       <aside class="panel" id="detailPanel" aria-label="Chi tiết khoa"></aside>
-
     </div>
 
   </div>
 </div>
 
-<dialog id="facultyDialog">
-  <form id="facultyForm">
-    <h2 id="dialogTitle">Thêm khoa</h2>
-    <div class="two">
-      <label>Mã khoa <input name="code" required maxlength="10" placeholder="VD: FIT"></label>
-      <label>Năm thành lập <input name="founded" type="number" min="1900" max="2100" placeholder="VD: 1995"></label>
-    </div>
-    <label>Tên khoa <input name="name" required maxlength="150" placeholder="VD: Khoa Công nghệ thông tin"></label>
-    <label>Trưởng khoa <input name="dean" required maxlength="100" placeholder="VD: PGS.TS. Trần Đình Khang"></label>
-    <label>Phó trưởng khoa (cách nhau bằng dấu phẩy) <input name="deputies" maxlength="300"></label>
-    <label>Địa điểm làm việc <input name="building" maxlength="150" placeholder="VD: Nhà A1 - Tầng 3, 4"></label>
-    <div class="two">
-      <label>Số giảng viên <input name="lecturers" type="number" min="0" value="0"></label>
-      <label>Số sinh viên <input name="students" type="number" min="0" value="0"></label>
-    </div>
-    <label class="check"><input name="active" type="checkbox" checked> Khoa đang hoạt động</label>
-    <p id="formError" class="error"></p>
-    <div class="actions">
-      <button type="button" id="btnCancel">Hủy</button>
-      <button type="submit" class="primary">Lưu khoa</button>
-    </div>
-  </form>
-</dialog>
-
-<div id="toast" role="status" aria-live="polite"></div>
-
 <script>
-/* DỮ LIỆU MẪU (chạy tạm trên trình duyệt, chưa nối API).
-   Khi backend có API khoa, thay biến `data` bằng dữ liệu fetch từ server. */
+/* Danh sách khoa & ngành DÙNG CHUNG cho trang Quản lý khoa và Quản lý lớp học.
+   Muốn thêm/sửa khoa hay ngành thì chỉ cần sửa ở file này. */
 (function () {
-  const PAGE_SIZE = 5;
-  let data = [
-    { id: 1, code: 'FIT', name: 'Khoa Công nghệ thông tin', dean: 'PGS.TS. Trần Đình Khang', deputies: ['TS. Lê Quang Huy', 'TS. Nguyễn Thị Mai'], building: 'Nhà A1 - Tầng 3, 4', founded: 1995, lecturers: 120, students: 3200, active: true },
-    { id: 2, code: 'FBA', name: 'Khoa Quản trị Kinh doanh', dean: 'GS.TS. Nguyễn Văn Long', deputies: [], building: 'Nhà B2 - Tầng 2', founded: 1998, lecturers: 85, students: 2800, active: true },
-    { id: 3, code: 'FEE', name: 'Khoa Điện - Điện tử & Tự động hóa', dean: 'PGS.TS. Đỗ Hoàng Dương', deputies: [], building: 'Nhà C1 - Tầng 1', founded: 1996, lecturers: 70, students: 2100, active: true },
-    { id: 4, code: 'FL', name: 'Khoa Ngoại ngữ Ứng dụng', dean: 'TS. Trần Bích Thủy', deputies: [], building: 'Nhà A2 - Tầng 4', founded: 2002, lecturers: 60, students: 1900, active: true },
-    { id: 5, code: 'IAI', name: 'Viện Trí tuệ nhân tạo & Dữ liệu lớn', dean: 'GS.TSKH. Vũ Minh Giang', deputies: [], building: 'Khu Công nghệ cao - Tầng 5', founded: 2021, lecturers: 40, students: 800, active: true },
-    { id: 6, code: 'FED', name: 'Khoa Kinh tế & Tài chính Quốc tế', dean: 'PGS.TS. Hà Thị Thanh Hòa', deputies: [], building: 'Nhà B1 - Tầng 3', founded: 2005, lecturers: 55, students: 1500, active: false }
+  const FACULTIES = [
+    { code: 'CNTT', name: 'Khoa Công nghệ thông tin', majors: ['Công nghệ thông tin', 'Kỹ thuật máy tính', 'Trí tuệ nhân tạo'] },
+    { code: 'DDT', name: 'Khoa Điện – Điện tử', majors: ['Công nghệ kỹ thuật điện – điện tử', 'Điều khiển và tự động hóa', 'Kỹ thuật cơ điện tử'] },
+    { code: 'Y', name: 'Khoa Y', majors: ['Y khoa', 'Điều dưỡng', 'Hộ sinh', 'Dinh dưỡng', 'Kỹ thuật phục hồi chức năng'] },
+    { code: 'SP', name: 'Khoa Sư phạm', majors: ['Giáo dục mầm non', 'Giáo dục tiểu học', 'Giáo dục học'] },
+    { code: 'LUAT', name: 'Khoa Luật', majors: ['Luật', 'Luật kinh tế'] },
+    { code: 'DL', name: 'Khoa Du lịch', majors: ['Quản trị khách sạn', 'Quản trị dịch vụ du lịch và lữ hành', 'Quản trị nhà hàng và dịch vụ ăn uống'] },
+    { code: 'NN', name: 'Khoa Ngôn ngữ', majors: ['Ngôn ngữ Anh', 'Ngôn ngữ Nhật', 'Ngôn ngữ Trung Quốc', 'Ngôn ngữ Hàn Quốc'] },
+    { code: 'TCKT', name: 'Khoa Tài chính – Kế toán', majors: ['Kế toán', 'Tài chính – Ngân hàng'] },
+    { code: 'QTKD', name: 'Khoa Quản trị kinh doanh', majors: ['Quản trị kinh doanh'] },
+    { code: 'M', name: 'Khoa Marketing', majors: ['Marketing', 'Truyền thông đa phương tiện'] },
+    { code: 'CNTP', name: 'Khoa Công nghệ thực phẩm', majors: ['Công nghệ thực phẩm'] }
   ];
-  let nextId = 7, page = 1, selectedId = 1, editingId = null;
 
-  const $ = id => document.getElementById(id);
-  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-  const num = n => Number(n || 0).toLocaleString('vi-VN');
-  const initial = name => { const w = String(name).replace(/^(GS\.TSKH\.|GS\.TS\.|PGS\.TS\.|TS\.|ThS\.)\s*/i, '').trim().split(/\s+/); return (w[w.length - 1] || '?').charAt(0).toUpperCase(); };
+  const norm = s => String(s || '').normalize('NFC').trim().toLowerCase()
+    .replace(/[–—−]/g, '-').replace(/\s*-\s*/g, ' - ').replace(/\s+/g, ' ');
 
-  function toast(msg) {
-    const t = $('toast'); t.textContent = msg; t.classList.add('show');
-    clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove('show'), 2200);
+  // Tên ngành cũ/viết tắt -> tên ngành chuẩn
+  const ALIASES = { 'ngôn ngữ': 'Ngôn ngữ Anh' };
+
+  const byKey = new Map();
+  FACULTIES.forEach(f => f.majors.forEach(m => byKey.set(norm(m), { faculty: f, major: m })));
+
+  function find(name) {
+    const k = norm(name);
+    return byKey.get(k) || (ALIASES[k] ? byKey.get(norm(ALIASES[k])) : null) || null;
+  }
+  // Trả về tên ngành chuẩn; nếu không nhận ra thì giữ nguyên
+  function canonical(name) {
+    const hit = find(name);
+    return hit ? hit.major : String(name || '');
   }
 
-  function filtered() {
-    const q = $('fSearch').value.trim().toLowerCase();
-    const st = $('fStatus').value;
-    return data.filter(f => {
-      if (st === 'active' && !f.active) return false;
-      if (st === 'off' && f.active) return false;
-      if (!q) return true;
-      return [f.code, f.name, f.dean].some(v => String(v).toLowerCase().includes(q));
-    });
-  }
-
-  function renderStats() {
-    const active = data.filter(f => f.active);
-    $('statTotal').textContent = num(data.length);
-    $('statActive').textContent = num(active.length);
-    $('statActiveRate').textContent = data.length ? Math.round(active.length * 100 / data.length) + '%' : '0%';
-    $('statLecturers').textContent = num(active.reduce((s, f) => s + f.lecturers, 0));
-    $('statStudents').textContent = num(active.reduce((s, f) => s + f.students, 0));
-  }
-
-  function renderTable() {
-    const list = filtered();
-    const pages = Math.max(1, Math.ceil(list.length / PAGE_SIZE));
-    if (page > pages) page = pages;
-    const start = (page - 1) * PAGE_SIZE;
-    const rows = list.slice(start, start + PAGE_SIZE);
-
-    $('facultyBody').innerHTML = rows.map((f, i) => `
-      <tr data-id="${f.id}" class="${f.id === selectedId ? 'selected' : ''}">
-        <td>${String(start + i + 1).padStart(2, '0')}</td>
-        <td><span class="code-tag">${esc(f.code)}</span></td>
-        <td><b>${esc(f.name)}</b><br><small>${esc(f.building)}</small></td>
-        <td>${esc(f.dean)}</td>
-        <td>${num(f.lecturers)}</td>
-        <td>${num(f.students)}</td>
-        <td><span class="st ${f.active ? 'st-on' : 'st-off'}">${f.active ? 'Hoạt động' : 'Ngừng'}</span></td>
-        <td><div class="row-actions">
-          <button type="button" data-act="edit" data-id="${f.id}">Sửa</button>
-          <button type="button" class="danger" data-act="del" data-id="${f.id}">Xóa</button>
-        </div></td>
-      </tr>`).join('');
-
-    $('emptyList').hidden = list.length > 0;
-    $('tableFoot').textContent = list.length
-      ? `Hiển thị ${start + 1} - ${start + rows.length} trong số ${list.length} khoa`
-      : '0 khoa';
-
-    let btns = '';
-    if (pages > 1) {
-      btns += `<button type="button" data-page="${page - 1}" ${page === 1 ? 'disabled' : ''} aria-label="Trang trước">‹</button>`;
-      for (let p = 1; p <= pages; p++) btns += `<button type="button" data-page="${p}" class="${p === page ? 'on' : ''}">${p}</button>`;
-      btns += `<button type="button" data-page="${page + 1}" ${page === pages ? 'disabled' : ''} aria-label="Trang sau">›</button>`;
-    }
-    $('pager').innerHTML = btns;
-  }
-
-  function renderDetail() {
-    const f = data.find(x => x.id === selectedId);
-    const box = $('detailPanel');
-    if (!f) { box.innerHTML = '<div class="detail-empty">Bấm vào một khoa trong bảng để xem chi tiết.</div>'; return; }
-    const people = [{ name: f.dean, role: 'Trưởng khoa' }].concat(f.deputies.map(n => ({ name: n, role: 'Phó trưởng khoa' })));
-    box.innerHTML = `
-      <div class="detail-head">
-        <div class="detail-logo">${esc(f.code.slice(0, 3))}</div>
-        <div><h3>${esc(f.name)}</h3><span class="st ${f.active ? 'st-on' : 'st-off'}">${f.active ? 'Hoạt động' : 'Ngừng hoạt động'}</span></div>
-      </div>
-      <div class="info-box">
-        <div><span>Mã khoa</span>${esc(f.code)}</div>
-        <div><span>Thành lập</span>${f.founded ? esc(f.founded) : '—'}</div>
-        <div style="grid-column:1/-1"><span>Địa điểm</span>${esc(f.building || '—')}</div>
-      </div>
-      <p class="section-label">Ban chủ nhiệm khoa</p>
-      ${people.map(p => `<div class="person"><div class="avatar">${esc(initial(p.name))}</div><div><b>${esc(p.name)}</b><small>${esc(p.role)}</small></div></div>`).join('')}
-      <div class="quick">
-        <div><strong>${num(f.lecturers)}</strong><small>Giảng viên</small></div>
-        <div><strong>${num(f.students)}</strong><small>Sinh viên</small></div>
-      </div>`;
-  }
-
-  function renderAll() { renderStats(); renderTable(); renderDetail(); }
-
-  function openForm(id) {
-    const f = id ? data.find(x => x.id === id) : null;
-    editingId = id || null;
-    const form = $('facultyForm');
-    form.reset();
-    $('formError').textContent = '';
-    $('dialogTitle').textContent = f ? 'Sửa khoa' : 'Thêm khoa';
-    if (f) {
-      form.code.value = f.code; form.name.value = f.name; form.dean.value = f.dean;
-      form.deputies.value = f.deputies.join(', '); form.building.value = f.building;
-      form.founded.value = f.founded || ''; form.lecturers.value = f.lecturers;
-      form.students.value = f.students; form.active.checked = f.active;
-    }
-    $('facultyDialog').showModal();
-  }
-
-  $('btnAdd').addEventListener('click', () => openForm(null));
-  $('btnCancel').addEventListener('click', () => $('facultyDialog').close());
-
-  $('facultyForm').addEventListener('submit', e => {
-    e.preventDefault();
-    const f = e.target;
-    const code = f.code.value.trim().toUpperCase();
-    if (data.some(x => x.code === code && x.id !== editingId)) {
-      $('formError').textContent = 'Mã khoa "' + code + '" đã tồn tại.';
-      return;
-    }
-    const item = {
-      code, name: f.name.value.trim(), dean: f.dean.value.trim(),
-      deputies: f.deputies.value.split(',').map(s => s.trim()).filter(Boolean),
-      building: f.building.value.trim(), founded: f.founded.value ? Number(f.founded.value) : null,
-      lecturers: Number(f.lecturers.value) || 0, students: Number(f.students.value) || 0,
-      active: f.active.checked
-    };
-    if (editingId) {
-      Object.assign(data.find(x => x.id === editingId), item);
-      toast('Đã cập nhật khoa ' + code);
-    } else {
-      item.id = nextId++;
-      data.push(item);
-      selectedId = item.id;
-      toast('Đã thêm khoa ' + code);
-    }
-    $('facultyDialog').close();
-    renderAll();
-  });
-
-  $('facultyBody').addEventListener('click', e => {
-    const btn = e.target.closest('button[data-act]');
-    if (btn) {
-      const id = Number(btn.dataset.id);
-      if (btn.dataset.act === 'edit') { openForm(id); return; }
-      const f = data.find(x => x.id === id);
-      if (f && confirm('Xóa khoa "' + f.name + '"?')) {
-        data = data.filter(x => x.id !== id);
-        if (selectedId === id) selectedId = null;
-        toast('Đã xóa khoa ' + f.code);
-        renderAll();
-      }
-      return;
-    }
-    const tr = e.target.closest('tr[data-id]');
-    if (tr) { selectedId = Number(tr.dataset.id); renderTable(); renderDetail(); }
-  });
-
-  $('pager').addEventListener('click', e => {
-    const b = e.target.closest('button[data-page]');
-    if (b && !b.disabled) { page = Number(b.dataset.page); renderTable(); }
-  });
-
-  $('fSearch').addEventListener('input', () => { page = 1; renderTable(); });
-  $('fStatus').addEventListener('change', () => { page = 1; renderTable(); });
-  $('btnReset').addEventListener('click', () => { $('fSearch').value = ''; $('fStatus').value = ''; page = 1; renderTable(); });
-
-  renderAll();
+  window.Catalog = { FACULTIES, norm, find, canonical };
 })();
 </script>
 <script src="/auth.js"></script>
 <script>Auth.require(['admin', 'staff', 'advisor']);</script>
+<script>
+(function () {
+  /* Danh sách khoa/ngành dùng chung với trang Quản lý lớp học (xem đoạn Catalog phía trên) */
+  const FACULTIES = Catalog.FACULTIES;
+
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const num = n => Number(n || 0).toLocaleString('vi-VN');
+  const norm = Catalog.norm;
+
+  async function api(url) {
+    const res = await fetch(url);
+    const data = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(Array.isArray(data.message) ? data.message.join(', ') : data.message || 'Có lỗi xảy ra');
+    return data;
+  }
+
+  // CVHT đang phụ trách: id lớp -> { name, code }
+  async function fetchActiveAdvisors(limit) {
+    const map = new Map();
+    let got = 0;
+    for (let page = 1; page <= 100; page++) {
+      const { items, total } = await api('/advisor-assignments?status=active&limit=' + limit + '&page=' + page);
+      items.forEach(r => map.set(String(r.studentClassId), { name: r.employeeName, code: r.employeeCode }));
+      got += items.length;
+      if (!items.length || got >= total) break;
+    }
+    return map;
+  }
+  async function loadAdvisors() {
+    try { return await fetchActiveAdvisors(50); }
+    catch (_) { try { return await fetchActiveAdvisors(10); } catch (__) { return new Map(); } }
+  }
+
+  let faculties = [], selectedCode = null, advisorsMap = new Map();
+
+  function newFaculty(code, name, assigned) {
+    return { code, name, assigned, majors: [], classes: [], students: 0, advisors: new Set(), years: new Set() };
+  }
+
+  function build(classes, advisors) {
+    const list = FACULTIES.map(f => {
+      const x = newFaculty(f.code, f.name, true);
+      x.majors = f.majors.map(m => ({ name: m, key: norm(m), classes: [] }));
+      return x;
+    });
+    const byKey = new Map();
+    list.forEach(f => f.majors.forEach(m => byKey.set(m.key, { f, m })));
+
+    classes.forEach(c => {
+      const hit = byKey.get(norm(Catalog.canonical(c.majorName)));
+      if (!hit) return; // lớp có ngành chưa thuộc khoa nào: không hiển thị ở trang này
+      const { f, m } = hit;
+      m.classes.push(c);
+      f.classes.push(c);
+      f.students += Number(c.studentCount) || 0;
+      f.years.add(c.academicYear);
+      const a = advisors.get(String(c.id));
+      if (a) f.advisors.add(a.code);
+    });
+    return list;
+  }
+
+  function filtered() {
+    const q = $('fSearch').value.trim().toLowerCase();
+    if (!q) return faculties;
+    return faculties.filter(f =>
+      f.name.toLowerCase().includes(q) ||
+      f.majors.some(m => m.name.toLowerCase().includes(q)) ||
+      f.classes.some(c => String(c.classCode).toLowerCase().includes(q)));
+  }
+
+  function renderTable() {
+    const list = filtered();
+    $('facultyBody').innerHTML = list.map((f, i) => `
+      <tr data-code="${esc(f.code)}" class="${f.code === selectedCode ? 'selected' : ''}">
+        <td>${String(i + 1).padStart(2, '0')}</td>
+        <td><span class="code-tag">${esc(f.code)}</span></td>
+        <td><b>${esc(f.name)}</b></td>
+        <td>${num(f.majors.length)}</td>
+        <td>${num(f.classes.length)}</td>
+        <td>${num(f.students)}</td>
+        <td>${num(f.advisors.size)}</td>
+      </tr>`).join('');
+    $('emptyList').hidden = list.length > 0;
+    $('tableFoot').textContent = 'Hiển thị ' + list.length + ' trong tổng số ' + faculties.length + ' khoa';
+  }
+
+  function renderDetail() {
+    const f = faculties.find(x => x.code === selectedCode);
+    const box = $('detailPanel');
+    if (!f) {
+      box.innerHTML = '<div class="detail-empty"><b>Chưa chọn khoa</b><span>Bấm vào một khoa trong bảng để xem các ngành và lớp.</span></div>';
+      return;
+    }
+    box.innerHTML = `
+      <div class="detail-head">
+        <div class="detail-logo">${esc(f.code.slice(0, 3))}</div>
+        <div><h3>${esc(f.name)}</h3><p>${num(f.majors.length)} ngành · ${num(f.classes.length)} lớp</p></div>
+      </div>
+      <div class="quick">
+        <div class="q-blue"><strong>${num(f.majors.length)}</strong><small>Ngành</small></div>
+        <div class="q-green"><strong>${num(f.classes.length)}</strong><small>Lớp</small></div>
+        <div class="q-purple"><strong>${num(f.students)}</strong><small>Sinh viên</small></div>
+        <div class="q-amber"><strong>${num(f.advisors.size)}</strong><small>CVHT</small></div>
+      </div>
+      <p class="section-label">Các ngành thuộc khoa</p>
+      ${f.majors.map(m => `
+        <div class="major">
+          <div class="major-head"><b>${esc(m.name)}</b><span class="pill ${m.classes.length ? 'on' : ''}">${num(m.classes.length)} lớp</span></div>
+          ${m.classes.length ? m.classes.map(c => {
+            const a = advisorsMap.get(String(c.id));
+            return `<div class="cls">
+              <div class="cls-top"><span class="code-tag">${esc(c.classCode)}</span><span class="cls-name">${esc(c.className)}</span></div>
+              <div class="cls-meta"><span>Niên khóa ${esc(c.academicYear)}</span><span>${num(c.studentCount)} sinh viên</span><span>CVHT: ${a ? esc(a.name) : 'chưa có'}</span></div>
+            </div>`;
+          }).join('') : '<div class="no-cls">Chưa có lớp</div>'}
+        </div>`).join('')}`;
+  }
+
+  function renderAll() { renderTable(); renderDetail(); }
+
+  $('facultyBody').addEventListener('click', e => {
+    const tr = e.target.closest('tr[data-code]');
+    if (tr) { selectedCode = (selectedCode === tr.dataset.code) ? null : tr.dataset.code; renderAll(); }
+  });
+  $('fSearch').addEventListener('input', renderTable);
+
+  (async function init() {
+    try {
+      const [classes, advisors] = await Promise.all([api('/student-classes'), loadAdvisors()]);
+      advisorsMap = advisors;
+      faculties = build(classes, advisors);
+      selectedCode = null;
+      $('statFaculties').textContent = num(FACULTIES.length);
+      $('statMajors').textContent = num(FACULTIES.reduce((s, f) => s + f.majors.length, 0));
+      $('statClasses').textContent = num(classes.length);
+      $('statStudents').textContent = num(classes.reduce((s, c) => s + (Number(c.studentCount) || 0), 0));
+      renderAll();
+    } catch (e) {
+      $('facultyError').textContent = e.message;
+      $('facultyError').hidden = false;
+    }
+  })();
+})();
+</script>
 </body>
 </html>
