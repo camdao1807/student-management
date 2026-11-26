@@ -28,12 +28,12 @@ const Auth = {
     if (!u) return;
     const staffPages = [
       'dashboard.html', 'student.html', 'faculty.html', 'student-classes.html',
-      'advisor-classe-sections.html', 'courses.html', 'grades.html',
+      'advisor-classe-sections.html', 'courses.html', 'grades.html', 'attendance.html',
       'student-status.html', 'user.html',
     ];
     const allowed = {
-      admin: [...staffPages, 'accounts.html'],
-      staff: staffPages,
+      admin: [...staffPages, 'accounts.html', 'announcements.html'],
+      staff: [...staffPages, 'announcements.html'],
       advisor: staffPages,
       student: ['student-portal.html'],
     }[u.role] || [];

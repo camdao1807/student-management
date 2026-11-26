@@ -7,7 +7,8 @@
 <link rel="stylesheet" href="/layout.css">
 <link rel="stylesheet" href="/dashboard.css">
 <style>
-.faculty-grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;align-items:start}
+/* Trang dùng đúng layout.css + dashboard.css như dashboard; chỉ style thêm phần riêng của trang khoa. */
+.faculty-grid{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
 #facultyBody tr{cursor:pointer}
 #facultyBody tr.selected{background:#eef4ff}
 .code-tag{display:inline-block;padding:3px 8px;border-radius:6px;background:#e8efff;color:#1d4ed8;font-size:12px;font-weight:700}
@@ -40,6 +41,8 @@
 .no-cls{padding:12px;border:1px dashed #dbe2ec;border-radius:10px;color:#94a3b8;font-size:13px;text-align:center}
 .detail-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:36px 12px;text-align:center;color:#94a3b8;font-size:13px}
 .detail-empty b{color:#475569;font-size:15px}
+.faculty-grid .report-table{min-width:0;width:100%}
+.faculty-grid .report-table th,.faculty-grid .report-table td{padding-left:10px;padding-right:10px}
 @media (max-width:1100px){.faculty-grid{grid-template-columns:1fr}}
 </style>
 </head>
@@ -220,11 +223,10 @@
   </div>
 </div>
 
-<script src="/auth.js"></script>
-<script>Auth.require(['admin', 'staff', 'advisor']);</script>
 <script>
+/* Danh sách khoa & ngành DÙNG CHUNG cho trang Quản lý khoa và Quản lý lớp học.
+   Muốn thêm/sửa khoa hay ngành thì chỉ cần sửa ở file này. */
 (function () {
-  /* Danh sách khoa và các ngành thuộc khoa. Muốn thêm/sửa khoa hay ngành thì sửa ở đây. */
   const FACULTIES = [
     { code: 'CNTT', name: 'Khoa Công nghệ thông tin', majors: ['Công nghệ thông tin', 'Kỹ thuật máy tính', 'Trí tuệ nhân tạo'] },
     { code: 'DDT', name: 'Khoa Điện – Điện tử', majors: ['Công nghệ kỹ thuật điện – điện tử', 'Điều khiển và tự động hóa', 'Kỹ thuật cơ điện tử'] },
@@ -234,14 +236,44 @@
     { code: 'DL', name: 'Khoa Du lịch', majors: ['Quản trị khách sạn', 'Quản trị dịch vụ du lịch và lữ hành', 'Quản trị nhà hàng và dịch vụ ăn uống'] },
     { code: 'NN', name: 'Khoa Ngôn ngữ', majors: ['Ngôn ngữ Anh', 'Ngôn ngữ Nhật', 'Ngôn ngữ Trung Quốc', 'Ngôn ngữ Hàn Quốc'] },
     { code: 'TCKT', name: 'Khoa Tài chính – Kế toán', majors: ['Kế toán', 'Tài chính – Ngân hàng'] },
+    { code: 'QTKD', name: 'Khoa Quản trị kinh doanh', majors: ['Quản trị kinh doanh'] },
     { code: 'M', name: 'Khoa Marketing', majors: ['Marketing', 'Truyền thông đa phương tiện'] },
     { code: 'CNTP', name: 'Khoa Công nghệ thực phẩm', majors: ['Công nghệ thực phẩm'] }
   ];
 
+  const norm = s => String(s || '').normalize('NFC').trim().toLowerCase()
+    .replace(/[–—−]/g, '-').replace(/\s*-\s*/g, ' - ').replace(/\s+/g, ' ');
+
+  // Tên ngành cũ/viết tắt -> tên ngành chuẩn
+  const ALIASES = { 'ngôn ngữ': 'Ngôn ngữ Anh' };
+
+  const byKey = new Map();
+  FACULTIES.forEach(f => f.majors.forEach(m => byKey.set(norm(m), { faculty: f, major: m })));
+
+  function find(name) {
+    const k = norm(name);
+    return byKey.get(k) || (ALIASES[k] ? byKey.get(norm(ALIASES[k])) : null) || null;
+  }
+  // Trả về tên ngành chuẩn; nếu không nhận ra thì giữ nguyên
+  function canonical(name) {
+    const hit = find(name);
+    return hit ? hit.major : String(name || '');
+  }
+
+  window.Catalog = { FACULTIES, norm, find, canonical };
+})();
+</script>
+<script src="/auth.js"></script>
+<script>Auth.require(['admin', 'staff', 'advisor']);</script>
+<script>
+(function () {
+  /* Danh sách khoa/ngành dùng chung với trang Quản lý lớp học (xem đoạn Catalog phía trên) */
+  const FACULTIES = Catalog.FACULTIES;
+
   const $ = id => document.getElementById(id);
   const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const num = n => Number(n || 0).toLocaleString('vi-VN');
-  const norm = s => String(s || '').normalize('NFC').trim().toLowerCase().replace(/[–—−]/g, '-').replace(/\s*-\s*/g, ' - ').replace(/\s+/g, ' ');
+  const norm = Catalog.norm;
 
   async function api(url) {
     const res = await fetch(url);
@@ -283,7 +315,7 @@
     list.forEach(f => f.majors.forEach(m => byKey.set(m.key, { f, m })));
 
     classes.forEach(c => {
-      const hit = byKey.get(norm(c.majorName));
+      const hit = byKey.get(norm(Catalog.canonical(c.majorName)));
       if (!hit) return; // lớp có ngành chưa thuộc khoa nào: không hiển thị ở trang này
       const { f, m } = hit;
       m.classes.push(c);
