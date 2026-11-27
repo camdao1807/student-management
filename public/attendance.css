@@ -85,3 +85,10 @@
 
 .chips-head .link-btn { text-transform:none; letter-spacing:0; font-size:12px; }
 .chips-head .link-btn[hidden] { display:none; }
+
+/* Sinh viên thôi học / bảo lưu / tốt nghiệp (chỉ xem) */
+.att-table tr.inactive td { background:#f9fafb; color:#9ca3af; }
+.att-table tr.inactive .mssv { color:#9ca3af; }
+.stu-badge { display:inline-block; margin-left:6px; padding:1px 6px; border-radius:4px; background:#fee2e2; color:#b91c1c; font-size:9px; font-weight:700; vertical-align:middle; }
+.inactive-toggle { display:inline-flex; align-items:center; gap:6px; color:var(--dash-muted); font-size:11px; cursor:pointer; }
+.inactive-toggle[hidden] { display:none; }

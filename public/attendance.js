@@ -3,7 +3,8 @@
    API dự kiến (xem hàm api() — mở trang với ?mock=1 để chạy thử không cần backend):
    GET  /attendance/sections                      -> [{id, code, name, lecturerName, room, schedule, studentCount, totalSessions}]
    GET  /attendance/sections/:id/sessions         -> [{id, number, date, status:'locked'|'open'|'future', presentCount, total, lockedBy}]
-   GET  /attendance/sessions/:id                  -> {note, records:[{studentId, studentCode, fullName, email, classCode, status|null, absentBefore}]}
+   GET  /attendance/sessions/:id                  -> {note, records:[{studentId, studentCode, fullName, email, classCode, status|null, absentBefore,
+                                                            eligible, studentStatus: studying|reserved|dropped|graduated|no_status}]}
    PUT  /attendance/sessions/:id  {records:[{studentId,status}], note, lock}
    GET  /attendance/sections/:id/students         -> như records ở trên (status=null) — dùng khi lớp chưa có buổi nào
    POST /attendance/sections/:id/sessions {date?}  -> mở buổi học tiếp theo (mặc định hôm nay)
@@ -30,7 +31,7 @@ const norm = (s) => String(s ?? '').normalize('NFD').replace(/[\u0300-\u036f]/g,
 const state = {
   sections: [], section: null, sessions: [], session: null,
   records: [], snapshot: '', dirty: false,
-  page: 1, limit: 10, q: '', status: 'all', risk: 0,
+  page: 1, limit: 10, q: '', status: 'all', risk: 0, showInactive: false,
 };
 
 /* ---------- API ---------- */
@@ -61,13 +62,17 @@ function showToast(message, success = true) {
 /* ---------- Tính toán ---------- */
 const isLocked = () => state.session?.status === 'locked';
 const readOnly = () => !state.session || isLocked();
+// Chỉ sinh viên "Đang học" (eligible) phải điểm danh; SV thôi học / bảo lưu / tốt nghiệp chỉ để xem
+const isActive = (r) => r.eligible !== false;
+const activeRecords = () => state.records.filter(isActive);
+const STUDY_STATUS = { dropped: 'Thôi học', reserved: 'Bảo lưu', graduated: 'Đã tốt nghiệp' };
 const totalSessions = () => state.section?.totalSessions || state.sessions.length || 1;
 function absentCount(r) { return (r.absentBefore || 0) + (r.status === 'absent' ? 1 : 0); }
 function rateOf(r) { return pct(absentCount(r), totalSessions()); }
 function levelOf(r) { const v = rateOf(r); return v > BAN_RATE ? 'risk' : v > WARN_RATE ? 'warn' : ''; }
 function counts() {
   const c = { present: 0, excused: 0, absent: 0, late: 0, unmarked: 0 };
-  state.records.forEach((r) => { c[r.status || 'unmarked'] += 1; });
+  activeRecords().forEach((r) => { c[r.status || 'unmarked'] += 1; });
   return c;
 }
 function markDirty() { state.dirty = true; }
@@ -147,6 +152,7 @@ function renderChips() {
 function filtered() {
   const q = norm(state.q);
   return state.records.filter((r) => {
+    if (!state.showInactive && !isActive(r)) return false;
     if (q && !norm(`${r.studentCode} ${r.fullName} ${r.email || ''}`).includes(q)) return false;
     if (state.status === 'unmarked' ? r.status : state.status !== 'all' && r.status !== state.status) return false;
     if (state.risk && rateOf(r) <= state.risk) return false;
@@ -162,16 +168,19 @@ function renderTable() {
   $('attBody').innerHTML = rows.slice(start, start + state.limit).map((r, i) => {
     const lvl = levelOf(r);
     const btns = Object.keys(STATUS).map((k) =>
-      `<button type="button" data-status="${k}" class="${r.status === k ? 'on-' + k : ''}" ${locked ? 'disabled' : ''}>${STATUS[k].short}</button>`).join('');
-    return `<tr class="${lvl}" data-id="${esc(r.studentId)}">
+      `<button type="button" data-status="${k}" class="${r.status === k ? 'on-' + k : ''}" ${locked || !isActive(r) ? 'disabled' : ''}>${STATUS[k].short}</button>`).join('');
+    return `<tr class="${lvl}${isActive(r) ? '' : ' inactive'}" data-id="${esc(r.studentId)}">
       <td>${pad(start + i + 1)}</td>
       <td class="mssv">${esc(r.studentCode)}</td>
-      <td><strong>${esc(r.fullName)}</strong><small>${esc(r.email || '')}</small></td>
+      <td><strong>${esc(r.fullName)}</strong>${isActive(r) ? '' : `<span class="stu-badge">${esc(STUDY_STATUS[r.studentStatus] || 'Không còn học')}</span>`}<small>${esc(r.email || '')}</small></td>
       <td>${esc(r.classCode || '—')}</td>
       <td><div class="status-seg">${btns}</div></td>
       <td><span class="rate ${lvl}">${absentCount(r)}/${totalSessions()} (${rateOf(r).toFixed(1)}%)</span></td>
     </tr>`;
   }).join('');
+  const hidden = state.records.filter((r) => !isActive(r)).length;
+  $('inactiveToggle').hidden = hidden === 0;
+  $('inactiveCount').textContent = hidden;
   $('attEmpty').hidden = rows.length !== 0;
   $('attEmpty').textContent = state.records.length
     ? `Không có sinh viên nào khớp trong lớp học phần này (chỉ tìm trong ${state.records.length} sinh viên đã ghi danh).`
@@ -184,7 +193,7 @@ function renderTable() {
   $('btnResetMarks').disabled = locked;
 }
 function renderSummary() {
-  const c = counts(); const total = state.records.length;
+  const c = counts(); const total = activeRecords().length;
   const s = state.session;
   $('sumTitle').textContent = s ? `Buổi ${pad(s.number)} & Thống kê` : 'Chưa có buổi học';
   $('sessionLabel').textContent = s ? `buổi ${pad(s.number)}` : '';
@@ -199,7 +208,7 @@ function renderSummary() {
   $('btnLock').disabled = locked || !s; $('btnSave').disabled = locked || !s; $('note').disabled = locked || !s;
 }
 function renderMetrics() {
-  const c = counts(); const total = state.records.length;
+  const c = counts(); const total = activeRecords().length;
   const attended = c.present + c.late;
   $('mPresent').textContent = `${pct(attended, total).toFixed(1)}%`;
   $('mPresentBadge').textContent = `${attended}/${total} SV`;
@@ -208,7 +217,7 @@ function renderMetrics() {
   $('mSessions').textContent = done; $('mSessionsTotal').textContent = totalSessions();
   $('mSessionsPct').textContent = `${pct(done, totalSessions()).toFixed(1)}%`;
   $('mSessionsBar').style.width = `${pct(done, totalSessions())}%`;
-  $('mWarn').textContent = state.records.filter((r) => rateOf(r) > BAN_RATE).length;
+  $('mWarn').textContent = activeRecords().filter((r) => rateOf(r) > BAN_RATE).length;
   $('mExcused').textContent = c.excused;
 }
 function renderHistory() {
@@ -228,13 +237,13 @@ function renderLive() { renderTable(); renderSummary(); renderMetrics(); }
 /* ---------- Lưu ---------- */
 async function save(lock) {
   const s = state.session; if (!s || isLocked()) return;
-  const unmarked = state.records.filter((r) => !r.status).length;
+  const unmarked = activeRecords().filter((r) => !r.status).length;
   if (lock && unmarked) return showToast(`Còn ${unmarked} sinh viên chưa điểm danh`, false);
   if (lock && !confirm(`Khóa sổ buổi ${pad(s.number)}? Sau khi khóa sẽ không thể chỉnh sửa.`)) return;
   $('btnSave').disabled = $('btnLock').disabled = true;
   try {
     await api(`${API}/sessions/${encodeURIComponent(s.id)}`, 'PUT', {
-      records: state.records.filter((r) => r.status).map((r) => ({ studentId: r.studentId, status: r.status })),
+      records: activeRecords().filter((r) => r.status).map((r) => ({ studentId: r.studentId, status: r.status })),
       note: $('note').value.trim(), lock,
     });
     state.dirty = false;
@@ -250,9 +259,9 @@ async function save(lock) {
 
 function exportCsv() {
   if (!state.records.length) return showToast('Chưa có dữ liệu để xuất', false);
-  const head = ['STT', 'MSSV', 'Họ tên', 'Lớp HC', 'Trạng thái', 'Số buổi vắng', 'Tỷ lệ vắng (%)'];
+  const head = ['STT', 'MSSV', 'Họ tên', 'Lớp HC', 'Trạng thái', 'Số buổi vắng', 'Tỷ lệ vắng (%)', 'Trạng thái học tập'];
   const rows = state.records.map((r, i) => [i + 1, r.studentCode, r.fullName, r.classCode || '',
-    r.status ? STATUS[r.status].label : 'Chưa điểm danh', absentCount(r), rateOf(r).toFixed(1)]);
+    r.status ? STATUS[r.status].label : 'Chưa điểm danh', absentCount(r), rateOf(r).toFixed(1), isActive(r) ? 'Đang học' : (STUDY_STATUS[r.studentStatus] || 'Không còn học')]);
   const csv = '\uFEFF' + [head, ...rows].map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -276,12 +285,12 @@ $('historyList').addEventListener('click', (e) => {
 $('attBody').addEventListener('click', (e) => {
   const b = e.target.closest('button[data-status]'); if (!b || readOnly()) return;
   const rec = state.records.find((r) => String(r.studentId) === b.closest('tr').dataset.id);
-  if (!rec) return;
+  if (!rec || !isActive(rec)) return;
   rec.status = rec.status === b.dataset.status ? null : b.dataset.status; // bấm lại để bỏ chọn
   markDirty(); renderLive();
 });
 $('btnAllPresent').addEventListener('click', () => {
-  state.records.forEach((r) => { if (!r.status) r.status = 'present'; });
+  activeRecords().forEach((r) => { if (!r.status) r.status = 'present'; });
   markDirty(); renderLive();
 });
 $('btnResetMarks').addEventListener('click', () => {
@@ -296,6 +305,7 @@ $('btnBan').addEventListener('click', () => {
   state.risk = state.risk === BAN_RATE ? 0 : BAN_RATE; state.page = 1; renderRiskBtn(); renderTable();
   $('attBody').scrollIntoView({ behavior: 'smooth', block: 'center' });
 });
+$('chkInactive').addEventListener('change', (e) => { state.showInactive = e.target.checked; state.page = 1; renderTable(); });
 $('pageLimit').addEventListener('change', (e) => { state.limit = Number(e.target.value); state.page = 1; renderTable(); });
 $('prevPage').addEventListener('click', () => { state.page -= 1; renderTable(); });
 $('nextPage').addEventListener('click', () => { state.page += 1; renderTable(); });
@@ -338,12 +348,12 @@ function mockApi(url, method, body) {
   }
   if (/\/sections\/.+\/students$/.test(url)) {
     return wait(MOCK_NAMES.map((n, i) => ({ studentId: `st${i}`, studentCode: `SV2023${pad(i + 1)}0`, fullName: n,
-      email: `sv${i + 1}@sms.edu.vn`, classCode: 'CNTT-K23A', status: null, absentBefore: 0 })));
+      email: `sv${i + 1}@sms.edu.vn`, classCode: 'CNTT-K23A', eligible: i !== 11, studentStatus: i === 11 ? 'dropped' : 'studying', status: null, absentBefore: 0 })));
   }
   const m = url.match(/\/sessions\/(b\d+)$/);
   if (m && method === 'GET') {
     mockDb.records[m[1]] ||= { note: '', records: MOCK_NAMES.map((n, i) => ({
-      studentId: `st${i}`, studentCode: `SV2023${pad(i + 1)}0`, fullName: n, email: `sv${i + 1}@sms.edu.vn`, classCode: 'CNTT-K23A',
+      studentId: `st${i}`, studentCode: `SV2023${pad(i + 1)}0`, fullName: n, email: `sv${i + 1}@sms.edu.vn`, classCode: 'CNTT-K23A', eligible: i !== 11, studentStatus: i === 11 ? 'dropped' : 'studying',
       status: mockDb.sessions.find((s) => s.id === m[1]).status === 'locked' ? (i % 7 === 2 ? 'absent' : 'present') : null,
       absentBefore: i === 2 ? 3 : i === 5 ? 2 : i % 4 === 0 ? 1 : 0 })) };
     return wait(mockDb.records[m[1]]);

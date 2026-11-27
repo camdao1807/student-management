@@ -5,6 +5,7 @@ import { Attendance, AttendanceStatus } from '../../entities/attendance.entity';
 import { AttendanceSession, SessionStatus } from '../../entities/attendance-session.entity';
 import { ClassSection } from '../../entities/class-section.entity';
 import { Enrollment, EnrollmentStatus } from '../../entities/enrollment.entity';
+import { Student } from '../../entities/student.entity';
 import { CreateSessionDto, SaveAttendanceDto } from './attendance.dto';
 
 /** Số buổi tối đa của một lớp học phần (tương ứng 15 buổi trên giao diện) */
@@ -30,6 +31,31 @@ const scheduleOf = (s: ClassSection) => {
   return s.startPeriod && s.endPeriod ? `${day}, tiết ${s.startPeriod}-${s.endPeriod}` : day;
 };
 
+/**
+ * Trạng thái học tập HIỆN TẠI của sinh viên: studying | reserved | dropped | graduated | null (chưa có bản ghi).
+ * Lấy từ lịch sử `student.statuses`: ưu tiên bản ghi isCurrent=true (nếu entity có cột này),
+ * nếu không thì bản ghi mới nhất theo ngày hiệu lực / ngày tạo, cuối cùng theo id lớn nhất.
+ */
+const currentStudyStatus = (student: Student): string | null => {
+  const list = (student.statuses ?? []) as unknown[];
+  if (!list.length) return null;
+  const flagged = list.find((x) => (x as Record<string, unknown>).isCurrent === true);
+  if (flagged) return field(flagged, 'status');
+  const timeOf = (o: unknown) => {
+    const t = new Date(field(o, 'effectiveDate', 'effective_date', 'changedAt', 'startDate', 'createdAt', 'updatedAt') ?? '').getTime();
+    return Number.isNaN(t) ? 0 : t;
+  };
+  const sorted = [...list].sort(
+    (a, b) => timeOf(b) - timeOf(a) || Number(field(b, 'id') ?? 0) - Number(field(a, 'id') ?? 0),
+  );
+  return field(sorted[0], 'status');
+};
+/** Chỉ sinh viên "Đang học" (hoặc chưa có trạng thái) mới phải điểm danh */
+const isEligible = (student: Student) => {
+  const st = currentStudyStatus(student);
+  return st === null || st === 'studying';
+};
+
 @Injectable()
 export class AttendanceService {
   constructor(
@@ -41,14 +67,15 @@ export class AttendanceService {
   ) {}
 
   // ---------- helpers ----------
-  /** Sinh viên đang học lớp học phần (bỏ đăng ký đã hủy và sinh viên đã xóa mềm) */
+  /** Sinh viên ghi danh lớp học phần (bỏ đăng ký đã hủy và sinh viên đã xóa mềm), kèm lịch sử trạng thái học tập */
   private enrollmentsOf(sectionId: string) {
     return this.enrollRepo
       .createQueryBuilder('e')
       .innerJoinAndSelect('e.student', 's')
       .leftJoinAndSelect('s.studentClass', 'c')
+      .leftJoinAndSelect('s.statuses', 'st')
       .where('e.sectionId = :sectionId', { sectionId })
-      .andWhere('e.status = :st', { st: EnrollmentStatus.ENROLLED })
+      .andWhere('e.status = :enr', { enr: EnrollmentStatus.ENROLLED })
       .andWhere('s.deletedAt IS NULL')
       .orderBy('s.studentCode', 'ASC')
       .getMany();
@@ -69,6 +96,21 @@ export class AttendanceService {
     return s;
   }
 
+  private toRecord(e: Enrollment, absentBefore: number, status: AttendanceStatus | null) {
+    const st = currentStudyStatus(e.student);
+    return {
+      studentId: String(e.student.id),
+      studentCode: e.student.studentCode,
+      fullName: e.student.fullName,
+      email: e.student.email,
+      classCode: e.student.studentClass?.classCode ?? null,
+      studentStatus: st ?? 'no_status', // studying | reserved | dropped | graduated | no_status
+      eligible: isEligible(e.student), // false => không phải điểm danh, không tính vào sĩ số / khóa sổ
+      status,
+      absentBefore,
+    };
+  }
+
   async listStudents(sectionId: string) {
     const [enrolls, rows] = await Promise.all([this.enrollmentsOf(sectionId), this.attendanceOf(sectionId)]);
     const absent = new Map<string, number>();
@@ -78,68 +120,70 @@ export class AttendanceService {
         absent.set(k, (absent.get(k) ?? 0) + 1);
       }
     });
-    return enrolls.map((e) => ({
-      studentId: String(e.student.id),
-      studentCode: e.student.studentCode,
-      fullName: e.student.fullName,
-      email: e.student.email,
-      classCode: e.student.studentClass?.classCode ?? null,
-      status: null,
-      absentBefore: absent.get(String(e.id)) ?? 0,
-    }));
+    return enrolls.map((e) => this.toRecord(e, absent.get(String(e.id)) ?? 0, null));
   }
-  
+
   // ---------- Lớp học phần ----------
- async listSections() {
-  const sections = await this.sectionRepo.find({
-    where: { isActive: true },
-    relations: { subject: true, employee: true },
-    order: { sectionCode: 'ASC' },
-  });
+  async listSections() {
+    const sections = await this.sectionRepo.find({
+      where: { isActive: true },
+      relations: { subject: true, employee: true },
+      order: { sectionCode: 'ASC' },
+    });
 
-  // Lấy môn chính thức từ bảng courses (trang quản lý môn học dùng bảng này)
-  const courseIds = [...new Set(sections.map((c) => c.subject?.courseId).filter((x): x is string => !!x))];
-  const courses: { id: string; code: string; name: string; status: string }[] = courseIds.length
-    ? await this.ds.query(
-        `SELECT id, course_code AS code, name, status FROM courses WHERE id IN (${courseIds.map(() => '?').join(',')})`,
-        courseIds,
-      )
-    : [];
-  const courseMap = new Map(courses.map((c) => [String(c.id), c]));
+    // Lấy môn chính thức từ bảng courses (trang quản lý môn học dùng bảng này)
+    const courseIds = [...new Set(sections.map((c) => c.subject?.courseId).filter((x): x is string => !!x))];
+    const courses: { id: string; code: string; name: string; status: string }[] = courseIds.length
+      ? await this.ds.query(
+          `SELECT id, course_code AS code, name, status FROM courses WHERE id IN (${courseIds.map(() => '?').join(',')})`,
+          courseIds,
+        )
+      : [];
+    const courseMap = new Map(courses.map((c) => [String(c.id), c]));
 
-  // Môn đã ánh xạ: theo status của courses. Môn chưa ánh xạ: theo is_active của subjects.
-  const visible = sections.filter((c) => {
-    const course = c.subject?.courseId ? courseMap.get(String(c.subject.courseId)) : null;
-    return course ? course.status === 'active' : c.subject?.isActive !== false;
-  });
+    // Môn đã ánh xạ: theo status của courses. Môn chưa ánh xạ: theo is_active của subjects.
+    const visible = sections.filter((c) => {
+      const course = c.subject?.courseId ? courseMap.get(String(c.subject.courseId)) : null;
+      return course ? course.status === 'active' : c.subject?.isActive !== false;
+    });
 
-  const counts = await this.enrollRepo
-    .createQueryBuilder('e')
-    .select('e.sectionId', 'sectionId')
-    .addSelect('COUNT(e.id)', 'cnt')
-    .where('e.status = :st', { st: EnrollmentStatus.ENROLLED })
-    .groupBy('e.sectionId')
-    .getRawMany<{ sectionId: string; cnt: string }>();
-  const countMap = new Map(counts.map((r) => [String(r.sectionId), Number(r.cnt)]));
+    // Sĩ số = chỉ sinh viên ĐANG HỌC; sinh viên thôi học / bảo lưu / tốt nghiệp đếm riêng
+    const enrolled = await this.enrollRepo
+      .createQueryBuilder('e')
+      .innerJoinAndSelect('e.student', 's')
+      .leftJoinAndSelect('s.statuses', 'st')
+      .where('e.status = :enr', { enr: EnrollmentStatus.ENROLLED })
+      .andWhere('s.deletedAt IS NULL')
+      .getMany();
+    const countMap = new Map<string, { active: number; inactive: number }>();
+    enrolled.forEach((e) => {
+      const k = String(e.sectionId);
+      const v = countMap.get(k) ?? { active: 0, inactive: 0 };
+      if (isEligible(e.student)) v.active += 1;
+      else v.inactive += 1;
+      countMap.set(k, v);
+    });
 
-  return visible.map((c) => {
-    const course = c.subject?.courseId ? courseMap.get(String(c.subject.courseId)) : null;
-    const subjectCode = course?.code ?? field(c.subject, 'subjectCode');
-    const subjectName = course?.name ?? field(c.subject, 'subjectName', 'name', 'title');
-    return {
-      id: String(c.id),
-      code: c.sectionCode,
-      subjectCode,
-      subjectName,
-      name: subjectCode && subjectName ? `${subjectCode} - ${subjectName}` : subjectName ?? c.sectionCode,
-      lecturerName: c.employee?.fullName ?? null,
-      room: c.room,
-      schedule: scheduleOf(c),
-      studentCount: countMap.get(String(c.id)) ?? 0,
-      totalSessions: TOTAL_SESSIONS,
-    };
-  });
-}
+    return visible.map((c) => {
+      const course = c.subject?.courseId ? courseMap.get(String(c.subject.courseId)) : null;
+      const subjectCode = course?.code ?? field(c.subject, 'subjectCode');
+      const subjectName = course?.name ?? field(c.subject, 'subjectName', 'name', 'title');
+      const cnt = countMap.get(String(c.id));
+      return {
+        id: String(c.id),
+        code: c.sectionCode,
+        subjectCode,
+        subjectName,
+        name: subjectCode && subjectName ? `${subjectCode} - ${subjectName}` : subjectName ?? c.sectionCode,
+        lecturerName: c.employee?.fullName ?? null,
+        room: c.room,
+        schedule: scheduleOf(c),
+        studentCount: cnt?.active ?? 0,
+        inactiveCount: cnt?.inactive ?? 0,
+        totalSessions: TOTAL_SESSIONS,
+      };
+    });
+  }
 
   // ---------- Danh sách buổi ----------
   async listSessions(sectionId: string) {
@@ -198,16 +242,9 @@ export class AttendanceService {
       records: enrolls.map((e) => {
         const mine = byEnroll.get(String(e.id)) ?? [];
         const current = mine.find((r) => dateStr(r.date) === sDate);
-        return {
-          studentId: String(e.student.id),
-          studentCode: e.student.studentCode,
-          fullName: e.student.fullName,
-          email: e.student.email,
-          classCode: e.student.studentClass?.classCode ?? null,
-          status: current?.status ?? null,
-          // số buổi vắng KHÔNG phép trước buổi này (vắng có phép / đi muộn không tính)
-          absentBefore: mine.filter((r) => r.status === AttendanceStatus.ABSENT && dateStr(r.date) < sDate).length,
-        };
+        // số buổi vắng KHÔNG phép trước buổi này (vắng có phép / đi muộn không tính)
+        const absentBefore = mine.filter((r) => r.status === AttendanceStatus.ABSENT && dateStr(r.date) < sDate).length;
+        return this.toRecord(e, absentBefore, current?.status ?? null);
       }),
     };
   }
@@ -217,11 +254,14 @@ export class AttendanceService {
     const s = await this.findSession(id);
     if (s.status === SessionStatus.LOCKED) throw new ConflictException('Buổi học đã khóa sổ, không thể chỉnh sửa');
 
-    const enrolls = await this.enrollmentsOf(s.sectionId);
+    // Chỉ sinh viên ĐANG HỌC mới điểm danh / bị tính khi khóa sổ
+    const enrolls = (await this.enrollmentsOf(s.sectionId)).filter((e) => isEligible(e.student));
     const known = new Set(enrolls.map((e) => String(e.student.id)));
     const incoming = new Map<string, AttendanceStatus>();
     for (const r of dto.records) {
-      if (!known.has(r.studentId)) throw new BadRequestException(`Sinh viên ${r.studentId} không thuộc lớp học phần này`);
+      if (!known.has(r.studentId)) {
+        throw new BadRequestException(`Sinh viên ${r.studentId} không thuộc lớp học phần này hoặc không còn ở trạng thái đang học`);
+      }
       incoming.set(r.studentId, r.status);
     }
     if (dto.lock && incoming.size !== enrolls.length) {
