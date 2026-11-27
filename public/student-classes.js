@@ -246,6 +246,55 @@ $('btnAssign').addEventListener('click', async () => {
   } catch (err) { alert(err.message); }
 });
 
+// ===== Thêm lớp mẫu: mỗi ngành 2 lớp (bỏ qua lớp đã có) =====
+const MAJOR_PREFIX = {
+  'Công nghệ thông tin': 'CNTT', 'Kỹ thuật máy tính': 'KTMT', 'Trí tuệ nhân tạo': 'TTNT',
+  'Công nghệ kỹ thuật điện – điện tử': 'DDT', 'Điều khiển và tự động hóa': 'DKTD', 'Kỹ thuật cơ điện tử': 'CDT',
+  'Y khoa': 'YK', 'Điều dưỡng': 'DD', 'Hộ sinh': 'HS', 'Dinh dưỡng': 'DDG', 'Kỹ thuật phục hồi chức năng': 'PHCN',
+  'Giáo dục mầm non': 'GDMN', 'Giáo dục tiểu học': 'GDTH', 'Giáo dục học': 'GDH',
+  'Luật': 'LUAT', 'Luật kinh tế': 'LKT',
+  'Quản trị khách sạn': 'QTKS', 'Quản trị dịch vụ du lịch và lữ hành': 'QTLH', 'Quản trị nhà hàng và dịch vụ ăn uống': 'QTNH',
+  'Ngôn ngữ Anh': 'NNA', 'Ngôn ngữ Nhật': 'NNN', 'Ngôn ngữ Trung Quốc': 'NNT', 'Ngôn ngữ Hàn Quốc': 'NNH',
+  'Kế toán': 'KT', 'Tài chính – Ngân hàng': 'TCNH', 'Quản trị kinh doanh': 'QTKD',
+  'Marketing': 'MKT', 'Truyền thông đa phương tiện': 'TTDPT', 'Công nghệ thực phẩm': 'CNTP',
+};
+const SEED_YEARS = ['2024-2028', '2025-2029'];
+
+$('btnSeed').addEventListener('click', async () => {
+  if (!confirm('Tự tạo 2 lớp cho mỗi ngành (lớp nào đã có mã trùng sẽ được bỏ qua). Tiếp tục?')) return;
+  const btn = $('btnSeed');
+  btn.disabled = true;
+  const exists = new Set(classes.map((c) => c.classCode.toUpperCase()));
+  let ok = 0, skip = 0;
+  const fail = [];
+  try {
+    for (const f of Catalog.FACULTIES) {
+      for (const major of f.majors) {
+        const prefix = MAJOR_PREFIX[major];
+        if (!prefix) continue;
+        for (let i = 0; i < 2; i++) {
+          const n = String(i + 1).padStart(2, '0');
+          const code = prefix + n;
+          if (exists.has(code)) { skip++; continue; }
+          btn.textContent = `Đang thêm ${code}...`;
+          try {
+            await api(API, 'POST', {
+              classCode: code, className: `${major} ${n}`, majorName: major,
+              academicYear: SEED_YEARS[i], isActive: true,
+            });
+            ok++;
+          } catch (err) { fail.push(`${code}: ${err.message}`); }
+        }
+      }
+    }
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Thêm lớp mẫu';
+    await loadClasses();
+  }
+  alert(`Đã thêm ${ok} lớp, bỏ qua ${skip} lớp đã có, lỗi ${fail.length}.${fail.length ? '\n' + fail.join('\n') : ''}`);
+});
+
 (async function init() {
   advisorsMap = await loadAdvisors();
   await loadClasses();
