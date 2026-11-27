@@ -109,10 +109,13 @@
 .empty-report { padding:26px; color:#9ca3af; font-size:12px; text-align:center; }
 .empty-report[hidden] { display:none; }
 .report-footer { display:flex; justify-content:space-between; align-items:center; gap:12px; padding-top:12px; color:var(--dash-muted); font-size:11px; }
-.pager { display:flex; align-items:center; gap:8px; } .pager label { display:flex; align-items:center; gap:6px; }
-.pager select { height:30px; padding:4px 7px; border-radius:6px; font-size:11px; }
-.pager button { width:30px; height:30px; padding:0; border-radius:6px; }
-.pager button:disabled { cursor:not-allowed; }
+.report-info { display:flex; align-items:center; gap:14px; flex-wrap:wrap; }
+.page-size { display:flex; align-items:center; gap:6px; }
+.page-size select { height:30px; padding:4px 7px; border-radius:6px; font-size:11px; }
+.pg { display:flex; align-items:center; gap:6px; }
+.pg button { padding:6px 11px; }
+.pg button.on { background:var(--pri); color:#fff; border-color:var(--pri); }
+.pg button:disabled { cursor:not-allowed; }
 #toast { max-width:min(400px,calc(100vw - 32px)); }
 
 @media (max-width:1100px) {

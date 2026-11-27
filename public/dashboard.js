@@ -171,17 +171,17 @@ async function loadReport() {
   $('reportState').textContent = 'Đang tải báo cáo...';
   $('reportError').hidden = true;
   $('reportEmpty').hidden = true;
-  try {
+    try {
     const data = await api(`${API}/report/students?${buildParams()}`);
     state.total = data.meta.total;
     state.totalPages = Math.max(1, data.meta.totalPages);
     renderRows(data.data);
     renderSortButtons();
-    $('recordCount').textContent = `${number(state.total)} bản ghi sau lọc`;
+    const startNo = (state.page - 1) * state.limit;
+    const from = data.data.length ? startNo + 1 : 0;
+    $('recordCount').textContent = `Hiển thị ${number(from)} - ${number(startNo + data.data.length)} trong tổng số ${number(state.total)} sinh viên`;
     $('reportSummary').textContent = `${number(state.total)} sinh viên phù hợp với bộ lọc`;
-    $('pageNumber').textContent = `Trang ${state.page} / ${state.totalPages}`;
-    $('prevPage').disabled = state.page <= 1;
-    $('nextPage').disabled = state.page >= state.totalPages;
+    renderPager();
     $('reportEmpty').hidden = state.total !== 0;
     $('reportState').hidden = true;
   } catch (error) {
@@ -212,7 +212,18 @@ function renderRows(rows) {
     </tr>`;
   }).join('');
 }
-
+function renderPager() {
+  const box = $('pg');
+  const tp = state.totalPages;
+  if (tp <= 1) { box.innerHTML = ''; return; }
+  const b = (label, page, dis = false, on = false) =>
+    `<button type="button" class="${on ? 'on' : ''}" ${dis ? 'disabled' : ''} data-page="${page}">${label}</button>`;
+  let html = b('‹', state.page - 1, state.page === 1);
+  const from = Math.max(1, state.page - 2), to = Math.min(tp, state.page + 2);
+  for (let i = from; i <= to; i++) html += b(i, i, false, i === state.page);
+  html += b('›', state.page + 1, state.page === tp);
+  box.innerHTML = html;
+}
 function renderBarChart(elementId, rows, labelFor, valueKey) {
   const container = $(elementId);
   if (!rows?.length) {
@@ -323,11 +334,11 @@ $('pageLimit').addEventListener('change', () => {
   state.page = 1;
   loadReport();
 });
-$('prevPage').addEventListener('click', () => {
-  if (state.page > 1) { state.page -= 1; loadReport(); }
-});
-$('nextPage').addEventListener('click', () => {
-  if (state.page < state.totalPages) { state.page += 1; loadReport(); }
+$('pg').addEventListener('click', (event) => {
+  const button = event.target.closest('button[data-page]');
+  if (!button || button.disabled) return;
+  state.page = Number(button.dataset.page);
+  loadReport();
 });
 $('exportCsv').addEventListener('click', () => exportReport('csv'));
 $('exportXlsx').addEventListener('click', () => exportReport('xlsx'));

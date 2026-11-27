@@ -232,13 +232,13 @@
       </div>
       <div id="reportEmpty" class="empty-report" hidden>Không tìm thấy sinh viên phù hợp.</div>
       <div class="report-footer">
-        <span id="recordCount">0 bản ghi</span>
-        <div class="pager">
-          <label>Số dòng<select id="pageLimit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option></select></label>
-          <button type="button" id="prevPage" aria-label="Trang trước">‹</button>
-          <span id="pageNumber">Trang 1 / 1</span>
-          <button type="button" id="nextPage" aria-label="Trang sau">›</button>
+        <div class="report-info">
+          <span id="recordCount">Hiển thị 0 - 0 trong tổng số 0 sinh viên</span>
+          <label class="page-size">Số dòng
+            <select id="pageLimit"><option value="10">10</option><option value="20" selected>20</option><option value="50">50</option><option value="100">100</option></select>
+          </label>
         </div>
+        <div class="pg" id="pg"></div>
       </div>
     </section>
   </div>

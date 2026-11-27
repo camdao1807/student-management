@@ -26,6 +26,8 @@ import { UsersModule } from './modules/users/users.module';
 import { AccountsModule } from './modules/accounts/accounts.module'; // <-- THÊM
 import { SubstitutesModule } from './modules/substitutes/substitutes.module';
 import { CourseTeachingsModule } from './modules/course-teachings/course-teachings.module';
+import { AttendanceModule } from './modules/attendance/attendance.module';
+import { AnnouncementsModule } from './modules/announcements/announcements.module';
 @Module({
   imports: [
     TypeOrmModule.forRoot({
@@ -64,7 +66,9 @@ import { CourseTeachingsModule } from './modules/course-teachings/course-teachin
     UsersModule,
     AccountsModule,
     SubstitutesModule,
-    CourseTeachingsModule, // <-- THÊM
+    CourseTeachingsModule,
+    AttendanceModule,   // <-- THÊM
+    AnnouncementsModule, // <-- THÊM
   ],
 })
 export class AppModule {}
