@@ -190,13 +190,13 @@
         </div>
         <div id="attEmpty" class="empty-report" hidden>Không có sinh viên phù hợp.</div>
         <div class="report-footer">
-          <span id="recordCount">0 sinh viên</span>
-          <div class="pager">
-            <label>Số dòng<select id="pageLimit"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select></label>
-            <button type="button" id="prevPage" aria-label="Trang trước">‹</button>
-            <span id="pageNumber">Trang 1 / 1</span>
-            <button type="button" id="nextPage" aria-label="Trang sau">›</button>
+          <div class="report-info">
+            <span id="recordCount">Hiển thị 0 - 0 trong tổng số 0 sinh viên</span>
+            <label class="page-size">Số dòng
+              <select id="pageLimit"><option value="10" selected>10</option><option value="20">20</option><option value="50">50</option></select>
+            </label>
           </div>
+          <div class="pg" id="pg"></div>
         </div>
       </section>
 

@@ -185,12 +185,22 @@ function renderTable() {
   $('attEmpty').textContent = state.records.length
     ? `Không có sinh viên nào khớp trong lớp học phần này (chỉ tìm trong ${state.records.length} sinh viên đã ghi danh).`
     : 'Lớp học phần chưa có sinh viên ghi danh.';
-  $('recordCount').textContent = `Hiển thị ${Math.min(state.limit, Math.max(0, rows.length - start))} / ${rows.length} sinh viên`;
-  $('pageNumber').textContent = `Trang ${state.page} / ${pages}`;
-  $('prevPage').disabled = state.page <= 1;
-  $('nextPage').disabled = state.page >= pages;
+  const shown = Math.min(state.limit, Math.max(0, rows.length - start));
+  $('recordCount').textContent = `Hiển thị ${shown ? start + 1 : 0} - ${start + shown} trong tổng số ${rows.length} sinh viên`;
+  renderPager(pages);
   $('btnAllPresent').disabled = locked;
   $('btnResetMarks').disabled = locked;
+}
+function renderPager(pages) {
+  const box = $('pg');
+  if (pages <= 1) { box.innerHTML = ''; return; }
+  const b = (label, page, dis = false, on = false) =>
+    `<button type="button" class="${on ? 'on' : ''}" ${dis ? 'disabled' : ''} data-page="${page}">${label}</button>`;
+  let html = b('‹', state.page - 1, state.page === 1);
+  const from = Math.max(1, state.page - 2), to = Math.min(pages, state.page + 2);
+  for (let i = from; i <= to; i++) html += b(i, i, false, i === state.page);
+  html += b('›', state.page + 1, state.page === pages);
+  box.innerHTML = html;
 }
 function renderSummary() {
   const c = counts(); const total = activeRecords().length;
@@ -307,8 +317,12 @@ $('btnBan').addEventListener('click', () => {
 });
 $('chkInactive').addEventListener('change', (e) => { state.showInactive = e.target.checked; state.page = 1; renderTable(); });
 $('pageLimit').addEventListener('change', (e) => { state.limit = Number(e.target.value); state.page = 1; renderTable(); });
-$('prevPage').addEventListener('click', () => { state.page -= 1; renderTable(); });
-$('nextPage').addEventListener('click', () => { state.page += 1; renderTable(); });
+$('pg').addEventListener('click', (e) => {
+  const b = e.target.closest('button[data-page]');
+  if (!b || b.disabled) return;
+  state.page = Number(b.dataset.page);
+  renderTable();
+});
 $('btnSave').addEventListener('click', () => save(false));
 $('btnLock').addEventListener('click', () => save(true));
 $('btnOpenSession').addEventListener('click', async () => {
